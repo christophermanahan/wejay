@@ -1,16 +1,8 @@
-'use strict'
-import React from 'react'
-import {Router, Route, IndexRedirect, browserHistory} from 'react-router'
-import {render} from 'react-dom'
-import {connect, Provider} from 'react-redux'
+import { combineReducers } from 'redux';
+import fake from './fake';
 
-import store from './store'
+const rootReducer = combineReducers({
+    fake
+});
 
-import Routes from './routes'
-
-render (
-  <Provider store={store}>
-    <Routes />
-  </Provider>,
-  document.getElementById('main')
-)
+export default rootReducer;

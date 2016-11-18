@@ -13,7 +13,7 @@ export const loadSearchResults = searchResults => ({
 
 /* ------------       REDUCER     ------------------ */
 
-export const reducer = (state = [], action) => {
+const reducer = (state = [], action) => {
   switch (action.type){
     case LOAD_SEARCH_RESULTS:
         return action.searchResults
@@ -29,7 +29,6 @@ export const fetchTrackResults = (query) => {
   return dispatch => {
     axios.get(`/api/search/tracks/${query}`)
     .then(results => {
-      console.log("results are: ", results.data);
       dispatch(loadSearchResults(results.data))
     })
   }

@@ -16,6 +16,21 @@ const config = {
 firebase.initializeApp(config);
 const auth = firebase.auth();
 
+/* -------------------- CRAZY DB STUFF ----------------------- */
+import { setMessages } from './ducks/chat';
+const messageDB = firebase.database();
+
+messageDB.ref('messages').on('value', snapshot =>{
+  store.dispatch(setMessages(snapshot.val()))
+})
+
+
+
+
+/* ---------------- END OF CRAZY DB STUFF ------------------- */
+
+
+
 // this will make sure that the current user gets placed in the store if oauth passes
 // still need to account for login failures, etc.
 

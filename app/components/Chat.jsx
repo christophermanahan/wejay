@@ -5,6 +5,8 @@ import { Link } from 'react-router';
 
 import { clearUser, setUser } from '../ducks/user';
 
+import QuoteList from './chat-quote'
+
 /* -----------------    COMPONENT     ------------------ */
 
 class Chat extends Component {
@@ -13,6 +15,7 @@ class Chat extends Component {
 
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
+    this.sendSwag = this.sendSwag.bind(this);
   }
 
   signIn(e) {
@@ -38,25 +41,43 @@ class Chat extends Component {
       .catch(err => console.error(err))
   }
 
+  sendSwag(e) {
+    e.preventDefault();
+    let randomStr = Math.random() + ""
+    let messages = this.props.messages
+    messages[randomStr.slice(3, 12)] = {name: this.props.user.displayName, text:'swag'}
+
+    this.props.firebase.database().ref('messages').set(messages)
+  }
+
   render() {
-    const { user } = this.props
+    const { user, messages } = this.props
+
     return (
       <div>
         <h1>chat will be here</h1>
         <div>
           <div>
-            <p>placeholder for messages</p>
+            {user && user.displayName ?
+              <QuoteList messages={messages} />
+              :
+              <p>Log in to see messages</p>
+            }
           </div>
-          <form>
-            <input type="text" />
-            <button type="submit">send message</button>
-          </form>
+          {user && user.displayName ?
+              <form>
+                <button type="submit" onClick={this.sendSwag}>send swag</button>
+              </form>
+              :
+              <p>Log in to send swag</p>
+            }
+
           {
             user && user.displayName ?
             <span>Welcome, {user.displayName}
               <button onClick={this.signOut}>sign out</button>
             </span>
-            :       
+            :
             <span><button onClick={this.signIn}>sign in</button></span>
           }
         </div>
@@ -65,12 +86,14 @@ class Chat extends Component {
   }
 }
 
+
+// <input type="text" />
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ firebase, user }) => ({ firebase, user });
+const mapStateToProps = ({ firebase, user, messages }) => ({ firebase, user, messages });
 const mapDispatchToProps = dispatch => ({
   logout: () => dispatch(clearUser()),
-  login: user => dispatch(setUser(user)) 
+  login: user => dispatch(setUser(user))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

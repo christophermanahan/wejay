@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 // import { Link } from 'react-router';
 import Song from './Song'
 
@@ -11,7 +10,7 @@ const SongList = props => {
   return (
     <div>
       {topTen && topTen.map(song => (
-        song && <Song name={song.name} artist={song.artist} DJ={song.DJ} key={song.id} />
+        song && <Song name={song.name} artist={song.artist} DJ={song.DJ} key={song.sc_id} />
       ))}
     </div>
   )

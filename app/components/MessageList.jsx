@@ -10,16 +10,15 @@ const Message = props => {
 }
 
 const MessageList = props => {
-        let messages = []
-        let id = 0
-        for(let message in props.messages) {
-            props.messages[message]['id'] = id++
-            messages.push(props.messages[message])
+        let messages = [];
+        for (let message in props.messages) {
+            messages.push(props.messages[message]);
         }
+
         return (
         <div>
           {
-           messages && messages.map(message => <Message key={message.id} message={message} />)
+           messages && messages.map((message, index) => <Message key={index} message={message} />)
           }
         </div>
 

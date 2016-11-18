@@ -5,13 +5,16 @@ import { Link } from 'react-router';
 
 import { clearUser, setUser } from '../ducks/user';
 
-import QuoteList from './chat-quote'
+import MessageList from './MessageList'
 
 /* -----------------    COMPONENT     ------------------ */
 
 class Chat extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      txt: ''
+    }
 
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
@@ -43,11 +46,15 @@ class Chat extends Component {
 
   sendSwag(e) {
     e.preventDefault();
-    let randomStr = Math.random() + ""
-    let messages = this.props.messages
-    messages[randomStr.slice(3, 12)] = {name: this.props.user.displayName, text:'swag'}
+    let timeStamp = Date.now() + '';
+    const { messages, user, firebase } = this.props;
+    const userName = user.displayName || 'anon';
+    const messageText = this.state.txt;
+    
+    this.setState({txt: ''})
+    messages[timeStamp] = {name: userName, text: messageText};
+    firebase.database().ref('messages').set(messages);
 
-    this.props.firebase.database().ref('messages').set(messages)
   }
 
   render() {
@@ -58,19 +65,15 @@ class Chat extends Component {
         <h1>chat will be here</h1>
         <div>
           <div>
-            {user && user.displayName ?
-              <QuoteList messages={messages} />
-              :
-              <p>Log in to see messages</p>
-            }
+            
+              <MessageList messages={messages} />
+     
           </div>
-          {user && user.displayName ?
+         
               <form>
-                <button type="submit" onClick={this.sendSwag}>send swag</button>
+                <input type="text" name="chattext" value={this.state.txt} onChange={(e) => { this.setState({txt: e.target.value}) }}/>
+                <button type="submit" onClick={this.sendSwag}>Send Swag</button>
               </form>
-              :
-              <p>Log in to send swag</p>
-            }
 
           {
             user && user.displayName ?

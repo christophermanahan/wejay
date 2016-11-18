@@ -1,9 +1,11 @@
 import store from './store';
-import { setFirebase } from './ducks/firebase';
-import { setUser } from './ducks/user';
-
 import firebase from 'firebase';
 require('APP/.env.js');
+
+import { setFirebase } from './ducks/firebase';
+import { setUser } from './ducks/user';
+import { setMessages } from './ducks/chat';
+
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -14,32 +16,29 @@ const config = {
   };
 
 firebase.initializeApp(config);
-const auth = firebase.auth();
 
-/* -------------------- CRAZY DB STUFF ----------------------- */
-import { setMessages } from './ducks/chat';
-const messageDB = firebase.database();
 
-messageDB.ref('messages').on('value', snapshot =>{
+/* -------------------- FIREBASE DB STUFF ----------------------- */
+const database = firebase.database();
+
+database.ref('messages').on('value', snapshot => {
   store.dispatch(setMessages(snapshot.val()))
-})
+});
 
 
 
+/* -------------------- FIREBASE AUTH STUFF ----------------------- */
 
-/* ---------------- END OF CRAZY DB STUFF ------------------- */
-
-
-
+const auth = firebase.auth();
 // this will make sure that the current user gets placed in the store if oauth passes
 // still need to account for login failures, etc.
-
 auth.onAuthStateChanged(user => {
   if (user) {
     store.dispatch(setUser(user));
   }
 });
 
+/* -------------------- ON-ENTER HOOKS ----------------------- */
 
 export const loadFirebase = () => {
   store.dispatch(setFirebase(firebase));

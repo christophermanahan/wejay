@@ -1,5 +1,8 @@
 import store from './store';
 import { setFirebase } from './ducks/firebase';
+import { setUser } from './ducks/user';
+import { setAuth } from './ducks/auth';
+
 import firebase from 'firebase';
 require('APP/.env.js');
 
@@ -11,8 +14,17 @@ const config = {
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
   };
 
-const firebaseApp = firebase.initializeApp(config)
+firebase.initializeApp(config);
+const auth = firebase.auth();
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    store.dispatch(setUser(user));
+  }
+});
+
 
 export const loadFirebase = () => {
-  store.dispatch(setFirebase(firebaseApp))
-}
+  store.dispatch(setFirebase(firebase));
+  store.dispatch(setAuth(auth));
+};

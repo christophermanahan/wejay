@@ -2,27 +2,28 @@
 
 /* -----------------    ACTIONS     ------------------ */
 
-const SET_FIREBASE = 'SET_FIREBASE'
+const SET_AUTH = 'SET_AUTH';
 
 /* ------------   ACTION CREATORS     ------------------ */
 
-export const setFirebase = firebase => ({
-  type: SET_FIREBASE,
-  firebase
-})
+export const setAuth = auth => ({
+  type: SET_AUTH,
+  auth
+});
 
 /* ------------       REDUCER     ------------------ */
 
 const reducer = (previousState = {}, action) => {
 
   switch (action.type) {
-    case SET_FIREBASE:
-      return action.firebase
+    case SET_AUTH:
+      return action.auth;
 
     default:
-	    return previousState;
+			return previousState;
   }
-}
+};
 
-export default reducer
+export default reducer;
+
 /* ------------       DISPATCHERS     ------------------ */

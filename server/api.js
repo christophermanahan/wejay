@@ -2,6 +2,8 @@
 
 const api = module.exports = require('express').Router()
 
+api.use('/search', require('./search'));
+
 // Send along any errors
 api.use((err, req, res, next) => {
   res.status(500).send(err)

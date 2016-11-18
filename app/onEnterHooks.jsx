@@ -1,7 +1,6 @@
 import store from './store';
 import { setFirebase } from './ducks/firebase';
 import { setUser } from './ducks/user';
-import { setAuth } from './ducks/auth';
 
 import firebase from 'firebase';
 require('APP/.env.js');
@@ -17,6 +16,9 @@ const config = {
 firebase.initializeApp(config);
 const auth = firebase.auth();
 
+// this will make sure that the current user gets placed in the store if oauth passes
+// still need to account for login failures, etc.
+
 auth.onAuthStateChanged(user => {
   if (user) {
     store.dispatch(setUser(user));
@@ -26,5 +28,4 @@ auth.onAuthStateChanged(user => {
 
 export const loadFirebase = () => {
   store.dispatch(setFirebase(firebase));
-  store.dispatch(setAuth(auth));
 };

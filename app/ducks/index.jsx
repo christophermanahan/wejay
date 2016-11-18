@@ -1,8 +1,13 @@
 import { combineReducers } from 'redux';
-import fake from './fake';
+import firebase from './firebase';
+import user from './user';
+import messages from './chat'
+
 
 const rootReducer = combineReducers({
-    fake
+  firebase,
+  user,
+  messages
 });
 
 export default rootReducer;

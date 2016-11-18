@@ -11,9 +11,11 @@ class Main extends Component {
   }
 
   render() {
+    const { children } = this.props
     return (
       <div>
         <h1>bones has been gutted.</h1>
+        { children }
       </div>
     )
   }
@@ -21,9 +23,7 @@ class Main extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({  }) => ({ });
-const mapDispatchToProps = () => ({
-
-});
+const mapStateToProps = ({ firebase }) => ({ firebase });
+const mapDispatchToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

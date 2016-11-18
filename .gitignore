@@ -8,3 +8,4 @@ public/bundle.js
 public/bundle.js.map
 bones_orig_backup
 npm-debug.log
+yarn.lock

@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
 
-// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {RaisedButton, TextField, MuiThemeProvider} from 'material-ui';
+import {RaisedButton, TextField} from 'material-ui';
 import {fetchTrackResults} from '../ducks/searchResults';
 import injectTapEventPlugin from "react-tap-event-plugin";
 injectTapEventPlugin();
@@ -54,12 +53,10 @@ class Search extends Component {
   render() {
 
     return (
-      <MuiThemeProvider>
         <DumbSearch
           onType={ this.onType }
           trackSearch={ this.trackSearch }
         />
-      </MuiThemeProvider>
     );
   }
 }

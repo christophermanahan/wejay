@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import {MuiThemeProvider} from 'material-ui';
+
 
 /* -----------------    COMPONENT     ------------------ */
 
@@ -13,10 +15,12 @@ class Main extends Component {
   render() {
     const { children } = this.props
     return (
-      <div>
-        <h1>bones has been gutted.</h1>
-        { children }
-      </div>
+      <MuiThemeProvider>
+        <div>
+          <h1>bones has been gutted.</h1>
+          { children }
+        </div>
+      </MuiThemeProvider>
     )
   }
 }

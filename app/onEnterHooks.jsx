@@ -5,6 +5,7 @@ require('APP/.env.js');
 import { setFirebase } from './ducks/firebase';
 import { setUser } from './ducks/user';
 import { setMessages } from './ducks/chat';
+import { setTopTen } from './ducks/topTen';
 
 
 const config = {
@@ -22,7 +23,11 @@ firebase.initializeApp(config);
 const database = firebase.database();
 
 database.ref('messages').on('value', snapshot => {
-  store.dispatch(setMessages(snapshot.val()))
+  store.dispatch(setMessages(snapshot.val()));
+});
+
+database.ref('top_ten').on('value', snapshot => {
+  store.dispatch(setTopTen(snapshot.val()));
 });
 
 

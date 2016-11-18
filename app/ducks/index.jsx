@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import fake from './fake';
+import firebase from './firebase';
 
 const rootReducer = combineReducers({
-    fake
+    firebase
 });
 
 export default rootReducer;

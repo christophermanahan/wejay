@@ -6,6 +6,7 @@ import { setFirebase } from './ducks/firebase';
 import { setUser } from './ducks/user';
 import { setMessages } from './ducks/chat';
 import { setTopTen } from './ducks/topTen';
+import { setCurrentSong } from './ducks/currentSong';
 
 
 const config = {
@@ -28,6 +29,10 @@ database.ref('messages').on('value', snapshot => {
 
 database.ref('top_ten').on('value', snapshot => {
   store.dispatch(setTopTen(snapshot.val()));
+});
+
+database.ref('current_song').on('value', snapshot => {
+  store.dispatch(setCurrentSong(snapshot.val()));
 });
 
 

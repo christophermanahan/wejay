@@ -34,9 +34,16 @@ const db = admin.database();
 /* -----------------    DB LISTENERS     ------------------ */
 
 
-const ref = db.ref('messages');
-ref.on('value', snapshot => {
-	console.log('messges changed!');
+const needSongRef = db.ref('needSong');
+needSongRef.set(false);
+
+needSongRef.on('value', snapshot => {
+	if (snapshot.val()) {
+		console.log('we need a song!')
+		// get a new song
+		needSongRef.set(false)
+	}
+
 });
 
 module.exports = admin;

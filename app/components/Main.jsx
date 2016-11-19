@@ -19,6 +19,10 @@ class Main extends Component {
       <MuiThemeProvider>
         <div>
           <h1>bones has been gutted.</h1>
+          <Link to="/">Home</Link>
+          <Link to="/search">Search</Link>
+          <Link to="/chat">Chat</Link>
+          <Link to="/songs">Songs</Link>
           { children }
           <Player/>
         </div>

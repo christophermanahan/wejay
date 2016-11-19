@@ -18,12 +18,49 @@ class CustomPlayer extends React.Component {
         super(props)
         this.play = this.play.bind(this);
         this.triggerFirebase = this.triggerFirebase.bind(this);
-        const { soundCloudAudio } = this.props;
+        const { soundCloudAudio, song_uri } = this.props;
         soundCloudAudio.audio.addEventListener('ended', () => {
             console.log('SONG ENDED!!!');
             this.triggerFirebase();
         });
+
+        soundCloudAudio.audio.addEventListener('loaded', () => {
+            console.log('the track', soundCloudAudio._track)
+
+        });
+
+
+
+
+        // this.props.firebase && this.props.firebase.database().ref('needSong').on('value', snapshot => {
+        //     // setTimeout(() => {
+        //     //     console.log('needSong just updated!', snapshot.val())
+        //     //     if(!snapshot.val()) {
+        //     //         this.play()
+        //     //     }
+        //     // }, 1000)
+        //     console.log('shit changed')
+        //     console.log(song_uri)
+
+        //     console.log('in the if')
+        //     soundCloudAudio.resolve('https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat', () => {
+        //         console.log('resolved')
+        //     })
+
+
+        // })
     }
+
+    componentWillReceiveProps() {
+        console.log('uri in custom player', this.props.song_uri)
+        if(this.props.song_uri) {
+            this.props.soundCloudAudio.resolve(this.props.song_uri, () => {
+                console.log('resolved with new props!')
+                this.play()
+            })
+        }
+    }
+
 
     play() {
         let { soundCloudAudio, playing } = this.props;
@@ -31,6 +68,9 @@ class CustomPlayer extends React.Component {
             soundCloudAudio.pause();
         } else {
             soundCloudAudio.play();
+            console.log('the play function has actived "play"')
+            console.log('what we are playing', soundCloudAudio._track)
+            console.log(soundCloudAudio)
         }
     }
 
@@ -44,6 +84,7 @@ class CustomPlayer extends React.Component {
         if (!track) {
             return <div>Loading...</div>;
         }
+        // console.log('rendering custom player')
 
         return (
             <div>
@@ -65,14 +106,22 @@ class CustomPlayer extends React.Component {
 
 
 class CustomPlayerWrapper extends React.Component {
+    constructor(props) {
+        super(props)
+        this.ready = this.ready.bind(this)
+    }
+
+    ready() {
+        console.log('special onReady is ready')
+    }
     render() {
-        // const { song_uri } = this.props.currentSong || 'https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat'
-        const song_uri = 'https://soundcloud.com/dazzel-almond/dark-ally'
+        const { song_uri } = this.props.currentSong || 'https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat'
+        // console.log('rendering CustomPlayerWrapper', song_uri)
         return (
             <SoundPlayerContainer
                 resolveUrl={song_uri}
                 clientId={clientId}>
-                <CustomPlayer firebase={this.props.firebase} />
+                <CustomPlayer firebase={this.props.firebase} song_uri={song_uri}/>
             </SoundPlayerContainer>
         );
     }

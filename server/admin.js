@@ -35,13 +35,29 @@ const db = admin.database();
 
 
 const needSongRef = db.ref('needSong');
-needSongRef.set(false);
+const topTenRef = db.ref('top_ten')
+const currentSongRef = db.ref('current_song')
+
+needSongRef.set(false)
 
 needSongRef.on('value', snapshot => {
 	if (snapshot.val()) {
 		console.log('we need a song!')
-		// get a new song
-		needSongRef.set(false)
+		let topTen;
+		// grab a song off the top 10
+		topTenRef.once('value', snapshot => {
+			topTen = snapshot.val()
+			let nextSong;
+			let songNames = Object.keys(topTen)
+			let randIndex = Math.floor(Math.random() * songNames.length)
+			nextSong = topTen[songNames[randIndex]]
+
+			currentSongRef.set({room1: nextSong})
+			needSongRef.set(false)
+		})
+		// set that song to the current
+
+
 	}
 
 });

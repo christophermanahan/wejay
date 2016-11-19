@@ -4,6 +4,7 @@ import user from './user';
 import messages from './chat'
 import topTen from './topTen'
 import searchResults from './searchResults'
+import currentSong from './currentSong'
 
 
 const rootReducer = combineReducers({
@@ -11,7 +12,8 @@ const rootReducer = combineReducers({
   user,
   messages,
   topTen,
-  searchResults
+  searchResults,
+  currentSong
 });
 
 export default rootReducer;

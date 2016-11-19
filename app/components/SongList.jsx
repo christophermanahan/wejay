@@ -7,10 +7,14 @@ import Song from './Song'
 
 const SongList = props => {
   const { topTen } = props;
+  let topTenArr = [];
+  for(let song in topTen) {
+    topTenArr.push(topTen[song])
+  }
   return (
     <div>
-      {topTen && topTen.map(song => (
-        song && <Song name={song.name} artist={song.artist} DJ={song.DJ} key={song.sc_id} />
+      {topTenArr.length && topTenArr.map(song => (
+        song && <Song title={song.title} artist={song.artist} DJ={song.DJ} key={song.sc_id} />
       ))}
     </div>
   )

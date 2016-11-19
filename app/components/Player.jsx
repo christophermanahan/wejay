@@ -1,5 +1,6 @@
 import React from 'react';
 import { SoundPlayerContainer } from 'react-soundplayer/addons';
+import { connect } from 'react-redux';
 
 require('APP/.env.js');
 
@@ -9,7 +10,6 @@ require('APP/.env.js');
 // }
 
 const clientId = process.env.SC_CLIENT_ID;
-const resolveUrl = 'https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat';
 
 class CustomPlayer extends React.Component {
     play() {
@@ -40,48 +40,22 @@ class CustomPlayer extends React.Component {
     }
 }
 
-class App extends React.Component {
+class CustomPlayerWrapper extends React.Component {
     render() {
+        const { song_uri } = this.props.currentSong || 'https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat'
         return (
-            <SoundPlayerContainer resolveUrl={resolveUrl} clientId={clientId}>
+            <SoundPlayerContainer resolveUrl={song_uri} clientId={clientId}>
                 <CustomPlayer />
             </SoundPlayerContainer>
         );
     }
 }
 
-export default App
+const mapStateToProps = ({ currentSong }) => ({ currentSong })
 
-// import React, {Component} from 'react';
-//
-// import { PlayButton, Progress, Icons, Timer } from 'react-soundplayer/components';
-// import { SoundPlayerContainer } from 'react-soundplayer/addons';
-//
-//
-// /* -----------------    STATEFUL REACT COMPONENT     ------------------ */
-//
-// class Player extends Component {
-//   constructor(props) {
-//     super(props);
-//
-//   }
-//
-//   render() {
-//
-//     return (
-//         <div>
-//           <h1>I will be the player yo</h1>
-//             <PlayButton
-//               className={String}
-//               playing={Boolean}
-//               seeking={Boolean}
-//               seekingIcon={ReactElement}
-//               onTogglePlay={Function}
-//               soundCloudAudio={instanceof SoundCloudAudio}
-//             />
-//         </div>
-//     );
-//   }
-// }
-//
-// export default Player
+const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
+
+
+
+
+export default CustomPlayerContainer

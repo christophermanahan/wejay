@@ -34,11 +34,9 @@ const db = admin.database();
 /* -----------------    DB LISTENERS     ------------------ */
 
 
-const ref = db.ref('messages')
+const ref = db.ref('messages');
 ref.on('value', snapshot => {
-	console.log('messges changed!')
+	console.log('messges changed!');
 });
-
-
 
 module.exports = admin;

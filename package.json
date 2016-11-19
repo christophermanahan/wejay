@@ -38,6 +38,7 @@
     "enzyme": "^2.5.1",
     "express": "^4.14.0",
     "firebase": "^3.6.1",
+    "firebase-admin": "^4.0.2",
     "material-ui": "^0.16.4",
     "node-soundcloud": "0.0.6",
     "passport": "^0.3.2",

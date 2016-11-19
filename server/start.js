@@ -1,9 +1,9 @@
 'use strict'
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const {resolve} = require('path')
-const passport = require('passport')
+const express = require('express');
+const bodyParser = require('body-parser');
+const {resolve} = require('path');
+const passport = require('passport');
 
 // Bones has a symlink from node_modules/APP to the root of the app.
 // That means that we can require paths relative to the app root by
@@ -55,3 +55,6 @@ if (module === require.main) {
     }
   )
 }
+
+// RUN FIREBASE ADMIN STUFF
+const admin = require('./admin');

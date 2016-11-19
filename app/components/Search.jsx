@@ -9,7 +9,6 @@ import injectTapEventPlugin from "react-tap-event-plugin";
 injectTapEventPlugin();
 
 import SearchResults from './SearchResults';
-import { appendToTopTen } from '../ducks/topTen';
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
@@ -42,7 +41,7 @@ class Search extends Component {
 
     this.onType = this.onType.bind(this);
     this.trackSearch = this.trackSearch.bind(this);
-    this.addToQuery = this.addToQuery.bind(this);
+    this.addToQueue = this.addToQueue.bind(this);
   }
 
   onType(evt) {
@@ -60,11 +59,13 @@ class Search extends Component {
     tracksearch(query);
   }
 
-  addToQuery(song_uri, title, sc_id) {
-    const { appendtotopten } = this.props;
+  addToQueue(song_uri, title, sc_id, artist) {
     console.log('added something to playlist!', song_uri, title, sc_id);
-    const song = { song_uri, title, sc_id };
-    appendtotopten(song);
+    const { displayName } = this.props.user
+    const DJ = displayName ? `DJ ${displayName}` : 'DJ anon'
+    const song = { song_uri, title, sc_id, artist, DJ };
+    // send to firebase
+    this.props.firebase.database().ref().child('top_ten').push(song);
 
   }
 
@@ -78,7 +79,7 @@ class Search extends Component {
           />
           <SearchResults
             searchResults={ searchResults }
-            addToQuery={ this.addToQuery }
+            addToQueue={ this.addToQueue }
           />
         </div>
     );
@@ -88,10 +89,9 @@ class Search extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ searchResults }) => ({ searchResults });
+const mapStateToProps = ({ searchResults, firebase, user }) => ({ searchResults, firebase, user });
 const mapDispatchToProps = dispatch => ({
-  tracksearch: (query) => dispatch(fetchTrackResults(query)),
-  appendtotopten: song => dispatch(appendToTopTen(song))
+  tracksearch: (query) => dispatch(fetchTrackResults(query))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Search);

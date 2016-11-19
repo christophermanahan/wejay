@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import {MuiThemeProvider} from 'material-ui';
+import Player from './Player'
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -19,6 +20,7 @@ class Main extends Component {
         <div>
           <h1>bones has been gutted.</h1>
           { children }
+          <Player/>
         </div>
       </MuiThemeProvider>
     )

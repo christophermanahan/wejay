@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import {RaisedButton, TextField} from 'material-ui';
 
 import {fetchTrackResults} from '../ducks/searchResults';
-import injectTapEventPlugin from "react-tap-event-plugin";
-injectTapEventPlugin();
+
 
 import SearchResults from './SearchResults';
 

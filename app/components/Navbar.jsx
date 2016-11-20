@@ -23,8 +23,8 @@ export default class Navbar extends Component {
           <MenuItem value="4" containerElement={<Link to="/app/songs" />}>Songs</MenuItem>
 
         </IconMenu>
-
       </div>
     );
   }
 }
+

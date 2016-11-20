@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+
 import {MuiThemeProvider} from 'material-ui';
-import Player from './Player'
-import Navbar from './Navbar'
+
+import Player from './Player';
+import Navbar from './Navbar';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 
 /* -----------------    COMPONENT     ------------------ */
 
 class Main extends Component {
   constructor(props) {
-    super(props)
-
+    super(props);
   }
 
   render() {
-    const { children } = this.props
+    const { children } = this.props;
     return (
       <MuiThemeProvider>
         <div>
@@ -25,7 +27,7 @@ class Main extends Component {
           <Player/>
         </div>
       </MuiThemeProvider>
-    )
+    );
   }
 }
 

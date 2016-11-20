@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 
 import { connect } from 'react-redux';
-// import { Link } from 'react-router';
-
-import { clearUser, setUser } from '../ducks/user';
 
 import MessageList from './MessageList';
 
@@ -54,23 +51,22 @@ class Chat extends Component {
 
   signIn(evt) {
     evt.preventDefault();
-    const { firebase, login } = this.props;
+    const { firebase } = this.props;
     const myAuth = firebase.auth();
     const provider = new firebase.auth.GoogleAuthProvider();
     myAuth.signInWithPopup(provider)
       .then(result => {
-        const user = result.user;
-        login(user);
+        console.log('logged in!')
       })
       .catch(err => console.error(err));
   }
 
   signOut(evt) {
     evt.preventDefault();
-    const { firebase, logout } = this.props;
+    const { firebase } = this.props;
     firebase.auth().signOut()
       .then(() => {
-        logout();
+        console.log('logged out!');
       })
       .catch(err => console.error(err));
   }
@@ -114,9 +110,6 @@ class Chat extends Component {
 /* -----------------    CONTAINER     ------------------ */
 
 const mapStateToProps = ({ firebase, user, messages }) => ({ firebase, user, messages });
-const mapDispatchToProps = dispatch => ({
-  logout: () => dispatch(clearUser()),
-  login: user => dispatch(setUser(user))
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+
+export default connect(mapStateToProps)(Chat);

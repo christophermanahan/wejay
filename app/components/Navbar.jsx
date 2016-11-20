@@ -1,16 +1,30 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import { Link } from 'react-router';
-import Player from './Player';
+
+import {IconButton, MenuItem, IconMenu} from 'material-ui';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 
 /* -----------------    COMPONENT     ------------------ */
 
-export default props => (
-  <div>
-    <Link to="/app/search">Search</Link>
-    <Link to="/app/chat">Chat</Link>
-    <Link to="/app/songs">Songs</Link>
-    { props.children }
-    <Player/>
-  </div>
-);
+
+export default class Navbar extends Component {
+
+
+  render() {
+    return (
+      <div>
+        <IconMenu
+          iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+        >
+          <Link to="/"><MenuItem value="1">Home</MenuItem></Link>
+          <Link to="Search"><MenuItem value="2">Search</MenuItem></Link>
+          <Link to="Chat"><MenuItem value="3">Chat</MenuItem></Link>
+          <Link to="Songs"><MenuItem value="4">Songs</MenuItem></Link>
+
+        </IconMenu>
+
+      </div>
+    );
+  }
+}

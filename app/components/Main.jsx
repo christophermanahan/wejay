@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import {MuiThemeProvider} from 'material-ui';
 import Player from './Player'
+import Navbar from './Navbar'
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -19,11 +20,8 @@ class Main extends Component {
       <MuiThemeProvider>
         <div>
           <h1>bones has been gutted.</h1>
-          <Link to="/">Home</Link>
-          <Link to="/search">Search</Link>
-          <Link to="/chat">Chat</Link>
-          <Link to="/songs">Songs</Link>
-          { children }
+          <Navbar/>
+            { children }
           <Player/>
         </div>
       </MuiThemeProvider>

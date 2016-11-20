@@ -6,7 +6,7 @@ import Chat from './components/Chat';
 import Search from './components/Search';
 import SongList from './components/SongList';
 import Login from './components/Login';
-import Navbar from './components/Navbar';
+import App from './components/App';
 
 
 import { loadFirebase } from './onEnterHooks';
@@ -15,7 +15,7 @@ export default () => (
   <Router history={browserHistory}>
 	    <Route path="/" component={Main} onEnter={loadFirebase}>
 	      <IndexRedirect to="/login" />
-	      <Route path="/app" component={Navbar}>
+	      <Route path="/app" component={App}>
 		      <Route path="/app/search" component={Search} />
 		      <Route path="/app/chat" component={Chat} />
 		      <Route path="/app/songs" component={SongList} />

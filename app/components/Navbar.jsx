@@ -17,10 +17,10 @@ export default class Navbar extends Component {
         <IconMenu
           iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
         >
-          <Link to="/"><MenuItem value="1">Home</MenuItem></Link>
-          <Link to="Search"><MenuItem value="2">Search</MenuItem></Link>
-          <Link to="Chat"><MenuItem value="3">Chat</MenuItem></Link>
-          <Link to="Songs"><MenuItem value="4">Songs</MenuItem></Link>
+          <MenuItem value="1" containerElement={<Link to="/" />}>Home</MenuItem>
+          <MenuItem value="2" containerElement={<Link to="/app/search" />}>Search</MenuItem>
+          <MenuItem value="3" containerElement={<Link to="/app/chat" />}>Chat</MenuItem>
+          <MenuItem value="4" containerElement={<Link to="/app/songs" />}>Songs</MenuItem>
 
         </IconMenu>
 

@@ -18,47 +18,25 @@ class CustomPlayer extends React.Component {
         super(props)
         this.play = this.play.bind(this);
         this.triggerFirebase = this.triggerFirebase.bind(this);
-        const { soundCloudAudio, song_uri } = this.props;
+
+        const { soundCloudAudio } = this.props;
         soundCloudAudio.audio.addEventListener('ended', () => {
             console.log('SONG ENDED!!!');
             this.triggerFirebase();
         });
-
-        soundCloudAudio.audio.addEventListener('loaded', () => {
-            console.log('the track', soundCloudAudio._track)
-
-        });
-
-
-
-
-        // this.props.firebase && this.props.firebase.database().ref('needSong').on('value', snapshot => {
-        //     // setTimeout(() => {
-        //     //     console.log('needSong just updated!', snapshot.val())
-        //     //     if(!snapshot.val()) {
-        //     //         this.play()
-        //     //     }
-        //     // }, 1000)
-        //     console.log('shit changed')
-        //     console.log(song_uri)
-
-        //     console.log('in the if')
-        //     soundCloudAudio.resolve('https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat', () => {
-        //         console.log('resolved')
-        //     })
-
-
-        // })
     }
 
-    componentWillReceiveProps() {
-        console.log('uri in custom player', this.props.song_uri)
-        if(this.props.song_uri) {
-            this.props.soundCloudAudio.resolve(this.props.song_uri, () => {
-                console.log('resolved with new props!')
+    componentWillReceiveProps(nextProps) {
+        // trigger play only after current song has been updated and the audio object
+        // has been received from SoundCloud
+        if(this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
+            console.log('-------- there is a new song -----------')
+            this.props.soundCloudAudio.resolve(nextProps.song_uri, () => {
                 this.play()
             })
         }
+        // EDGE CASE: this fails to autoplay if the same song is played 2x in a row
+        // SOLUTION: every song on top ten needs to have unique id
     }
 
 
@@ -68,9 +46,6 @@ class CustomPlayer extends React.Component {
             soundCloudAudio.pause();
         } else {
             soundCloudAudio.play();
-            console.log('the play function has actived "play"')
-            console.log('what we are playing', soundCloudAudio._track)
-            console.log(soundCloudAudio)
         }
     }
 
@@ -84,7 +59,6 @@ class CustomPlayer extends React.Component {
         if (!track) {
             return <div>Loading...</div>;
         }
-        // console.log('rendering custom player')
 
         return (
             <div>
@@ -108,20 +82,15 @@ class CustomPlayer extends React.Component {
 class CustomPlayerWrapper extends React.Component {
     constructor(props) {
         super(props)
-        this.ready = this.ready.bind(this)
     }
 
-    ready() {
-        console.log('special onReady is ready')
-    }
     render() {
         const { song_uri } = this.props.currentSong || 'https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat'
-        // console.log('rendering CustomPlayerWrapper', song_uri)
         return (
             <SoundPlayerContainer
                 resolveUrl={song_uri}
                 clientId={clientId}>
-                <CustomPlayer firebase={this.props.firebase} song_uri={song_uri}/>
+                <CustomPlayer firebase={this.props.firebase} song_uri={song_uri} />
             </SoundPlayerContainer>
         );
     }

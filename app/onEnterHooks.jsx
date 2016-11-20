@@ -9,7 +9,6 @@ import { setMessages } from './ducks/chat';
 import { setTopTen } from './ducks/topTen';
 import { setCurrentSong } from './ducks/currentSong';
 
-
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -45,14 +44,19 @@ const auth = firebase.auth();
 auth.onAuthStateChanged(user => {
   if (user) {
     store.dispatch(setUser(user));
+    browserHistory.push('/app/chat');
   } else {
     store.dispatch(clearUser());
+    browserHistory.push('/login');
   }
 });
+
 
 /* -------------------- ON-ENTER HOOKS ----------------------- */
 
 export const loadFirebase = () => {
   store.dispatch(setFirebase(firebase));
 };
+
+
 

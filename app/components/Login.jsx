@@ -5,7 +5,6 @@ import { browserHistory } from 'react-router';
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 
-
 /* -----------------    COMPONENT     ------------------ */
 
 class Login extends Component {
@@ -29,7 +28,7 @@ class Login extends Component {
 
   signUp() {
     const { firebase } = this.props;
-    console.log('trigger sign-in!');
+    console.log('trigger sign-up!');
     // TODO: create form for sign up
   }
 
@@ -38,33 +37,33 @@ class Login extends Component {
 
     const myAuth = firebase.auth();
     const provider = new firebase.auth.GoogleAuthProvider();
-    myAuth.signInWithPopup(provider)
-      .then(result => {
-        console.log('logged in!');
-        browserHistory.push('/app/chat');
-      })
-      .catch(console.error);
+    myAuth.signInWithRedirect(provider)
+    .then(() => { console.log('signed in!')})
+    .catch(console.error);
+
   }
 
   render() {
     return (
         <div>
           <h1>WEJAY</h1>
-          <RaisedButton
-            secondary={true}
-            label="Sign-Up"
-            onTouchTap={this.signUp}
-          />
-          <RaisedButton
-            primary={true}
-            label="Log In"
-            onTouchTap={this.logIn}
-          />
-          <Divider />
-          <RaisedButton
-            label="Continue As Guest"
-            onTouchTap={this.anonymousSignIn}
-          />
+            <div>
+              <RaisedButton
+              secondary={true}
+              label="Sign Up"
+              onTouchTap={this.signUp}
+              />
+              <RaisedButton
+                primary={true}
+                label="Log In with Google"
+                onTouchTap={this.logIn}
+              />
+              <Divider />
+              <RaisedButton
+                label="Continue As Guest"
+                onTouchTap={this.anonymousSignIn}
+              />
+            </div>
         </div>
     );
   }
@@ -73,7 +72,7 @@ class Login extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ firebase }) => ({ firebase });
+const mapStateToProps = ({ firebase, user }) => ({ firebase, user });
 // const mapDispatchToProps = dispatch => ({
 //   tracksearch: (query) => dispatch(fetchTrackResults(query))
 // });

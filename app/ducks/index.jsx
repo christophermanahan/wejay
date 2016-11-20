@@ -6,7 +6,6 @@ import topTen from './topTen'
 import searchResults from './searchResults'
 import currentSong from './currentSong'
 
-
 const rootReducer = combineReducers({
   firebase,
   user,
@@ -14,6 +13,7 @@ const rootReducer = combineReducers({
   topTen,
   searchResults,
   currentSong
+  
 });
 
 export default rootReducer;

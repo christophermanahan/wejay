@@ -34,9 +34,32 @@ const db = admin.database();
 /* -----------------    DB LISTENERS     ------------------ */
 
 
-const ref = db.ref('messages');
-ref.on('value', snapshot => {
-	console.log('messges changed!');
+const needSongRef = db.ref('needSong');
+const topTenRef = db.ref('top_ten')
+const currentSongRef = db.ref('current_song')
+
+needSongRef.set(false)
+
+needSongRef.on('value', snapshot => {
+	if (snapshot.val()) {
+		console.log('we need a song!')
+		let topTen;
+		// grab a song off the top 10
+		topTenRef.once('value', snapshot => {
+			topTen = snapshot.val()
+			let nextSong;
+			let songNames = Object.keys(topTen)
+			let randIndex = Math.floor(Math.random() * songNames.length)
+			nextSong = topTen[songNames[randIndex]]
+
+			currentSongRef.set({room1: nextSong})
+			needSongRef.set(false)
+		})
+		// set that song to the current
+
+
+	}
+
 });
 
 module.exports = admin;

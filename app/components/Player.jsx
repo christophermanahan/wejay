@@ -19,6 +19,7 @@ class CustomPlayer extends React.Component {
         this.play = this.play.bind(this);
         this.triggerFirebase = this.triggerFirebase.bind(this);
 
+        // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
         const { soundCloudAudio } = this.props;
         soundCloudAudio.audio.addEventListener('ended', () => {
             console.log('SONG ENDED!!!');

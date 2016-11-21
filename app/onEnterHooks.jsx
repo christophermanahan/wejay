@@ -1,13 +1,13 @@
 import store from './store';
 import firebase from 'firebase';
+import { browserHistory } from 'react-router';
 require('APP/.env.js');
 
 import { setFirebase } from './ducks/firebase';
-import { setUser } from './ducks/user';
+import { setUser, clearUser } from './ducks/user';
 import { setMessages } from './ducks/chat';
 import { setTopTen } from './ducks/topTen';
 import { setCurrentSong } from './ducks/currentSong';
-
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -36,20 +36,27 @@ database.ref('current_song').on('value', snapshot => {
 });
 
 
-
 /* -------------------- FIREBASE AUTH STUFF ----------------------- */
 
 const auth = firebase.auth();
-// this will make sure that the current user gets placed in the store if oauth passes
+// updates store according to user login/logout
 // still need to account for login failures, etc.
 auth.onAuthStateChanged(user => {
   if (user) {
     store.dispatch(setUser(user));
+    browserHistory.push('/app/chat');
+  } else {
+    store.dispatch(clearUser());
+    browserHistory.push('/login');
   }
 });
+
 
 /* -------------------- ON-ENTER HOOKS ----------------------- */
 
 export const loadFirebase = () => {
   store.dispatch(setFirebase(firebase));
 };
+
+
+

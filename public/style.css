@@ -1,1 +1,18 @@
+.login-txt {
+	font-family: Roboto;
+	text-align: center;
+}
 
+.login-btn {
+	width: 300px;
+	margin: 0 auto;
+	margin-bottom: 100px;
+}
+
+.signup-field {
+	margin: 0 auto;
+}
+
+#signup-form {
+	margin-top: -100px;
+}

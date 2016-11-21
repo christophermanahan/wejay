@@ -91,10 +91,10 @@ class Login extends Component {
     const { firebase } = this.props;
 
     firebase.auth().signInAnonymously()
-      .then(something => {
+      .then(() => {
         browserHistory.push('/app/chat')
       })
-      .catch(console.error)
+      .catch(this.renderError)
   }
 
   signUp() {

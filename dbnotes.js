@@ -58,8 +58,8 @@ parties: {
 
 party_djs: {
 	party1: [
-		uid1: {name, points},
-		uid2: {name, points}
+		uid1: {djname, points},
+		uid2: {djname, points}
 		...
 	],
 	party2...

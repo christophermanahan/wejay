@@ -57,6 +57,7 @@ class Login extends Component {
                 primary={true}
                 label="Log In with Google"
                 onTouchTap={this.logIn}
+                icon={<i className="zmdi zmdi-google" />}
               />
               <Divider />
               <RaisedButton

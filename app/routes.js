@@ -8,7 +8,6 @@ import SongList from './components/SongList';
 import Login from './components/Login';
 import App from './components/App';
 
-
 import { loadFirebase } from './onEnterHooks';
 
 export default () => (
@@ -21,6 +20,6 @@ export default () => (
 		      <Route path="/app/songs" component={SongList} />
 	      </Route>
 	      <Route path="/login" component={Login} />
-	  	</Route>
+			</Route>
   </Router>
 );

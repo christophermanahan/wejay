@@ -3,35 +3,35 @@
 
 // -----------------    QUEUES     ------------------ //
 currentSong: {
-	partyID: songid
+	partyID: {djid, sc_id, sc_title, sc_artist, time_priority, vote_priority}
 }
 
 topTen: {
 
-	partyID: [ songid, songid, ... ]
+	partyID: [ {djid, sc_id, sc_title, sc_artist, time_priority, vote_priority}, {}, ... ]
 	partyID: []
 }
 
 shadowQueue: {
-	partyID: [songid, songid, ...],
+	partyID: [{djid, sc_id, sc_title, sc_artist, priority(from DJ and time)}, {}, ...],
 	partyID: []
 }
 
 personalQueue: {
-	uid: [songid, songid, ....],
+	uid: [{sc_id, sc_title, sc_artist, rank}, {}, ....],
 	uid: [],
 	uid: []...
 }
 
-songs: {
-	id: { djid: uid,
-				time_priority: int,
-				vote_priority: int,
-				sc_id: str,
-				sc_title: str,
-				sc_artist: str
-		  }
-}
+	songs: {
+		id: { djid: uid,
+					time_priority: int,
+					vote_priority: int,
+					sc_id: str,
+					sc_title: str,
+					sc_artist: str
+			  }
+	}
 
 
 // -----------------    ATTENDEES     ------------------ //
@@ -56,14 +56,21 @@ parties: {
   }
 }
 
+party_djs: {
+	party1: [
+		uid1: {name, points},
+		uid2: {name, points}
+		...
+	],
+	party2...
+}
 
 
 
 // -----------------    PERSISTENCE     ------------------ //
 djNames: {
-	uid: ''
+	uid: 'name'
 }
-
 
 // -----------------    OTHER     ------------------ //
 

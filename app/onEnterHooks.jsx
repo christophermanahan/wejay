@@ -22,7 +22,7 @@ firebase.initializeApp(config);
 
 
 /* -------------------- FIREBASE DB STUFF ----------------------- */
-// const database = firebase.database();
+const database = firebase.database();
 //
 // database.ref('messages').on('value', snapshot => {
 //   store.dispatch(setMessages(snapshot.val()));
@@ -36,9 +36,9 @@ firebase.initializeApp(config);
 //   store.dispatch(setCurrentSong(snapshot.val()));
 // });
 //
-// database.ref('parties').on('value', snapshot => {
-//   store.dispatch(setParties(snapshot.val()));
-// });
+database.ref('parties').on('value', snapshot => {
+  store.dispatch(setParties(snapshot.val()));
+});
 
 
 /* -------------------- FIREBASE AUTH STUFF ----------------------- */
@@ -73,10 +73,29 @@ export const onAppEnter = () => {
 
 
   // check for party associated wiht user ID, if null, push to parties page
-  const djPartiesRef = firebase.database().ref('djParties')
-  djPartiesRef.child(uid).once('value', (data) => {
-    console.log("data.val: ", data.val());
+  const djPartiesRef = database.ref('djParties')
+  
+  const gettingPartyId = new Promise((resolve, reject) => {
+    djPartiesRef.child(uid).once('value', (data) => {
+      if(data) {
+        resolve(data.val())
+      } else {
+        reject(new Error('Could not find party'))
+      }
+    })
   })
+  .then(partyId => {
+    database.ref('current_song').child(partyId).on('value', snapshot => {
+      store.dispatch(setCurrentSong(snapshot.val()));
+    });
+    database.ref('top_ten').child(partyId).on('value', snapshot => {
+      store.dispatch(setTopTen(snapshot.val()));
+    });
+  })
+  .catch(err => {
+    console.error(err); //TODO real error handling
+  })
+
 
 
   //else set listeners (load current song, load top 10, load DJs --> load DJ pts, load personal queue)

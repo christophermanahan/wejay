@@ -5,6 +5,7 @@ import messages from './chat';
 import topTen from './topTen';
 import searchResults from './searchResults';
 import currentSong from './currentSong';
+import parties from './parties';
 
 const rootReducer = combineReducers({
   firebase,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   messages,
   topTen,
   searchResults,
-  currentSong
+  currentSong,
+  parties
 });
 
 export default rootReducer;

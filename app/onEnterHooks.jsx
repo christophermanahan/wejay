@@ -8,6 +8,7 @@ import { setUser, clearUser } from './ducks/user';
 import { setMessages } from './ducks/chat';
 import { setTopTen } from './ducks/topTen';
 import { setCurrentSong } from './ducks/currentSong';
+import { setParties } from './ducks/parties';
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -35,6 +36,10 @@ database.ref('current_song').on('value', snapshot => {
   store.dispatch(setCurrentSong(snapshot.val()));
 });
 
+database.ref('parties').on('value', snapshot => {
+  store.dispatch(setParties(snapshot.val()));
+});
+
 
 /* -------------------- FIREBASE AUTH STUFF ----------------------- */
 
@@ -44,7 +49,7 @@ const auth = firebase.auth();
 auth.onAuthStateChanged(user => {
   if (user) {
     store.dispatch(setUser(user));
-    browserHistory.push('/app/chat');
+    browserHistory.push('/parties');
   } else {
     store.dispatch(clearUser());
     browserHistory.push('/login');

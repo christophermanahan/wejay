@@ -7,6 +7,7 @@ import Search from './components/Search';
 import SongList from './components/SongList';
 import Login from './components/Login';
 import App from './components/App';
+import Parties from './components/Parties'
 
 import { loadFirebase } from './onEnterHooks';
 
@@ -19,6 +20,7 @@ export default () => (
 		      <Route path="/app/chat" component={Chat} />
 		      <Route path="/app/songs" component={SongList} />
 	      </Route>
+	      <Route path='/parties' component={Parties} />
 	      <Route path="/login" component={Login} />
 			</Route>
   </Router>

@@ -36,10 +36,9 @@ songs: {
 
 // -----------------    ATTENDEES     ------------------ //
 
-djs: {
-
-	partyID: [ uid, uid, ...],
-	partyID: []
+djParties: {
+	djId: partyId,
+	dj2Id: partyId
 }
 
 djpoints: {
@@ -77,7 +76,7 @@ partyHosts: {
 
 RULES OF QUEUES
 
-1. Top Ten are immutable but can move up/down top ten depending on 1) up/downvotes and 2) time 
+1. Top Ten are immutable but can move up/down top ten depending on 1) up/downvotes and 2) time
 2. When a song finishes playing, the next song to play is #1 on the Top Ten
 3. When a song finishes playing, the next song to go to the Top Ten is the one on the shadow queue with highest priority
 4. Shadow Queue consists of one song per user

@@ -9,13 +9,13 @@ import Login from './components/Login';
 import App from './components/App';
 import Parties from './components/Parties'
 
-import { loadFirebase } from './onEnterHooks';
+import { loadFirebase, onAppEnter } from './onEnterHooks';
 
 export default () => (
   <Router history={browserHistory}>
 	    <Route path="/" component={Main} onEnter={loadFirebase}>
 	      <IndexRedirect to="/login" />
-	      <Route path="/app" component={App}>
+	      <Route path="/app" component={App} onEnter={onAppEnter}>
 		      <Route path="/app/search" component={Search} />
 		      <Route path="/app/chat" component={Chat} />
 		      <Route path="/app/songs" component={SongList} />

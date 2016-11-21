@@ -6,6 +6,7 @@ import topTen from './topTen';
 import searchResults from './searchResults';
 import currentSong from './currentSong';
 import parties from './parties';
+import currentParty from './currentParty';
 
 const rootReducer = combineReducers({
   firebase,

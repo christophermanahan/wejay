@@ -22,23 +22,23 @@ firebase.initializeApp(config);
 
 
 /* -------------------- FIREBASE DB STUFF ----------------------- */
-const database = firebase.database();
-
-database.ref('messages').on('value', snapshot => {
-  store.dispatch(setMessages(snapshot.val()));
-});
-
-database.ref('top_ten').on('value', snapshot => {
-  store.dispatch(setTopTen(snapshot.val()));
-});
-
-database.ref('current_song').on('value', snapshot => {
-  store.dispatch(setCurrentSong(snapshot.val()));
-});
-
-database.ref('parties').on('value', snapshot => {
-  store.dispatch(setParties(snapshot.val()));
-});
+// const database = firebase.database();
+//
+// database.ref('messages').on('value', snapshot => {
+//   store.dispatch(setMessages(snapshot.val()));
+// });
+//
+// database.ref('top_ten').on('value', snapshot => {
+//   store.dispatch(setTopTen(snapshot.val()));
+// });
+//
+// database.ref('current_song').on('value', snapshot => {
+//   store.dispatch(setCurrentSong(snapshot.val()));
+// });
+//
+// database.ref('parties').on('value', snapshot => {
+//   store.dispatch(setParties(snapshot.val()));
+// });
 
 
 /* -------------------- FIREBASE AUTH STUFF ----------------------- */
@@ -63,5 +63,38 @@ export const loadFirebase = () => {
   store.dispatch(setFirebase(firebase));
 };
 
+export const onAppEnter = () => {
+  const { uid } = store.getState().user;
+
+  if (!uid){
+    browserHistory.push('/login');
+  }
+  //check user id from store, if null, push to login page
 
 
+  // check for party associated wiht user ID, if null, push to parties page
+  const djPartiesRef = firebase.database().ref('djParties')
+  djPartiesRef.child(uid).once('value', (data) => {
+    console.log("data.val: ", data.val());
+  })
+
+
+  //else set listeners (load current song, load top 10, load DJs --> load DJ pts, load personal queue)
+
+
+
+
+  // const currentPartyId = firebase.database().ref
+}
+
+
+
+//create listeners here browserhisttory.push--> App
+
+//currentSong --> use partyid
+//topTen --> use partyid
+//createPersonalQueue(empty) --> user Id
+//createDjPoints (set to 0) --> user Id
+//listenForDjName --> user Id
+
+//onExitParty ==> remove listeners

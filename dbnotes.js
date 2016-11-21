@@ -50,12 +50,13 @@ djpoints: {
 // -----------------    PARTIES     ------------------ //
 
 parties: {
-	partyID: name
+	partyID: {
+    name: '',
+    location: ''
+  }
 }
 
-addresses: {
-	partyID: {}
-}
+
 
 
 // -----------------    PERSISTENCE     ------------------ //

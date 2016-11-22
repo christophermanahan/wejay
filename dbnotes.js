@@ -3,81 +3,106 @@
 
 // -----------------    QUEUES     ------------------ //
 currentSong: {
-	partyID: songid
+	partyID: {
+		hashid: {
+			uid: str,
+			dj_name: str,
+			artist: str,
+			title: str,
+			song_uri: str,
+			time_priority: 0,
+			vote_priority: 0
+		}
+	}
 }
 
-topTen: {
 
-	partyID: [ songid, songid, ... ]
-	partyID: []
+topTen: {
+	partyID: {
+		hashid: {
+			uid: str,
+			dj_name: str,
+			artist: str,
+			title: str,
+			song_uri: str,
+			time_priority: 0,
+			vote_priority: 0
+		}
+	}
 }
 
 shadowQueue: {
-	partyID: [songid, songid, ...],
-	partyID: []
-}
-
-personalQueue: {
-	uid: [songid, songid, ....],
-	uid: [],
-	uid: []...
-}
-
-songs: {
-	id: { djid: uid,
-				time_priority: int,
-				vote_priority: int,
-				sc_id: str,
-				sc_title: str,
-				sc_artist: str
-		  }
+	partyID: {
+		hashid: {
+			uid: str,
+			dj_name: str,
+			artist: str,
+			title: str,
+			song_uri: str,
+			time_priority: 0,
+			vote_priority: 0
+		}
+	}
 }
 
 
 // -----------------    ATTENDEES     ------------------ //
 
-djs: {
-
-	partyID: [ uid, uid, ...],
-	partyID: []
-}
-
-djpoints: {
-	uid: int,
-	uid: int...
+user_parties: {
+	uid: partyId,
+	uid: partyId
 }
 
 
 // -----------------    PARTIES     ------------------ //
 
 parties: {
-	partyID: name
+	partyID: { // partyID === host.uid
+    name: '',
+    location: '',
+    id: partyID, // maybe change this? born of necessity
+    needSong: bool
+  }
 }
 
-addresses: {
-	partyID: {}
+party_djs: {
+
+	partyID: {
+		uid1: {
+			dj_points: int,
+			name: str,
+			personal_queue: {
+				hashid: {
+					uid: str,
+					dj_name: str,
+					artist: str,
+					title: str,
+					song_uri: str,
+					time_priority: 0,
+					vote_priority: 0
+				}
+			}
+		},
+		uid2: {
+			...
+		}
+	},
+	partyID2: {
+		...
+	}
 }
 
 
-// -----------------    PERSISTENCE     ------------------ //
+// -----------------    PERSISTENCE (AM)    ------------------ //
 djNames: {
-	uid: ''
+	uid: 'name'
 }
 
-
-// -----------------    OTHER     ------------------ //
-
-( party ID === uid of host)
-
-// workaround if cannot set partyID to uid of host
-partyHosts: {
-	uniquePartyId: uid of host
-}
 
 
 RULES OF QUEUES
 
-1. Top Ten are immutable but can move up/down top ten depending on 1) up/downvotes and 2) time 
+1. Top Ten are immutable but can move up/down top ten depending on 1) up/downvotes and 2) time
 2. When a song finishes playing, the next song to play is #1 on the Top Ten
 3. When a song finishes playing, the next song to go to the Top Ten is the one on the shadow queue with highest priority
 4. Shadow Queue consists of one song per user

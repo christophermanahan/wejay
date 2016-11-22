@@ -1,12 +1,12 @@
 /* -----------------    ACTIONS     ------------------ */
 
-const SET_CURRENT_SONG = 'SET_CURRENT_SONG';
+const SET_PARTIES = 'SET_PARTIES';
 
 /* ------------   ACTION CREATORS     ------------------ */
 
-export const setCurrentSong = currentSong => ({
-  type: SET_CURRENT_SONG,
-  currentSong
+export const setParties = parties => ({
+  type: SET_PARTIES,
+  parties
 })
 
 
@@ -15,8 +15,8 @@ export const setCurrentSong = currentSong => ({
 
 const reducer = (state = {}, action) => {
   switch (action.type){
-    case SET_CURRENT_SONG:
-      return action.currentSong;
+    case SET_PARTIES:
+        return action.parties;
 
     default:
         return state;

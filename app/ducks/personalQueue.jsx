@@ -1,22 +1,22 @@
 /* -----------------    ACTIONS     ------------------ */
 
-const SET_CURRENT_SONG = 'SET_CURRENT_SONG';
+const SET_PERSONAL_QUEUE = 'SET_PERSONAL_QUEUE';
 
 /* ------------   ACTION CREATORS     ------------------ */
 
-export const setCurrentSong = currentSong => ({
-  type: SET_CURRENT_SONG,
-  currentSong
+export const setPersonalQueue = personalQueue => ({
+  type: SET_PERSONAL_QUEUE,
+  personalQueue
 })
 
 
 
 /* ------------       REDUCER     ------------------ */
 
-const reducer = (state = {}, action) => {
+const reducer = (state = [], action) => {
   switch (action.type){
-    case SET_CURRENT_SONG:
-      return action.currentSong;
+    case SET_PERSONAL_QUEUE:
+        return action.personalQueue;
 
     default:
         return state;

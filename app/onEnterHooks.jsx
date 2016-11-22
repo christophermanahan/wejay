@@ -11,6 +11,7 @@ import { setCurrentSong } from './ducks/currentSong';
 import { setParties } from './ducks/parties';
 import { setDjs } from './ducks/djs';
 import { setPersonalQueue } from './ducks/personalQueue';
+import { setCurrentParty } from './ducks/currentParty';
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -55,6 +56,7 @@ export const loadFirebase = () => {
 
 export const onAppEnter = () => {
   const { uid } = store.getState().user;
+  console.log('entering the app')
 
   // check user id from store, if null, push to login page
   if (!uid){
@@ -65,7 +67,15 @@ export const onAppEnter = () => {
   database.ref('user_parties').child(uid).once('value')
     .then(data => {
       console.log('found user party! setting listeners...')
+
       const partyId = data.val()
+
+      // get the party stats once
+      database.ref('parties').child(partyId).once('value', snapshot => {
+        store.dispatch(setCurrentParty(snapshot.val()));
+      });
+
+      // set up listeners for state
       database.ref('current_song').child(partyId).on('value', snapshot => {
         store.dispatch(setCurrentSong(snapshot.val()));
       });
@@ -81,7 +91,8 @@ export const onAppEnter = () => {
       database.ref('messages').on('value', snapshot => {
         store.dispatch(setMessages(snapshot.val()));
       });
-      browserHistory.push('app/chat');
+
+      browserHistory.push('app/search');
     })
     .catch(err => {
       console.error(err); //TODO real error handling

@@ -84,7 +84,7 @@ class Parties extends Component {
     // link the user to a DJ alabi and a party id, then navigate to the app
     Promise.all([userParty, partyDjs])
       .then(() => {
-        browserHistory.push("/app/chat")
+        browserHistory.push("/app/search")
       })
       .catch(err => console.error(err)) // need real error handling
   }
@@ -96,9 +96,30 @@ class Parties extends Component {
     const location = evt.target.location.value
 
     const partiesRef = firebase.database().ref('parties')
-    partiesRef.child(user.uid).set({name, location, needSong: false });
+    const userPartiesRef = firebase.database().ref('user_parties')
+    const partyDjsRef = firebase.database().ref('party_djs')
+    const currentSongRef = firebase.database().ref('current_song')
 
-    // need to auto-join party and validate...
+    // sets up a new party
+    partiesRef.child(user.uid).set({id:user.uid, name, location, needSong: false })
+      .then(() => {
+        // associates the host with the party
+        const hostParty = userPartiesRef.child(user.uid).set(user.uid)
+        const hostDjs = partyDjsRef.child(user.uid).child(user.uid).set({djPoints: 0, name: 'DJ Host'})
+
+        // give every party an awesome initial song
+        const currentSong = currentSongRef.child(user.uid).set({DJ: 'DJ Init',
+                                                        artist: 'dazzel-almond',
+                                                        sc_id: 107781328,
+                                                        song_uri: 'https://soundcloud.com/dazzel-almond/melody-of-lies',
+                                                        title: 'Melody of Lies'
+                                                      })
+
+        Promise.all([hostParty, hostDjs, currentSong])
+          .then(() => {
+            browserHistory.push("/app/search")
+          })
+      })
   }
 
   onPartySelect = (event, index, partyId) => this.setState({partyId});

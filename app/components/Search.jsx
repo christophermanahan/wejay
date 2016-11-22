@@ -60,11 +60,11 @@ class Search extends Component {
 
   addToQueue(song_uri, title, sc_id, artist) {
     console.log('added something to playlist!', song_uri, title, sc_id);
-    const { displayName } = this.props.user
-    const DJ = displayName ? `DJ ${displayName}` : 'DJ anon'
+    const { user, currentParty } = this.props
+    const DJ = 'DJ anon'
     const song = { song_uri, title, sc_id, artist, DJ };
     // send to firebase
-    this.props.firebase.database().ref().child('top_ten').push(song);
+    this.props.firebase.database().ref('top_ten').child(currentParty.id).push(song);
 
   }
 
@@ -88,7 +88,7 @@ class Search extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ searchResults, firebase, user }) => ({ searchResults, firebase, user });
+const mapStateToProps = ({ searchResults, firebase, user, currentParty }) => ({ searchResults, firebase, user, currentParty });
 const mapDispatchToProps = dispatch => ({
   tracksearch: (query) => dispatch(fetchTrackResults(query))
 });

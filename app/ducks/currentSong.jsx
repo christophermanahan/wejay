@@ -16,7 +16,7 @@ export const setCurrentSong = currentSong => ({
 const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_CURRENT_SONG:
-      return state;
+      return action.currentSong;
 
     default:
         return state;

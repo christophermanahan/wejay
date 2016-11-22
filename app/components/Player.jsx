@@ -56,6 +56,7 @@ class CustomPlayer extends React.Component {
     }
 
     render() {
+        console.log('props in custom player', this.props)
         let { track, playing, soundCloudAudio, currentTime, duration } = this.props;
         if (!track) {
             return <div>Loading...</div>;
@@ -86,7 +87,9 @@ class CustomPlayerWrapper extends React.Component {
     }
 
     render() {
-        const { song_uri } = this.props.currentSong || 'https://soundcloud.com/stepan-i-meduza-official/dolgo-obyasnyat'
+        let song_uri
+        if(this.props.currentSong) { song_uri = this.props.currentSong.song_uri}
+
         return (
             <SoundPlayerContainer
                 resolveUrl={song_uri}

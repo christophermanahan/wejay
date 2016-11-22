@@ -131,14 +131,18 @@ class Parties extends Component {
   onSubmit(evt) {
     evt.preventDefault();
     const { user, firebase } = this.props;
+    const database = firebase.database();
     const name = evt.target.name.value;
     const location = evt.target.location.value;
     const { uid } = user;
 
-    const partiesRef = firebase.database().ref('parties');
-    const userPartiesRef = firebase.database().ref('user_parties');
-    const partyDjsRef = firebase.database().ref('party_djs');
-    const currentSongRef = firebase.database().ref('current_song');
+    const partiesRef = database.ref('parties');
+    const userPartiesRef = database.ref('user_parties');
+    const partyDjsRef = database.ref('party_djs');
+    const currentSongRef = database.ref('current_song');
+
+    const { setcurrentparty, setcurrentsong, settopten, setdjs, setpersonalqueue, setmessages } = this.props;
+
 
     // sets up a new party
     partiesRef.child(uid).set({id: uid, name, location, needSong: false })
@@ -166,7 +170,30 @@ class Parties extends Component {
 
         Promise.all([hostParty, hostDjs, currentSong])
           .then(() => {
-            browserHistory.push("/app/search");
+
+            const partyId = uid     //if a user starts the party, that party's uid becomes the partyId
+
+            // get the party stats once
+            database.ref('parties').child(partyId).once('value', snapshot => {
+              setcurrentparty(snapshot.val());
+            });
+
+            // set up listeners for state
+            database.ref('current_song').child(partyId).on('value', snapshot => {
+              setcurrentsong(snapshot.val());
+            });
+            database.ref('top_ten').child(partyId).on('value', snapshot => {
+              settopten(snapshot.val());
+            });
+            database.ref('party_djs').child(partyId).on('value', snapshot => {
+              setdjs(snapshot.val()); // updates entire party_djs in store
+              setpersonalqueue(snapshot.val()[uid].personal_queue); // updates personal queue
+            });
+            database.ref('messages').on('value', snapshot => {
+              setmessages(snapshot.val());
+            });
+
+            browserHistory.push('/app/search');
           })
           .catch(console.error) // TODO: real error handling
       })

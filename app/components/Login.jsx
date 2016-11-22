@@ -23,7 +23,7 @@ const DumbLogin = props => {
 
   return (
     <div>
-      <h1 className="login-txt">WEJAY</h1>       
+      <h1 className="login-txt">WEJAY</h1>
         <div>
           <Dialog
             actions={dialogActions}
@@ -91,9 +91,6 @@ class Login extends Component {
     const { firebase } = this.props;
 
     firebase.auth().signInAnonymously()
-      .then(() => {
-        browserHistory.push('/app/chat')
-      })
       .catch(this.renderError)
   }
 

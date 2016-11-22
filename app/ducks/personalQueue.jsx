@@ -4,19 +4,19 @@ const SET_PERSONAL_QUEUE = 'SET_PERSONAL_QUEUE';
 
 /* ------------   ACTION CREATORS     ------------------ */
 
-export const setPersonalQueue = personalQueue => ({
+export const setPersonalQueue = personal_queue => ({
   type: SET_PERSONAL_QUEUE,
-  personalQueue
+  personal_queue
 })
 
 
 
 /* ------------       REDUCER     ------------------ */
 
-const reducer = (state = [], action) => {
+const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_PERSONAL_QUEUE:
-        return action.personalQueue;
+        return action.personal_queue;
 
     default:
         return state;

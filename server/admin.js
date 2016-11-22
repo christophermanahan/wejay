@@ -33,36 +33,53 @@ const db = admin.database();
 
 /* -----------------    DB LISTENERS     ------------------ */
 
+/*
 
-const needSongRef = db.ref('needSong');
-const topTenRef = db.ref('top_ten')
-const currentSongRef = db.ref('current_song')
+when party is created
 
-needSongRef.set(false)
+onchildAdded listener for parties
+	create listener on that party
+		check every time that it changes
+		if need song is true, then do the magic
+			find song with highest priority in TT and set current song
+			delete sing from TT
+			change needSong to false
 
-// NEED TO REFACTOR FOR NEW TOP 10s and "need new songs" associated with rooms
-// -----
-// needSongRef.on('value', snapshot => {
-// 	if (snapshot.val()) {
-// 		console.log('we need a song!')
-// 		let topTen;
-// 		grab a song off the top 10
+*/
 
-// 		topTenRef.once('value', snapshot => {
-// 			topTen = snapshot.val()
-// 			let nextSong;
-// 			let songNames = Object.keys(topTen)
-// 			let randIndex = Math.floor(Math.random() * songNames.length)
-// 			nextSong = topTen[songNames[randIndex]]
-
-// 			currentSongRef.set({room1: nextSong})
-// 			needSongRef.set(false)
-// 		})
-// 		set that song to the current
+// const needSongRef = db.ref('needSong');
+// const topTenRef = db.ref('top_ten')
+// const currentSongRef = db.ref('current_song')
 
 
-// 	}
+// const partiesRef = db.ref('parties');
+//
+// partiesRef.on('child_added', (snapshot) => {
+// 	const party = snapshot.val()
+// 	const partyId = party.id
+// 	const currentSongRef = db.ref('current_song')[partyId]
+// 	currentSongRef.on('value', snapshot)
+//
+// })
 
-// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = admin;

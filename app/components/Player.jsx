@@ -62,6 +62,8 @@ class CustomPlayer extends React.Component {
             return <div>Loading...</div>;
         }
 
+        //Todo-->FIX: Custom Player renders before track loads
+
         return (
             <div>
                 <h2>{track.title}</h2>

@@ -23,80 +23,74 @@ const config = {
 
 firebase.initializeApp(config);
 
-
-/* ---------------- ALWAYS LISTEN TO PARTY LIST  ------------------- */
-const database = firebase.database();
-
-database.ref('parties').on('value', snapshot => {
-  store.dispatch(setParties(snapshot.val()));
-});
-
-
-/* -------------------- FIREBASE AUTH STUFF ----------------------- */
-
-const auth = firebase.auth();
-// updates store according to user login/logout
-// still need to account for login failures, etc.
-auth.onAuthStateChanged(user => {
-  if (user) {
-    store.dispatch(setUser(user));
-    browserHistory.push('/parties');
-  } else {
-    store.dispatch(clearUser());
-    browserHistory.push('/login');
-  }
-});
-
-
 /* -------------------- ON-ENTER HOOKS ----------------------- */
 
-export const loadFirebase = () => {
+export const onMainEnter = () => {
+  // 1. Set Firebase on Store
   store.dispatch(setFirebase(firebase));
+
+  // 2. Always listen to Party List
+  const database = firebase.database();
+  database.ref('parties').on('value', snapshot => {
+    store.dispatch(setParties(snapshot.val()));
+  });
+
+  // 3. Check if user is authenticated
+  const auth = firebase.auth();
+  auth.onAuthStateChanged(user => {
+    if (!user) { // if not authenticated, send to login
+      store.dispatch(clearUser());
+      browserHistory.push('/login');
+    } else { // otherwise, set user on store
+      store.dispatch(setUser(user));
+      const { uid } = user;
+
+      database.ref('user_parties').child(uid).once('value')
+      .then(data => {
+        const partyId = data.val();
+        if (!partyId) {
+          browserHistory.push('/parties'); // user must select party
+        } else {
+
+          // get the party stats once
+          database.ref('parties').child(partyId).once('value', snapshot => {
+            store.dispatch(setCurrentParty(snapshot.val()));
+          });
+
+          // set up listeners for state
+          database.ref('current_song').child(partyId).on('value', snapshot => {
+            store.dispatch(setCurrentSong(snapshot.val()));
+          });
+          database.ref('top_ten').child(partyId).on('value', snapshot => {
+            store.dispatch(setTopTen(snapshot.val()));
+          });
+          database.ref('party_djs').child(partyId).on('value', snapshot => {
+            store.dispatch(setDjs(snapshot.val()));
+          });
+          database.ref('personal_queue').child(uid).on('value', snapshot => {
+            store.dispatch(setPersonalQueue(snapshot.val()));
+          });
+          database.ref('messages').on('value', snapshot => {
+            store.dispatch(setMessages(snapshot.val()));
+          });
+
+          browserHistory.push('/app/search');
+        }
+      })
+      .catch(console.error); // TODO: real error handling
+    }
+  });
 };
 
-export const onAppEnter = () => {
-  const { uid } = store.getState().user;
-  console.log('entering the app')
 
-  // check user id from store, if null, push to login page
-  if (!uid){
-    browserHistory.push('/login');
-  }
+/*
+TODO for UX:
 
-  // check for party associated with user ID, if null, push to parties page
-  database.ref('user_parties').child(uid).once('value')
-    .then(data => {
-      console.log('found user party! setting listeners...')
+1. When you go back to Login (or parties) and are logged in/in a party, need to change display/given user options
+2. Make onRage
+3. Make leaveParty button
+4. Make Logout button, should also make you leave the party
 
-      const partyId = data.val()
-
-      // get the party stats once
-      database.ref('parties').child(partyId).once('value', snapshot => {
-        store.dispatch(setCurrentParty(snapshot.val()));
-      });
-
-      // set up listeners for state
-      database.ref('current_song').child(partyId).on('value', snapshot => {
-        store.dispatch(setCurrentSong(snapshot.val()));
-      });
-      database.ref('top_ten').child(partyId).on('value', snapshot => {
-        store.dispatch(setTopTen(snapshot.val()));
-      });
-      database.ref('party_djs').child(partyId).on('value', snapshot => {
-        store.dispatch(setDjs(snapshot.val()));
-      })
-      database.ref('personal_queue').child(uid).on('value', snapshot => {
-        store.dispatch(setPersonalQueue(snapshot.val()));
-      })
-      database.ref('messages').on('value', snapshot => {
-        store.dispatch(setMessages(snapshot.val()));
-      });
-
-      browserHistory.push('app/search');
-    })
-    .catch(err => {
-      console.error(err); //TODO real error handling
-    })
-}
+*/
 
 //onExitParty ==> remove listeners

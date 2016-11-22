@@ -3,13 +3,20 @@ import { connect } from 'react-redux';
 
 import {SelectField, MenuItem, RaisedButton, TextField} from 'material-ui';
 
-import {browserHistory} from 'react-router'
+import {browserHistory} from 'react-router';
+
+import { setCurrentParty } from '../ducks/currentParty';
+import { setCurrentSong } from '../ducks/currentSong';
+import { setTopTen } from '../ducks/topTen';
+import { setDjs } from '../ducks/djs';
+import { setPersonalQueue } from '../ducks/personalQueue';
+import { setMessages } from '../ducks/chat';
 
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbParties = props => {
-  const { parties, partyId, onPartySelect, joinParty, onSubmit } = props
+  const { parties, partyId, onPartySelect, joinParty, onSubmit } = props;
 
   // partiesArr is an array with each index representing a party
   // each party has the following data [partyid, {name: '', location: ''}]
@@ -58,9 +65,9 @@ const DumbParties = props => {
 class Parties extends Component {
   constructor(props) {
     super(props);
-    this.onPartySelect = this.onPartySelect.bind(this)
-    this.joinParty = this.joinParty.bind(this)
-    this.onSubmit = this.onSubmit.bind(this)
+    this.onPartySelect = this.onPartySelect.bind(this);
+    this.joinParty = this.joinParty.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
     this.state = {
       partyId: ''
     };
@@ -71,58 +78,104 @@ class Parties extends Component {
   joinParty(evt) {
     evt.preventDefault();
     const { user, firebase } = this.props;
-    const userPartiesRef = firebase.database().ref('user_parties')
-    const partyDjsRef = firebase.database().ref('party_djs')
+    const database = firebase.database();
+    const userPartiesRef = database.ref('user_parties');
+    const partyDjsRef = database.ref('party_djs');
 
-    const {partyId} = this.state;
-    if(!partyId) {
-      return
+    const { partyId } = this.state;
+    if (!partyId) {
+      return;
     }
-    const userParty = userPartiesRef.child(user.uid).set(partyId)
-    const partyDjs = partyDjsRef.child(partyId).child(user.uid).set({djPoints: 0, name: 'DJ Random'})
+    const userParty = userPartiesRef.child(user.uid).set(partyId);
+    // TODO: set actual DJ Name based on entry in Firebase DB
+    const partyDjs = partyDjsRef.child(partyId).child(user.uid)
+    .set({
+      dj_points: 0,
+      dj_name: `DJ ${user.displayName || 'Rando'}`,
+      personal_queue: {}
+    });
 
-    // link the user to a DJ alabi and a party id, then navigate to the app
+    const { setcurrentparty, setcurrentsong, settopten, setdjs, setpersonalqueue, setmessages } = this.props;
+    const { uid } = user;
+    // link the user to a DJ alibi and a party id, then navigate to the app
     Promise.all([userParty, partyDjs])
       .then(() => {
-        browserHistory.push("/app/search")
+
+        // Add listeners to relevant party info
+
+          // get the party stats once
+          database.ref('parties').child(partyId).once('value', snapshot => {
+            setcurrentparty(snapshot.val());
+          });
+
+          // set up listeners for state
+          database.ref('current_song').child(partyId).on('value', snapshot => {
+            setcurrentsong(snapshot.val());
+          });
+          database.ref('top_ten').child(partyId).on('value', snapshot => {
+            settopten(snapshot.val());
+          });
+          database.ref('party_djs').child(partyId).on('value', snapshot => {
+            setdjs(snapshot.val()); // updates entire party_djs in store
+            setpersonalqueue(snapshot.val()[uid].personal_queue); // updates personal queue
+          });
+          database.ref('messages').on('value', snapshot => {
+            setmessages(snapshot.val());
+          });
+
+          browserHistory.push('/app/search');
       })
-      .catch(err => console.error(err)) // need real error handling
+      .catch(err => console.error(err)) // TODO: need real error handling
   }
 
   onSubmit(evt) {
     evt.preventDefault();
     const { user, firebase } = this.props;
-    const name = evt.target.name.value
-    const location = evt.target.location.value
+    const name = evt.target.name.value;
+    const location = evt.target.location.value;
+    const { uid } = user;
 
-    const partiesRef = firebase.database().ref('parties')
-    const userPartiesRef = firebase.database().ref('user_parties')
-    const partyDjsRef = firebase.database().ref('party_djs')
-    const currentSongRef = firebase.database().ref('current_song')
+    const partiesRef = firebase.database().ref('parties');
+    const userPartiesRef = firebase.database().ref('user_parties');
+    const partyDjsRef = firebase.database().ref('party_djs');
+    const currentSongRef = firebase.database().ref('current_song');
 
     // sets up a new party
-    partiesRef.child(user.uid).set({id:user.uid, name, location, needSong: false })
+    partiesRef.child(uid).set({id: uid, name, location, needSong: false })
       .then(() => {
         // associates the host with the party
-        const hostParty = userPartiesRef.child(user.uid).set(user.uid)
-        const hostDjs = partyDjsRef.child(user.uid).child(user.uid).set({djPoints: 0, name: 'DJ Host'})
+        const hostParty = userPartiesRef.child(uid).set(uid)
+        const hostDjs = partyDjsRef.child(uid).child(uid)
+        .set({
+          dj_points: 0,
+          dj_name: `DJ ${user.displayName || 'Rando'}`,
+          personal_queue: {}
+        });
 
         // give every party an awesome initial song
-        const currentSong = currentSongRef.child(user.uid).set({DJ: 'DJ Init',
-                                                        artist: 'dazzel-almond',
-                                                        sc_id: 107781328,
-                                                        song_uri: 'https://soundcloud.com/dazzel-almond/melody-of-lies',
-                                                        title: 'Melody of Lies'
-                                                      })
+        const currentSong = currentSongRef.child(uid)
+        .set({
+          uid,
+          dj_name: 'DJ Init',
+          artist: 'dazzel-almond',
+          title: 'Melody of Lies',
+          song_uri: 'https://soundcloud.com/dazzel-almond/melody-of-lies',
+          time_priority: 0,
+          vote_priority: 0
+        })
 
         Promise.all([hostParty, hostDjs, currentSong])
           .then(() => {
-            browserHistory.push("/app/search")
+            browserHistory.push("/app/search");
           })
+          .catch(console.error) // TODO: real error handling
       })
   }
 
-  onPartySelect = (event, index, partyId) => this.setState({partyId});
+  onPartySelect(evt, index, value) {
+    const partyId = value;
+    this.setState({ partyId });
+  }
 
   render() {
     return (
@@ -144,6 +197,13 @@ class Parties extends Component {
 
 const mapStateToProps = ({ parties, firebase, user }) => ({ parties, firebase, user });
 const mapDispatchToProps = dispatch => ({
+  setcurrentparty: party => dispatch(setCurrentParty(party)),
+  setcurrentsong: song => dispatch(setCurrentSong(song)),
+  settopten: topTen => dispatch(setTopTen(topTen)),
+  setdjs: djs => dispatch(setDjs(djs)),
+  setpersonalqueue: queue => dispatch(setPersonalQueue(queue)),
+  setmessages: messages => dispatch(setMessages(messages))
 });
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Parties);

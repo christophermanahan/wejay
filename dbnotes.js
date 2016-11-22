@@ -3,83 +3,101 @@
 
 // -----------------    QUEUES     ------------------ //
 currentSong: {
-	partyID: {djid, sc_id, sc_title, sc_artist, time_priority, vote_priority}
+	partyID: {
+		hashid: {
+			uid: str,
+			dj_name: str,
+			artist: str,
+			title: str,
+			song_uri: str,
+			time_priority: 0,
+			vote_priority: 0
+		}
+	}
 }
 
-topTen: {
 
-	partyID: [ {djid, sc_id, sc_title, sc_artist, time_priority, vote_priority}, {}, ... ]
-	partyID: []
+topTen: {
+	partyID: {
+		hashid: {
+			uid: str,
+			dj_name: str,
+			artist: str,
+			title: str,
+			song_uri: str,
+			time_priority: 0,
+			vote_priority: 0
+		}
+	}
 }
 
 shadowQueue: {
-	partyID: [{djid, sc_id, sc_title, sc_artist, priority(from DJ and time)}, {}, ...],
-	partyID: []
-}
-
-personalQueue: {
-	uid: [{sc_id, sc_title, sc_artist, rank}, {}, ....],
-	uid: [],
-	uid: []...
-}
-
-	songs: {
-		id: { djid: uid,
-					time_priority: int,
-					vote_priority: int,
-					sc_id: str,
-					sc_title: str,
-					sc_artist: str
-			  }
+	partyID: {
+		hashid: {
+			uid: str,
+			dj_name: str,
+			artist: str,
+			title: str,
+			song_uri: str,
+			time_priority: 0,
+			vote_priority: 0
+		}
 	}
+}
 
 
 // -----------------    ATTENDEES     ------------------ //
 
-dj_parties: {
-	djId: partyId,
-	dj2Id: partyId
-}
-
-djpoints: {
-	uid: int,
-	uid: int...
+user_parties: {
+	uid: partyId,
+	uid: partyId
 }
 
 
 // -----------------    PARTIES     ------------------ //
 
 parties: {
-	partyID: {
+	partyID: { // partyID === host.uid
     name: '',
-    location: ''
+    location: '',
+    id: partyID, // maybe change this? born of necessity
+    needSong: bool
   }
 }
 
 party_djs: {
-	party1: [
-		uid1: {djname, points},
-		uid2: {djname, points}
+
+	partyID: {
+		uid1: {
+			dj_points: int,
+			name: str,
+			personal_queue: {
+				hashid: {
+					uid: str,
+					dj_name: str,
+					artist: str,
+					title: str,
+					song_uri: str,
+					time_priority: 0,
+					vote_priority: 0
+				}
+			}
+		},
+		uid2: {
+			...
+		}
+	},
+	partyID2: {
 		...
-	],
-	party2...
+	}
 }
 
 
-
-// -----------------    PERSISTENCE     ------------------ //
+// -----------------    PERSISTENCE (AM)    ------------------ //
 djNames: {
 	uid: 'name'
 }
 
-// -----------------    OTHER     ------------------ //
-
-( party ID === uid of host)
-
-// workaround if cannot set partyID to uid of host
-partyHosts: {
-	uniquePartyId: uid of host
-}
 
 
 RULES OF QUEUES

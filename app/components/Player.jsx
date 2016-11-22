@@ -15,7 +15,7 @@ const clientId = process.env.SC_CLIENT_ID;
 
 class CustomPlayer extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.play = this.play.bind(this);
         this.triggerFirebase = this.triggerFirebase.bind(this);
 
@@ -30,7 +30,7 @@ class CustomPlayer extends React.Component {
     componentWillReceiveProps(nextProps) {
         // trigger play only after current song has been updated and the audio object
         // has been received from SoundCloud
-        if(this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
+        if (this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
             console.log('-------- there is a new song -----------')
             this.props.soundCloudAudio.resolve(nextProps.song_uri, () => {
                 this.play()
@@ -88,7 +88,7 @@ class CustomPlayerWrapper extends React.Component {
 
     render() {
         let song_uri
-        if(this.props.currentSong) { song_uri = this.props.currentSong.song_uri}
+        if (this.props.currentSong) { song_uri = this.props.currentSong.song_uri}
 
         return (
             <SoundPlayerContainer

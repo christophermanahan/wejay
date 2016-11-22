@@ -60,12 +60,44 @@ class Search extends Component {
 
   addToQueue(song_uri, title, sc_id, artist) {
     console.log('added something to playlist!', song_uri, title, sc_id);
-    const { user, currentParty } = this.props
+    const { user, currentParty, firebase } = this.props; 
+    const { uid } = user;
     const DJ = 'DJ anon'
-    const song = { song_uri, title, sc_id, artist, DJ };
+    const song = { song_uri, title, sc_id, artist, DJ, uid};
     // send to firebase
-    this.props.firebase.database().ref('top_ten').child(currentParty.id).push(song);
+    const currentSong = firebase.database().ref('current_song').child(currentParty.id);
+    const topTen = firebase.database().ref('top_ten').child(currentParty.id);
+    const shadowQueue = firebase.database().ref('shadow_queue').child(currentParty.id);
+    const personalQueue = firebase.database().ref('party_djs').child(currentParty.id).child(uid);
 
+    const gettingCurrentSong = currentSong.once('value');
+    const gettingTopTen = topTen.once('value');
+    const gettingShadowQueue = shadowQueue.once('value');
+
+    Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
+    .then(results => {
+      const currentSongVal = results[0] && results[0].val();
+      const topTenVal = results[1] && results[1].val();
+      const shadowQueueVal = results[2] && results[2].val();
+
+      let userSongInShadowQueue = false; 
+
+      if (shadowQueueVal) {
+        for (let track in shadowQueueVal) {
+          if (uid === shadowQueueVal[track].uid) userSongInShadowQueue = true;
+        }
+      }
+
+      if(!currentSongVal) {
+        currentSong.set(song);
+      } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
+        topTen.push(song);
+      } else if (!shadowQueueVal || !userSongInShadowQueue) {
+        shadowQueue.push(song);
+      } else {
+        personalQueue.child('personal_queue').push(song);
+      }
+    });
   }
 
   render() {

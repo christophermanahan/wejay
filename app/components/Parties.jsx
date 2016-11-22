@@ -168,7 +168,7 @@ class Parties extends Component {
           vote_priority: 0
         })
 
-        Promise.all([hostParty, hostDjs, currentSong])
+        Promise.all([hostParty, hostDjs, currentSong, shadowQueue])
           .then(() => {
 
             const partyId = uid     //if a user starts the party, that party's uid becomes the partyId

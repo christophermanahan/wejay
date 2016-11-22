@@ -73,8 +73,8 @@ export const onAppEnter = () => {
 
 
   // check for party associated wiht user ID, if null, push to parties page
-  const djPartiesRef = database.ref('djParties')
-  
+  const djPartiesRef = database.ref('dj_parties')
+  console.log(uid)
   const gettingPartyId = new Promise((resolve, reject) => {
     djPartiesRef.child(uid).once('value', (data) => {
       if(data) {
@@ -91,6 +91,12 @@ export const onAppEnter = () => {
     database.ref('top_ten').child(partyId).on('value', snapshot => {
       store.dispatch(setTopTen(snapshot.val()));
     });
+    database.ref('party_djs').child(partyid).on('value', snapshot => {
+      // store.dispatch(setPartyDjs(snapshot.val()));
+    })
+    database.ref('personal_queue').child(uid).on('value', snapshot => {
+      // store.dispatch(setPersonalQueue(snapshot.val()));
+    })
   })
   .catch(err => {
     console.error(err); //TODO real error handling

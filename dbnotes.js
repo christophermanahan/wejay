@@ -36,7 +36,7 @@ personalQueue: {
 
 // -----------------    ATTENDEES     ------------------ //
 
-djParties: {
+dj_parties: {
 	djId: partyId,
 	dj2Id: partyId
 }

@@ -66,60 +66,32 @@ export const loadFirebase = () => {
 export const onAppEnter = () => {
   const { uid } = store.getState().user;
 
+  // check user id from store, if null, push to login page
   if (!uid){
     browserHistory.push('/login');
   }
-  //check user id from store, if null, push to login page
 
-
-  // check for party associated wiht user ID, if null, push to parties page
-  const djPartiesRef = database.ref('dj_parties')
-  console.log(uid)
-  const gettingPartyId = new Promise((resolve, reject) => {
-    djPartiesRef.child(uid).once('value', (data) => {
-      if(data) {
-        resolve(data.val())
-      } else {
-        reject(new Error('Could not find party'))
-      }
+  // check for party associated with user ID, if null, push to parties page
+  database.ref('dj_parties').child(uid).once('value')
+    .then(data => {
+      const partyId = data.val()
+      database.ref('current_song').child(partyId).on('value', snapshot => {
+        // store.dispatch(setCurrentSong(snapshot.val()));
+      });
+      database.ref('top_ten').child(partyId).on('value', snapshot => {
+        // store.dispatch(setTopTen(snapshot.val()));
+      });
+      database.ref('party_djs').child(partyId).on('value', snapshot => {
+        // store.dispatch(setPartyDjs(snapshot.val()));
+      })
+      database.ref('personal_queue').child(uid).on('value', snapshot => {
+        // store.dispatch(setPersonalQueue(snapshot.val()));
+      })
+      browserHistory.push('app/chat');
     })
-  })
-  .then(partyId => {
-    database.ref('current_song').child(partyId).on('value', snapshot => {
-      store.dispatch(setCurrentSong(snapshot.val()));
-    });
-    database.ref('top_ten').child(partyId).on('value', snapshot => {
-      store.dispatch(setTopTen(snapshot.val()));
-    });
-    database.ref('party_djs').child(partyid).on('value', snapshot => {
-      // store.dispatch(setPartyDjs(snapshot.val()));
+    .catch(err => {
+      console.error(err); //TODO real error handling
     })
-    database.ref('personal_queue').child(uid).on('value', snapshot => {
-      // store.dispatch(setPersonalQueue(snapshot.val()));
-    })
-  })
-  .catch(err => {
-    console.error(err); //TODO real error handling
-  })
-
-
-
-  //else set listeners (load current song, load top 10, load DJs --> load DJ pts, load personal queue)
-
-
-
-
-  // const currentPartyId = firebase.database().ref
 }
-
-
-
-//create listeners here browserhisttory.push--> App
-
-//currentSong --> use partyid
-//topTen --> use partyid
-//createPersonalQueue(empty) --> user Id
-//createDjPoints (set to 0) --> user Id
-//listenForDjName --> user Id
 
 //onExitParty ==> remove listeners

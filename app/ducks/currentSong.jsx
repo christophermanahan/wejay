@@ -16,12 +16,7 @@ export const setCurrentSong = currentSong => ({
 const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_CURRENT_SONG:
-        let currentSongArr = Object.keys(action.currentSong)
-        if(currentSongArr.length !== 1) {
-          return state
-        } else {
-          return action.currentSong[currentSongArr[0]]
-        }
+      return state;
 
     default:
         return state;

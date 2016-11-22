@@ -27,8 +27,13 @@ const DumbParties = props => {
           onChange={onPartySelect}
         >
       {partiesArr && partiesArr.map(party => {
-        return <MenuItem key={party[0]} value={party[0]} primaryText={party[1].name} secondaryText={party[1].location}/>
-      })}
+          return (<MenuItem key={party[0]}
+                            value={party[0]}
+                            primaryText={party[1].name}
+                            secondaryText={party[1].location}
+                            />)
+        })
+      }
       </SelectField>
       <RaisedButton label="Rage" onTouchTap={joinParty}/>
       <h1>OR...</h1>
@@ -36,12 +41,12 @@ const DumbParties = props => {
         <TextField
           id="name"
           floatingLabelText="Party Name"
-        />
+          />
         <TextField
           id="location"
           floatingLabelText="Party Location"
-        />
-         <RaisedButton type="submit" label="Create Your Own"/>
+          />
+        <RaisedButton type="submit" label="Create Your Own"/>
        </form>
     </div>
   );
@@ -66,22 +71,22 @@ class Parties extends Component {
   joinParty(evt) {
     evt.preventDefault();
     const { user, firebase } = this.props;
-    const djPartiesRef = firebase.database().ref('dj_parties')
+    const userPartiesRef = firebase.database().ref('user_parties')
     const partyDjsRef = firebase.database().ref('party_djs')
 
     const {partyId} = this.state;
     if(!partyId) {
       return
     }
-    partyDjsRef.child(partyId).child(user.uid).set({djPoints: 0, name: 'DJ Random'})
+    const userParty = userPartiesRef.child(user.uid).set(partyId)
+    const partyDjs = partyDjsRef.child(partyId).child(user.uid).set({djPoints: 0, name: 'DJ Random'})
 
-    djPartiesRef.child(user.uid).set(partyId, (err) => {
-      if (err) {
-        console.error(err);   //TODO: Add real error handling
-      } else {
+    // link the user to a DJ alabi and a party id, then navigate to the app
+    Promise.all([userParty, partyDjs])
+      .then(() => {
         browserHistory.push("/app/chat")
-      }
-    })
+      })
+      .catch(err => console.error(err)) // need real error handling
   }
 
   onSubmit(evt) {

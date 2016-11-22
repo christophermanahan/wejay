@@ -1,12 +1,12 @@
 /* -----------------    ACTIONS     ------------------ */
 
-const SET_PARTIES = 'SET_PARTIES';
+const SET_DJS = 'SET_DJS';
 
 /* ------------   ACTION CREATORS     ------------------ */
 
-export const setParties = parties => ({
-  type: SET_PARTIES,
-  parties
+export const setDjs = djs => ({
+  type: SET_DJS,
+  djs
 })
 
 
@@ -15,8 +15,8 @@ export const setParties = parties => ({
 
 const reducer = (state = {}, action) => {
   switch (action.type){
-    case SET_PARTIES:
-        return action.parties;
+    case SET_DJS:
+        return action.djs;
 
     default:
         return state;

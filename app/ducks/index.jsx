@@ -7,6 +7,8 @@ import searchResults from './searchResults';
 import currentSong from './currentSong';
 import parties from './parties';
 import currentParty from './currentParty';
+import personalQueue from './personalQueue';
+import djs from './djs'
 
 const rootReducer = combineReducers({
   firebase,
@@ -15,7 +17,9 @@ const rootReducer = combineReducers({
   topTen,
   searchResults,
   currentSong,
-  parties
+  parties,
+  personalQueue,
+  djs
 });
 
 export default rootReducer;

@@ -1,22 +1,22 @@
 /* -----------------    ACTIONS     ------------------ */
 
-const SET_PARTIES = 'SET_PARTIES';
+const SET_PERSONAL_QUEUE = 'SET_PERSONAL_QUEUE';
 
 /* ------------   ACTION CREATORS     ------------------ */
 
-export const setParties = parties => ({
-  type: SET_PARTIES,
-  parties
+export const setPersonalQueue = personalQueue => ({
+  type: SET_PERSONAL_QUEUE,
+  personalQueue
 })
 
 
 
 /* ------------       REDUCER     ------------------ */
 
-const reducer = (state = {}, action) => {
+const reducer = (state = [], action) => {
   switch (action.type){
-    case SET_PARTIES:
-        return action.parties;
+    case SET_PERSONAL_QUEUE:
+        return action.personalQueue;
 
     default:
         return state;

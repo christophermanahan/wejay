@@ -9,6 +9,8 @@ import { setMessages } from './ducks/chat';
 import { setTopTen } from './ducks/topTen';
 import { setCurrentSong } from './ducks/currentSong';
 import { setParties } from './ducks/parties';
+import { setDjs } from './ducks/djs';
+import { setPersonalQueue } from './ducks/personalQueue';
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -21,21 +23,9 @@ const config = {
 firebase.initializeApp(config);
 
 
-/* -------------------- FIREBASE DB STUFF ----------------------- */
+/* ---------------- ALWAYS LISTEN TO PARTY LIST  ------------------- */
 const database = firebase.database();
-//
-// database.ref('messages').on('value', snapshot => {
-//   store.dispatch(setMessages(snapshot.val()));
-// });
-//
-// database.ref('top_ten').on('value', snapshot => {
-//   store.dispatch(setTopTen(snapshot.val()));
-// });
-//
-// database.ref('current_song').on('value', snapshot => {
-//   store.dispatch(setCurrentSong(snapshot.val()));
-// });
-//
+
 database.ref('parties').on('value', snapshot => {
   store.dispatch(setParties(snapshot.val()));
 });
@@ -72,21 +62,25 @@ export const onAppEnter = () => {
   }
 
   // check for party associated with user ID, if null, push to parties page
-  database.ref('dj_parties').child(uid).once('value')
+  database.ref('user_parties').child(uid).once('value')
     .then(data => {
+      console.log('found user party! setting listeners...')
       const partyId = data.val()
       database.ref('current_song').child(partyId).on('value', snapshot => {
-        // store.dispatch(setCurrentSong(snapshot.val()));
+        store.dispatch(setCurrentSong(snapshot.val()));
       });
       database.ref('top_ten').child(partyId).on('value', snapshot => {
-        // store.dispatch(setTopTen(snapshot.val()));
+        store.dispatch(setTopTen(snapshot.val()));
       });
       database.ref('party_djs').child(partyId).on('value', snapshot => {
-        // store.dispatch(setPartyDjs(snapshot.val()));
+        store.dispatch(setDjs(snapshot.val()));
       })
       database.ref('personal_queue').child(uid).on('value', snapshot => {
-        // store.dispatch(setPersonalQueue(snapshot.val()));
+        store.dispatch(setPersonalQueue(snapshot.val()));
       })
+      database.ref('messages').on('value', snapshot => {
+        store.dispatch(setMessages(snapshot.val()));
+      });
       browserHistory.push('app/chat');
     })
     .catch(err => {

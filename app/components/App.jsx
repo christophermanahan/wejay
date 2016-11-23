@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Player from './Player';
+import HostPlayer from './HostPlayer';
+import GuestPlayer from './GuestPlayer';
 import Navbar from './Navbar';
 
 
 /* -----------------    COMPONENT     ------------------ */
 
 const App = props => {
-  const { children } = props;
+  const { children, uid, party_id } = props;
   return (
       <div>
         <h1>bones has been gutted.</h1>
         <Navbar/>
           { children }
-        <Player/>
+        { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
       </div>
   );
 };
@@ -22,7 +23,9 @@ const App = props => {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ firebase }) => ({ firebase });
-const mapDispatchToProps = () => ({});
+const mapStateToProps = ({ user, currentParty }) => ({
+	uid: user.uid,
+	party_id: currentParty.id
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

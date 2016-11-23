@@ -16,3 +16,9 @@
 #signup-form {
 	margin-top: -100px;
 }
+
+.guest-player-text {
+	font-family: Roboto;
+	display: inline-block;
+	margin: 0px 15px 0px 15px;
+}

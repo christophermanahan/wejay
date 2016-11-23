@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router';
+import { connect } from 'react-redux';
 
 import {IconButton, MenuItem, IconMenu} from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
@@ -8,22 +9,26 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 /* -----------------    COMPONENT     ------------------ */
 
 
-export default class Navbar extends Component {
+const Navbar = props => {
+  const { user } = props;
 
-
-  render() {
-    return (
-      <div>
-        <IconMenu
-          iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-        >
-          <MenuItem value="1" containerElement={<Link to="/app/search" />}>Search</MenuItem>
-          <MenuItem value="2" containerElement={<Link to="/app/chat" />}>Chat</MenuItem>
-          <MenuItem value="3" containerElement={<Link to="/app/songs" />}>Songs</MenuItem>
-          
-        </IconMenu>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h2>weJay</h2>
+      <h3>Welcome DJ { user.displayName || 'Anon' }</h3>
+      <IconMenu
+        iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+      >
+        <MenuItem value="1">My Settings</MenuItem>
+        <MenuItem value="2">Leave Party</MenuItem>
+        <MenuItem value="3">Logout</MenuItem>
+        
+      </IconMenu>
+    </div>
+  );
 }
 
+const mapStateToProps = ({ user }) => ({ user });
+const NavbarContainer = connect(mapStateToProps)(Navbar);
+
+export default NavbarContainer;

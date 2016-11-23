@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 import HostPlayer from './HostPlayer';
 import GuestPlayer from './GuestPlayer';
 import Navbar from './Navbar';
+import Chat from './Chat';
+import Search from './Search';
+import SongList from './SongList';
+import { Tabs, Tab } from 'material-ui/Tabs'
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -12,9 +16,21 @@ const App = props => {
   const { children, uid, party_id } = props;
   return (
       <div>
-        <h1>bones has been gutted.</h1>
-        <Navbar/>
-          { children }
+        <Navbar />
+         <Tabs>
+		   <Tab label="Top Ten" >
+		   	<SongList />
+		   </Tab>
+		   <Tab label="Live DJs" >
+		   	<h1>Will Be DJs</h1>
+		   </Tab>
+		   <Tab label="My Tracks">
+		   	<Search />
+		   </Tab>
+		   <Tab label="Chat">
+	       	<Chat />
+		   </Tab>
+		 </Tabs>
         { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
       </div>
   );

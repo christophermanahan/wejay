@@ -74,7 +74,7 @@ export const onMainEnter = () => {
             store.dispatch(setMessages(snapshot.val()));
           });
 
-          browserHistory.push('/app/search');
+          browserHistory.push('/app');
         }
       })
       .catch(console.error); // TODO: real error handling

@@ -14,13 +14,13 @@ import { onMainEnter } from './onEnterHooks';
 export default () => (
   <Router history={browserHistory}>
 	    <Route path="/" component={Main} onEnter={onMainEnter}>
-	      <Route path="/app" component={App} >
-		      <Route path="/app/search" component={Search} />
-		      <Route path="/app/chat" component={Chat} />
-		      <Route path="/app/songs" component={SongList} />
-	      </Route>
-	      <Route path="/parties" component={Parties}  />
+	      <Route path="/app" component={App} />
+	      <Route path="/parties" component={Parties} />
 	      <Route path="/login" component={Login} />
-			</Route>
+		</Route>
   </Router>
 );
+
+  // <Route path="/app/search" component={Search} />
+  // <Route path="/app/chat" component={Chat} />
+  // <Route path="/app/songs" component={SongList} />

@@ -20,7 +20,3 @@ export default () => (
 		</Route>
   </Router>
 );
-
-  // <Route path="/app/search" component={Search} />
-  // <Route path="/app/chat" component={Chat} />
-  // <Route path="/app/songs" component={SongList} />

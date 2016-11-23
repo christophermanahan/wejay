@@ -1,6 +1,6 @@
 'use strict';
 
-var webpack = require('webpack');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './app/main.jsx',
@@ -22,6 +22,11 @@ module.exports = {
         query: {
           presets: ['react', 'es2015', 'stage-2']
         }
+      },
+      {
+        test: /\.css$/,
+        loader: 'style!css?modules',
+        include: /flexboxgrid/,
       }
     ]
   }

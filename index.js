@@ -21,7 +21,6 @@ try {
   debug('%s: env file not found or invalid, moving on', secretsFile)
 }
 
-console.log('i hate bones', env.HOME, `.${pkg.name}.env`)
 module.exports = {
   get name() { return pkg.name },
   get isTesting() { return !!global.it },

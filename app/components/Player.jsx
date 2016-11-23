@@ -4,11 +4,12 @@ import LinearProgress from 'material-ui/LinearProgress';
 import IconButton from 'material-ui/IconButton';
 import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 import PauseCircleOutline from 'material-ui/svg-icons/av/pause-circle-outline';
+import publicKeys from './utils/publicKeys'
 
 import { connect } from 'react-redux';
 
 // APPenv.js
-const clientId = process.env.SC_CLIENT_ID;
+const clientId = publicKeys.SC_CLIENT_ID;
 
 
 /* -----------------    DUMB COMPONENT     ------------------ */

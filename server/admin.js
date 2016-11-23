@@ -33,51 +33,110 @@ const db = admin.database();
 
 /* -----------------    DB LISTENERS     ------------------ */
 
-/*
-
-when party is created
-
-onchildAdded listener for parties
-	create listener on that party
-		check every time that it changes
-		if need song is true, then do the magic
-			find song with highest priority in TT and set current song
-			delete sing from TT
-			change needSong to false
-
-*/
-
-// const needSongRef = db.ref('needSong');
-// const topTenRef = db.ref('top_ten')
-// const currentSongRef = db.ref('current_song')
 
 
-// const partiesRef = db.ref('parties');
-//
-// partiesRef.on('child_added', (snapshot) => {
-// 	const party = snapshot.val()
-// 	const partyId = party.id
-// 	const currentSongRef = db.ref('current_song')[partyId]
-// 	currentSongRef.on('value', snapshot)
-//
-// })
+const partiesRef = db.ref('parties');
+
+partiesRef.on('child_added', (snapshot) => {
+
+	const partyId = snapshot.val().id
+
+	const newPartyRef = db.ref('parties').child(partyId)
+	newPartyRef.on('value', (snapshot) => {
+		// console.log("newPartyRef snap: ", snapshot.val());
+		if(!snapshot.val().needSong){
+			return
+		} else {
+
+			const currentSongRef = db.ref('current_song').child(partyId)
+			const topTenRef = db.ref('top_ten').child(partyId)
+			const shadowQueueRef = db.ref('shadow_queue').child(partyId)
+
+			topTenRef.once('value')
+			.then(snapshot => {
+
+				const topTen = snapshot && snapshot.val();
+				let nextSong;
+				let nextSongPriority = -1;		//needs to address --> collisions when priority scores are equal
+				let nextSongId;
+
+				if (!topTen) return;
+
+				for (let song in topTen){
+
+					let netPriority = topTen[song].time_priority + topTen[song].vote_priority
+
+					if(netPriority > nextSongPriority){
+						nextSong = topTen[song]
+						nextSongPriority = netPriority;
+						nextSongId = song
+					}
+				}
+
+				currentSongRef.set(nextSong);
+				newPartyRef.update({ needSong: false })
+
+				return topTenRef.child(nextSongId).remove()
+			})
+			.then((err) => {
+				if(err){
+					throw new Error(err);
+				} else {
+
+
+					return shadowQueueRef.once('value')
+
+				}
+			})
+			.then(snapshot => {
+				const shadowQueue = snapshot && snapshot.val()
+				if(!shadowQueue) return;
+
+				let nextSong;
+				let nextSongPriority = -1;		//needs to address --> collisions when priority scores are equal
+				let nextSongId;
+
+				for (let song in shadowQueue){
+
+					let netPriority = shadowQueue[song].time_priority + shadowQueue[song].vote_priority
+
+					if(netPriority > nextSongPriority){
+						nextSong = shadowQueue[song]
+						nextSongPriority = netPriority;
+						nextSongId = song
+					}
+				}
+				nextSong = Object.assign(nextSong, {time_priority: 0, vote_priority: 0})
+				const uidOfNewSQSong = nextSong.uid
+				topTenRef.update({[nextSongId]: nextSong})
+				shadowQueueRef.child(nextSongId).remove()
+				return uidOfNewSQSong												//We need to fix this....
+			})
+			.then((uidOfNewSQSong) => {
+				const pQRef = db.ref('party_djs').child(partyId).child(uidOfNewSQSong).child('personal_queue')
+				pQRef.once('value')
+				.then(snapshot => {
+					const personalQueue = snapshot && snapshot.val()
+					if (!personalQueue) return;
+					const key = Object.keys(personalQueue)[0]
+					const newSongOfPQ = personalQueue[key]
+					shadowQueueRef.update( {[key]: newSongOfPQ} )
+					return pQRef.child(key).remove();
+				})
+				.then(err => {
+					if(err){
+						throw new Error(err)
+					}
+				})
+
+			})
+			.catch(console.error)
+		}
+	})
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})
 
 
 

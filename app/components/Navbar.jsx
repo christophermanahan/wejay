@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router';
+import { browserHistory } from 'react-router';
 import { connect } from 'react-redux';
+import { clearCurrentParty } from '../ducks/currentParty';
 
 import {IconButton, MenuItem, IconMenu} from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
@@ -14,7 +15,8 @@ import FlatButton from 'material-ui/FlatButton';
 
 
 const DumbNavbar = props => {
-  const { user, handleOpenDialog, handleCancel, handleLogout, dialogOpen } = props;
+  const { user, handleOpenDialog, handleCancel, handleLeaveParty, dialogOpen, partyName } = props;
+  console.log("partyName: ", partyName);
 
   const actions = [
       <FlatButton
@@ -26,7 +28,7 @@ const DumbNavbar = props => {
         label="Confirm Leave"
         primary={true}
         keyboardFocused={true}
-        onTouchTap={handleLogout}
+        onTouchTap={handleLeaveParty}
       />,
     ];
 
@@ -38,12 +40,12 @@ const DumbNavbar = props => {
         iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
       >
         <MenuItem value="1">My Settings</MenuItem>
-        <MenuItem value="2">Leave Party</MenuItem>
-        <MenuItem value="3" onTouchTap={handleOpenDialog}>Logout</MenuItem>
+        <MenuItem value="2" onTouchTap={handleOpenDialog}>Leave Party</MenuItem>
+        <MenuItem value="3">Logout</MenuItem>
 
       </IconMenu>
       <Dialog
-        title="Here is our Dialog title!"
+        title={`Are you sure you want to leave ${partyName}?`}
         actions={actions}
         modal={false}
         open={dialogOpen}
@@ -65,7 +67,7 @@ class Navbar extends Component {
     };
 
     this.handleOpenDialog = this.handleOpenDialog.bind(this);
-    this.handleLogout = this.handleLogout.bind(this);
+    this.handleLeaveParty = this.handleLeaveParty.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
   }
 
@@ -73,9 +75,47 @@ class Navbar extends Component {
     this.setState({dialogOpen: true});
   }
 
-  handleLogout() {
-    // firebase . stuff
-    this.setState({dialogOpen: false});
+  handleLeaveParty() {
+    /*
+    FIREBASE
+    got to FB
+      remove that user from partyDjs
+      go to user_parties, remove them
+
+    LOCAL
+    CLEAR
+      currentParty,
+      currentSong,
+      DJs,
+      topTen,
+      personalQueue
+    */
+    const { uid } = this.props.user
+    const { currentParty, firebase, clearCurrentParty } = this.props
+    const userPartiesRef = firebase.database().ref('user_parties').child(uid);
+    const partyDjsRef = firebase.database().ref(currentParty.id).child(uid);
+
+    userPartiesRef.remove()
+    .then(err => {
+      if(err){
+        throw new Error(err)
+      } else {
+        return partyDjsRef.remove()
+      }
+    })
+    .then(err => {
+      if(err){
+        throw new Error(err)
+      } else {
+        this.setState({dialogOpen: false});
+        clearCurrentParty()
+        browserHistory.push('/parties');
+      }
+    })
+    .catch(console.error)
+
+
+
   }
 
   handleCancel() {
@@ -83,15 +123,15 @@ class Navbar extends Component {
   }
 
   render() {
-    const { uid, party_id } = this.props;
+    const { user, currentParty } = this.props
     return (
       <DumbNavbar
-        uid={uid}
-        party_id={party_id}
+        user={user}
         handleOpenDialog={this.handleOpenDialog}
-        handleLogout={this.handleLogout}
+        handleLeaveParty={this.handleLeaveParty}
         handleCancel={this.handleCancel}
         dialogOpen={this.state.dialogOpen}
+        partyName={currentParty.name}
       />
     );
   }
@@ -102,7 +142,11 @@ class Navbar extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ user, firebase }) => ({ user, firebase });
-const NavbarContainer = connect(mapStateToProps)(Navbar);
+const mapStateToProps = ({ user, firebase, currentParty }) => ({ user, firebase, currentParty });
+const mapDispatchToProps = (dispatch) => ({
+  clearCurrentParty: () => dispatch(clearCurrentParty())
+})
+
+const NavbarContainer = connect(mapStateToProps, mapDispatchToProps)(Navbar);
 
 export default NavbarContainer;

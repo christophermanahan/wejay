@@ -67,7 +67,7 @@ export const onMainEnter = () => {
           database.ref('party_djs').child(partyId).on('value', snapshot => {
             store.dispatch(setDjs(snapshot.val()));
           });
-          database.ref('personal_queue').child(uid).on('value', snapshot => {
+          database.ref('party_djs').child(partyId).child(uid).child('personal_queue').on('value', snapshot => {
             store.dispatch(setPersonalQueue(snapshot.val()));
           });
           database.ref('messages').on('value', snapshot => {

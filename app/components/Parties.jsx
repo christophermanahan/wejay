@@ -123,7 +123,7 @@ class Parties extends Component {
             setmessages(snapshot.val());
           });
 
-          browserHistory.push('/app/search');
+          browserHistory.push('/app');
       })
       .catch(err => console.error(err)) // TODO: need real error handling
   }

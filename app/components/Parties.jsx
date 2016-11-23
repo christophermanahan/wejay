@@ -166,7 +166,7 @@ class Parties extends Component {
           song_uri: 'https://soundcloud.com/dazzel-almond/melody-of-lies',
           time_priority: 0,
           vote_priority: 0
-        })
+        });
 
         Promise.all([hostParty, hostDjs, currentSong])
           .then(() => {
@@ -187,7 +187,8 @@ class Parties extends Component {
             });
             database.ref('party_djs').child(partyId).on('value', snapshot => {
               setdjs(snapshot.val()); // updates entire party_djs in store
-              setpersonalqueue(snapshot.val()[uid].personal_queue); // updates personal queue
+              const personalQueue = snapshot.val()[uid].personal_queue || {};
+              setpersonalqueue(personalQueue); // updates personal queue
             });
             database.ref('messages').on('value', snapshot => {
               setmessages(snapshot.val());
@@ -196,7 +197,7 @@ class Parties extends Component {
             browserHistory.push('/app/search');
           })
           .catch(console.error) // TODO: real error handling
-      })
+      });
   }
 
   onPartySelect(evt, index, value) {

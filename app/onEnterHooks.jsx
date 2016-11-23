@@ -1,7 +1,7 @@
 import store from './store';
 import firebase from 'firebase';
 import { browserHistory } from 'react-router';
-require('APP/.env.js');
+// require('APP/.env.js');
 
 import { setFirebase } from './ducks/firebase';
 import { setUser, clearUser } from './ducks/user';

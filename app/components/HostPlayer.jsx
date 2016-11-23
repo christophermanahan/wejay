@@ -7,7 +7,7 @@ import PauseCircleOutline from 'material-ui/svg-icons/av/pause-circle-outline';
 
 import { connect } from 'react-redux';
 
-require('APP/.env.js');
+// require('APP/.env.js');
 const clientId = process.env.SC_CLIENT_ID;
 
 

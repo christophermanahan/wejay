@@ -8,7 +8,6 @@ import publicKeys from '../utils/publicKeys'
 
 import { connect } from 'react-redux';
 
-// APPenv.js
 const clientId = publicKeys.SC_CLIENT_ID;
 
 

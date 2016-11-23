@@ -115,4 +115,4 @@ const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 
 
 
-export default CustomPlayerContainer;
+export default CustomPlayerContainer

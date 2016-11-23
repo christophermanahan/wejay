@@ -1,6 +1,6 @@
 const searchRouter = require('express').Router();
 const SC = require('node-soundcloud');
-require('APP/.env.js');
+// APPenv.js
 
 const config = {
   id: process.env.SC_CLIENT_ID,

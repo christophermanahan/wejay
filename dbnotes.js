@@ -4,15 +4,13 @@
 // -----------------    QUEUES     ------------------ //
 currentSong: {
 	partyID: {
-		hashid: {
-			uid: str,
-			dj_name: str,
-			artist: str,
-			title: str,
-			song_uri: str,
-			time_priority: 0,
-			vote_priority: 0
-		}
+		uid: str,
+		dj_name: str,
+		artist: str,
+		title: str,
+		song_uri: str,
+		time_priority: 0,
+		vote_priority: 0
 	}
 }
 

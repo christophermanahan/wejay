@@ -51,8 +51,8 @@ class CustomPlayer extends React.Component {
     }
 
     triggerFirebase() {
-        const { firebase } = this.props;
-        firebase.database().ref('needSong').set(true);
+        const { firebase, partyId } = this.props;
+        firebase.database().ref('parties').child(partyId).update({needSong: true})
     }
 
     render() {
@@ -96,7 +96,11 @@ class CustomPlayerWrapper extends React.Component {
             <SoundPlayerContainer
                 resolveUrl={song_uri}
                 clientId={clientId}>
-                <CustomPlayer firebase={this.props.firebase} song_uri={song_uri} />
+                <CustomPlayer
+                  firebase={this.props.firebase}
+                  song_uri={song_uri}
+                  partyId={this.props.currentParty.id}
+                />
             </SoundPlayerContainer>
         );
     }
@@ -104,7 +108,7 @@ class CustomPlayerWrapper extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, firebase }) => ({ currentSong, firebase })
+const mapStateToProps = ({ currentSong, firebase, currentParty }) => ({ currentSong, firebase, currentParty })
 
 const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 

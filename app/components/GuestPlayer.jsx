@@ -8,7 +8,7 @@ import IconButton from 'material-ui/IconButton';
 const GuestPlayer = props => {
   const { currentSong } = props;
   return (
-    <div>
+    <div className="guest-player-container">
       <FontIcon className="zmdi zmdi-hearing animated infinite pulse" />
       <h4 className="guest-player-text"> Song: { currentSong.title } </h4>
       <h4 className="guest-player-text"> Artist: { currentSong.artist } </h4>

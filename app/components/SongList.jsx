@@ -12,7 +12,7 @@ const SongList = props => {
     topTenArr.push(topTen[song])
   }
   return (
-    <div>
+    <div className="song-list-container">
       {topTenArr.length && topTenArr.map(song => (
         song && <Song title={song.title} artist={song.artist} DJ={song.DJ} key={song.sc_id} />
       ))}

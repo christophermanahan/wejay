@@ -117,7 +117,9 @@ class Parties extends Component {
           });
           database.ref('party_djs').child(partyId).on('value', snapshot => {
             setdjs(snapshot.val()); // updates entire party_djs in store
-            setpersonalqueue(snapshot.val()[uid].personal_queue); // updates personal queue
+          });
+          database.ref('party_djs').child(partyId).child(uid).child('personal_queue').on('value', snapshot => {
+            setpersonalqueue(snapshot.val()); // updates personal queue
           });
           database.ref('messages').on('value', snapshot => {
             setmessages(snapshot.val());

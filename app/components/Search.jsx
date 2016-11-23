@@ -60,10 +60,10 @@ class Search extends Component {
 
   addToQueue(song_uri, title, sc_id, artist) {
     console.log('added something to playlist!', song_uri, title, sc_id);
-    const { user, currentParty, firebase } = this.props; 
+    const { user, currentParty, firebase } = this.props;
     const { uid } = user;
-    const DJ = 'DJ anon'
-    const song = { song_uri, title, sc_id, artist, DJ, uid};
+    const dj_name = `DJ ${user.displayName || 'Anon'}`
+    const song = { song_uri, title, artist, dj_name, uid, time_priority: 0, vote_priority: 0};
     // send to firebase
     const currentSong = firebase.database().ref('current_song').child(currentParty.id);
     const topTen = firebase.database().ref('top_ten').child(currentParty.id);
@@ -80,7 +80,7 @@ class Search extends Component {
       const topTenVal = results[1] && results[1].val();
       const shadowQueueVal = results[2] && results[2].val();
 
-      let userSongInShadowQueue = false; 
+      let userSongInShadowQueue = false;
 
       if (shadowQueueVal) {
         for (let track in shadowQueueVal) {

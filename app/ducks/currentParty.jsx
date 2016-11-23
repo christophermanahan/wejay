@@ -1,3 +1,5 @@
+import { LEAVE_PARTY } from './global';
+
 /* -----------------    ACTIONS     ------------------ */
 
 const SET_CURRENT_PARTY = 'SET_CURRENT_PARTY';
@@ -10,13 +12,15 @@ export const setCurrentParty = currentParty => ({
 })
 
 
-
 /* ------------       REDUCER     ------------------ */
 
 const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_CURRENT_PARTY:
       return action.currentParty
+
+    case LEAVE_PARTY:
+      return {}
 
     default:
         return state;

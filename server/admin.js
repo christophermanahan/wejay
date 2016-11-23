@@ -44,7 +44,7 @@ partiesRef.on('child_added', (snapshot) => {
 	const newPartyRef = db.ref('parties').child(partyId)
 	newPartyRef.on('value', (snapshot) => {
 		// console.log("newPartyRef snap: ", snapshot.val());
-		if(!snapshot.val().needSong){
+		if(!snapshot || !snapshot.val().needSong){
 			return
 		} else {
 

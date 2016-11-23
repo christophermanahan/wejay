@@ -1,3 +1,5 @@
+import { LEAVE_PARTY } from './global';
+
 /* -----------------    ACTIONS     ------------------ */
 
 const SET_TOP_TEN = 'SET_TOP_TEN';
@@ -9,14 +11,15 @@ export const setTopTen = topTen => ({
   topTen
 })
 
-
-
 /* ------------       REDUCER     ------------------ */
 
 const reducer = (state = [], action) => {
   switch (action.type){
     case SET_TOP_TEN:
         return action.topTen;
+
+    case LEAVE_PARTY:
+      return {}
 
     default:
         return state;

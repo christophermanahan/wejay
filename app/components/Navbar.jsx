@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { browserHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { clearCurrentParty } from '../ducks/currentParty';
+import { leaveParty } from '../ducks/global';
 
 import {IconButton, MenuItem, IconMenu} from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
@@ -34,7 +34,7 @@ const DumbNavbar = props => {
 
   return (
     <div>
-      <h2>weeJay</h2>
+      <h2>WeJay</h2>
       <h3>Welcome DJ { user && user.displayName || 'Anon' }</h3>
       <IconMenu
         iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
@@ -77,21 +77,16 @@ class Navbar extends Component {
 
   handleLeaveParty() {
     /*
-    FIREBASE
-    got to FB
-      remove that user from partyDjs
-      go to user_parties, remove them
 
     LOCAL
     CLEAR
-      currentParty,
       currentSong,
       DJs,
       topTen,
       personalQueue
     */
     const { uid } = this.props.user
-    const { currentParty, firebase, clearCurrentParty } = this.props
+    const { currentParty, firebase, leaveParty } = this.props
     const userPartiesRef = firebase.database().ref('user_parties').child(uid);
     const partyDjsRef = firebase.database().ref(currentParty.id).child(uid);
 
@@ -108,7 +103,7 @@ class Navbar extends Component {
         throw new Error(err)
       } else {
         this.setState({dialogOpen: false});
-        clearCurrentParty()
+        leaveParty()
         browserHistory.push('/parties');
       }
     })
@@ -144,7 +139,7 @@ class Navbar extends Component {
 
 const mapStateToProps = ({ user, firebase, currentParty }) => ({ user, firebase, currentParty });
 const mapDispatchToProps = (dispatch) => ({
-  clearCurrentParty: () => dispatch(clearCurrentParty())
+  leaveParty: () => dispatch(leaveParty())
 })
 
 const NavbarContainer = connect(mapStateToProps, mapDispatchToProps)(Navbar);

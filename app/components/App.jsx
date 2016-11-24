@@ -29,10 +29,10 @@ const App = props => {
 			   <Tab label="Live DJs" >
 					<Grid>
 					<Row>
-						<Col md={6}>
+						<Col md={4}>
 							<h3>Will be DJs</h3>
 						</Col>
-						<Col md={6}>
+						<Col md={4}>
 							<h3>Another Column</h3>
 						</Col>
 					</Row>

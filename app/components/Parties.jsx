@@ -12,6 +12,8 @@ import { setDjs } from '../ducks/djs';
 import { setPersonalQueue } from '../ducks/personalQueue';
 import { setMessages } from '../ducks/chat';
 
+import Fireboss from '../utils/fireboss'
+
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
@@ -77,54 +79,24 @@ class Parties extends Component {
 
   joinParty(evt) {
     evt.preventDefault();
-    const { user, firebase } = this.props;
-    const database = firebase.database();
-    const userPartiesRef = database.ref('user_parties');
-    const partyDjsRef = database.ref('party_djs');
-
+    const { user, firebase, setcurrentparty, setcurrentsong,
+            settopten, setdjs, setpersonalqueue, setmessages } = this.props;
     const { partyId } = this.state;
-    if (!partyId) {
-      return;
-    }
-    const userParty = userPartiesRef.child(user.uid).set(partyId);
-    // TODO: set actual DJ Name based on entry in Firebase DB
-    const partyDjs = partyDjsRef.child(partyId).child(user.uid)
-    .set({
-      dj_points: 0,
-      dj_name: `DJ ${user.displayName || 'Rando'}`,
-      personal_queue: {}
-    });
+    const fireboss = new Fireboss(firebase)
 
-    const { setcurrentparty, setcurrentsong, settopten, setdjs, setpersonalqueue, setmessages } = this.props;
-    const { uid } = user;
-    // link the user to a DJ alibi and a party id, then navigate to the app
-    Promise.all([userParty, partyDjs])
+    if (!partyId) { return; }
+
+    const associatingPartyAndUser = fireboss.associatingPartyAndUser(partyId, user)
+    const addingPartyDJ = fireboss.addingPartyDJ(partyId, user)
+
+    Promise.all([associatingPartyAndUser, addingPartyDJ])
       .then(() => {
-
-        // Add listeners to relevant party info
-
-          // get the party stats once
-          database.ref('parties').child(partyId).once('value', snapshot => {
-            setcurrentparty(snapshot.val());
-          });
-
-          // set up listeners for state
-          database.ref('current_song').child(partyId).on('value', snapshot => {
-            setcurrentsong(snapshot.val());
-          });
-          database.ref('top_ten').child(partyId).on('value', snapshot => {
-            settopten(snapshot.val());
-          });
-          database.ref('party_djs').child(partyId).on('value', snapshot => {
-            setdjs(snapshot.val()); // updates entire party_djs in store
-          });
-          database.ref('party_djs').child(partyId).child(uid).child('personal_queue').on('value', snapshot => {
-            setpersonalqueue(snapshot.val()); // updates personal queue
-          });
-          database.ref('messages').on('value', snapshot => {
-            setmessages(snapshot.val());
-          });
-
+          fireboss.getCurrentPartySnapshot(partyId, setcurrentparty)
+          fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
+          fireboss.createPartyListener(partyId,'top_ten', settopten)
+          fireboss.createPartyListener(partyId,'party_djs', setdjs)
+          fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
+          fireboss.createMessagesListener(setmessages)
           browserHistory.push('/app');
       })
       .catch(err => console.error(err)) // TODO: need real error handling
@@ -132,70 +104,37 @@ class Parties extends Component {
 
   onSubmit(evt) {
     evt.preventDefault();
-    const { user, firebase } = this.props;
-    const database = firebase.database();
+    const { user, firebase, setcurrentparty, setcurrentsong, settopten, setdjs,
+            setpersonalqueue, setmessages } = this.props;
+    const fireboss = new Fireboss(firebase)
+
+    // if a user starts the party, that party's uid becomes the partyId
+    const partyId = user.uid
     const name = evt.target.name.value;
     const location = evt.target.location.value;
-    const { uid } = user;
 
-    const partiesRef = database.ref('parties');
-    const userPartiesRef = database.ref('user_parties');
-    const partyDjsRef = database.ref('party_djs');
-    const currentSongRef = database.ref('current_song');
+    const partyObj = {id: user.uid, name, location, needSong: false }
+    const initialSong = {uid: user.uid, dj_name: 'DJ Init', artist: 'dazzel-almond',
+                         title: 'Melody of Lies',
+                         song_uri: 'https://soundcloud.com/dazzel-almond/melody-of-lies',
+                         time_priority: 0,
+                         vote_priority: 0
+                       }
 
-    const { setcurrentparty, setcurrentsong, settopten, setdjs, setpersonalqueue, setmessages } = this.props;
-
-
-    // sets up a new party
-    partiesRef.child(uid).set({id: uid, name, location, needSong: false })
+    fireboss.creatingParty(partyId, partyObj)
       .then(() => {
-        // associates the host with the party
-        const hostParty = userPartiesRef.child(uid).set(uid)
-        const hostDjs = partyDjsRef.child(uid).child(uid)
-        .set({
-          dj_points: 0,
-          dj_name: `DJ ${user.displayName || 'Rando'}`,
-          personal_queue: {}
-        });
+        const addingHostDJ = fireboss.addingPartyDJ(partyId, user)
+        const associatingPartyAndHost = fireboss.associatingPartyAndUser(partyId, user)
+        const settingCurrentSong = fireboss.settingCurrentSong(partyId, initialSong)
 
-        // give every party an awesome initial song
-        const currentSong = currentSongRef.child(uid)
-        .set({
-          uid,
-          dj_name: 'DJ Init',
-          artist: 'dazzel-almond',
-          title: 'Melody of Lies',
-          song_uri: 'https://soundcloud.com/dazzel-almond/melody-of-lies',
-          time_priority: 0,
-          vote_priority: 0
-        });
-
-        Promise.all([hostParty, hostDjs, currentSong])
+        Promise.all([addingHostDJ, associatingPartyAndHost, settingCurrentSong])
           .then(() => {
-
-            const partyId = uid     //if a user starts the party, that party's uid becomes the partyId
-
-            // get the party stats once
-            database.ref('parties').child(partyId).once('value', snapshot => {
-              setcurrentparty(snapshot.val());
-            });
-
-            // set up listeners for state
-            database.ref('current_song').child(partyId).on('value', snapshot => {
-              setcurrentsong(snapshot.val());
-            });
-            database.ref('top_ten').child(partyId).on('value', snapshot => {
-              settopten(snapshot.val());
-            });
-            database.ref('party_djs').child(partyId).on('value', snapshot => {
-              setdjs(snapshot.val()); // updates entire party_djs in store
-              const personalQueue = snapshot.val()[uid].personal_queue || {};
-              setpersonalqueue(personalQueue); // updates personal queue
-            });
-            database.ref('messages').on('value', snapshot => {
-              setmessages(snapshot.val());
-            });
-
+            fireboss.getCurrentPartySnapshot(partyId, setcurrentparty)
+            fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
+            fireboss.createPartyListener(partyId,'top_ten', settopten)
+            fireboss.createPartyListener(partyId,'party_djs', setdjs)
+            fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
+            fireboss.createMessagesListener(setmessages)
             browserHistory.push('/app');
           })
           .catch(console.error) // TODO: real error handling

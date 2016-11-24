@@ -1,7 +1,10 @@
-/* Fireboss is a firebase database manager. A lot of firebase requests were used
-   multiple times in the codebase, so we DRYed things up with this utility. It is
-   mostly used to create listeners for parties and perfom some routine queries    */
+/* Fireboss is a firebase database manager. It allows us to DRYly implement
+   our core functionality and perfom tests using firebase-mock.
 
+   Fireboss can:
+     - create listeners for parties
+     - perform routine firebase queries
+     - post updates to the firebase database  */
 
 const Fireboss = function(firebase) {
   this.database = firebase.database()

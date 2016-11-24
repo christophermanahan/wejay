@@ -2,6 +2,7 @@ import store from './store';
 import firebase from 'firebase';
 import { browserHistory } from 'react-router';
 import publicKeys from './utils/publicKeys'
+import Fireboss from './utils/fireboss'
 
 import { setFirebase } from './ducks/firebase';
 import { setUser, clearUser } from './ducks/user';
@@ -24,17 +25,21 @@ const config = {
 
 firebase.initializeApp(config);
 
+
+
 /* -------------------- ON-ENTER HOOKS ----------------------- */
 
 export const onMainEnter = () => {
   // 1. Set Firebase on Store
   store.dispatch(setFirebase(firebase));
 
+  const fireboss = new Fireboss(firebase)
+  const dispatch = func => {
+    return val => store.dispatch(func(val))
+  }
+
   // 2. Always listen to Party List
-  const database = firebase.database();
-  database.ref('parties').on('value', snapshot => {
-    store.dispatch(setParties(snapshot.val()));
-  });
+  fireboss.createPartiesListener(dispatch(setParties))
 
   // 3. Check if user is authenticated
   const auth = firebase.auth();
@@ -42,39 +47,24 @@ export const onMainEnter = () => {
     if (!user) { // if not authenticated, send to login
       store.dispatch(clearUser());
       browserHistory.push('/login');
-    } else { // otherwise, set user on store
+    }
+    else { // otherwise, set user on store
       store.dispatch(setUser(user));
-      const { uid } = user;
 
-      database.ref('user_parties').child(uid).once('value')
+      fireboss.checkingUserParty(user)
       .then(data => {
         const partyId = data.val();
         if (!partyId) {
           browserHistory.push('/parties'); // user must select party
         } else {
 
-          // get the party stats once
-          database.ref('parties').child(partyId).once('value', snapshot => {
-            store.dispatch(setCurrentParty(snapshot.val()));
-          });
-
-          // set up listeners for state
-          database.ref('current_song').child(partyId).on('value', snapshot => {
-            store.dispatch(setCurrentSong(snapshot.val()));
-          });
-          database.ref('top_ten').child(partyId).on('value', snapshot => {
-            store.dispatch(setTopTen(snapshot.val()));
-          });
-          database.ref('party_djs').child(partyId).on('value', snapshot => {
-            store.dispatch(setDjs(snapshot.val()));
-          });
-          database.ref('party_djs').child(partyId).child(uid).child('personal_queue').on('value', snapshot => {
-            store.dispatch(setPersonalQueue(snapshot.val()));
-          });
-          database.ref('messages').on('value', snapshot => {
-            store.dispatch(setMessages(snapshot.val()));
-          });
-
+          // set typical party listeners
+          fireboss.getCurrentPartySnapshot(partyId, dispatch(setCurrentParty))
+          fireboss.createPartyListener(partyId,'current_song', dispatch(setCurrentSong))
+          fireboss.createPartyListener(partyId,'top_ten', dispatch(setTopTen))
+          fireboss.createPartyListener(partyId,'party_djs', dispatch(setDjs))
+          fireboss.createPersonalQueueListener(partyId, user, dispatch(setPersonalQueue))
+          fireboss.createMessagesListener(dispatch(setMessages))
           browserHistory.push('/app');
         }
       })
@@ -82,7 +72,6 @@ export const onMainEnter = () => {
     }
   });
 };
-
 
 /*
 TODO for UX:

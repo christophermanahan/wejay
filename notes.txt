@@ -1,0 +1,79 @@
+yesterday dillon and I worked on getting the logout to work
+
+
+DONE:
+#1
+REG USER LEAVES PARTY
+FIREBASE
+  go to user_parties and find specific uid (userPartiesRef)
+  go to specific party id and find userId (partyDjsRef)
+    remove user from party
+    remove DJ from party
+    push user back to partypage
+
+LOCAL
+CLEAR
+  currentSong,
+  DJs,
+  topTen,
+  personalQueue
+
+--
+
+NEXT:
+#2
+HOST LEAVES PARTY OR LOGS OUT
+  msg "Are you sure? all other users will be kicked out of the party"
+
+FIREBASE
+  find partyID//hostUserID
+  CLEAR top_ten (of that partyId)
+  CLEAR shadow_queue (of that partyId)
+  CLEAR current_song (of that partyId)
+
+  CLEAR (user_parties) (take out users from parties that have that party id)
+  CLEAR parties (with that partyId)
+  CLEAR party_djs (with that partyId)
+
+  OTHER USERS
+    send modal to them that theyve been kicked out and redirect to ChoosePartyPage
+    GRAB from user_parties (all uid's that have that partyId)
+      forEach initiate #1 REG USER LEAVES PARTY flow (above) with event listener
+
+
+LOCAL
+CLEAR (All stuff from the store)
+  currentSong,
+  DJs,
+  topTen,
+  personalQueue
+
+
+  if host chose LEAVE PARTY - refirect to party page
+  if host chose LOGOUT - redirect to login
+
+
+---
+
+NEXT:
+#3
+listen for host leave
+
+WHEN REG USERS GET KICKED OUT OF PARTY
+THEY NEED LISTENER FOR THAT HOST EVENT =-> WHERE LIVES THIS????
+HOST ALSO NEEDS TO EMIT THAT EVENT
+
+
+
+
+
+--
+
+NEXT:
+#4
+REG USER LOGS OUT (msg, are you sure you want to log out? you will leave the party you are in and loose your DJ Points)
+  FIREBASE
+    topTen, SQ & CurrentSong - ALL STAY SAME (votes will not count towards any DJ points but can still affect TopTen position )
+
+    #1 REG USER LEAVES PARTY flow (above) with event listener
+    browserHistory push to login page

@@ -43,14 +43,18 @@ Fireboss.prototype.getCurrentPartySnapshot = function(partyId, callback) {
   });
 }
 
-Fireboss.prototype.checkUserParty = function(user) {
+Fireboss.prototype.gettingPartyItemSnapshot = function(partyId, item) {
+  return this.database.ref(item).child(partyId).once('value');
+}
+
+Fireboss.prototype.checkingUserParty = function(user) {
   return this.database.ref('user_parties').child(user.uid).once('value');
 }
 
 
 /* --------------------------- SETTERS --------------------------- */
 
-Fireboss.prototype.addPartyDJ = function(partyId, user) {
+Fireboss.prototype.addingPartyDJ = function(partyId, user) {
   return this.database.ref('party_djs').child(partyId).child(user.uid)
          .set({
             dj_points: 0,
@@ -59,16 +63,30 @@ Fireboss.prototype.addPartyDJ = function(partyId, user) {
           })
 }
 
-Fireboss.prototype.associatePartyAndUser = function(partyId, user) {
+Fireboss.prototype.associatingPartyAndUser = function(partyId, user) {
   return this.database.ref('user_parties').child(user.uid).set(partyId)
 }
 
-Fireboss.prototype.setCurrentSong = function(partyId, song) {
+Fireboss.prototype.settingCurrentSong = function(partyId, song) {
   return this.database.ref('current_song').child(partyId).set(song)
 }
 
-Fireboss.prototype.createParty = function(partyId, party) {
+Fireboss.prototype.creatingParty = function(partyId, party) {
   return this.database.ref('parties').child(partyId).set(party)
+}
+
+Fireboss.prototype.setCurrentSong = function(partyId, song) {
+  this.database.ref('current_song').child(partyId).set(song)
+}
+
+Fireboss.prototype.addToPartyQueue = function(partyId, type, song) {
+  this.database.ref(type).child(partyId).push(song)
+}
+
+Fireboss.prototype.addToPersonalQueue = function(partyId, user, song) {
+  this.database.ref('party_djs').child(partyId).child(user.uid)
+  .child('personal_queue')
+  .push(song);
 }
 
 export default Fireboss

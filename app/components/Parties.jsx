@@ -86,8 +86,8 @@ class Parties extends Component {
 
     if (!partyId) { return; }
 
-    const associatingPartyAndUser = fireboss.associatePartyAndUser(partyId, user)
-    const addingPartyDJ = fireboss.addPartyDJ(partyId, user)
+    const associatingPartyAndUser = fireboss.associatingPartyAndUser(partyId, user)
+    const addingPartyDJ = fireboss.addingPartyDJ(partyId, user)
 
     Promise.all([associatingPartyAndUser, addingPartyDJ])
       .then(() => {
@@ -104,7 +104,8 @@ class Parties extends Component {
 
   onSubmit(evt) {
     evt.preventDefault();
-    const { user, firebase, setcurrentparty, setcurrentsong, settopten, setdjs, setpersonalqueue, setmessages } = this.props;
+    const { user, firebase, setcurrentparty, setcurrentsong, settopten, setdjs,
+            setpersonalqueue, setmessages } = this.props;
     const fireboss = new Fireboss(firebase)
 
     // if a user starts the party, that party's uid becomes the partyId
@@ -120,13 +121,11 @@ class Parties extends Component {
                          vote_priority: 0
                        }
 
-    const creatingNewParty = fireboss.createParty(partyId, partyObj)
-
-    creatingNewParty
+    fireboss.creatingParty(partyId, partyObj)
       .then(() => {
-        const addingHostDJ = fireboss.addPartyDJ(partyId, user)
-        const associatingPartyAndHost = fireboss.associatePartyAndUser(partyId, user)
-        const settingCurrentSong = fireboss.setCurrentSong(partyId, initialSong)
+        const addingHostDJ = fireboss.addingPartyDJ(partyId, user)
+        const associatingPartyAndHost = fireboss.associatingPartyAndUser(partyId, user)
+        const settingCurrentSong = fireboss.settingCurrentSong(partyId, initialSong)
 
         Promise.all([addingHostDJ, associatingPartyAndHost, settingCurrentSong])
           .then(() => {

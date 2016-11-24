@@ -51,7 +51,7 @@ export const onMainEnter = () => {
     else { // otherwise, set user on store
       store.dispatch(setUser(user));
 
-      fireboss.checkUserParty(user)
+      fireboss.checkingUserParty(user)
       .then(data => {
         const partyId = data.val();
         if (!partyId) {

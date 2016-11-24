@@ -1,11 +1,8 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-
-
 import {RaisedButton, TextField} from 'material-ui';
-
 import {fetchTrackResults} from '../ducks/searchResults';
-
+import Fireboss from '../utils/fireboss'
 
 import SearchResults from './SearchResults';
 
@@ -61,18 +58,15 @@ class Search extends Component {
   addToQueue(song_uri, title, sc_id, artist) {
     console.log('added something to playlist!', song_uri, title, sc_id);
     const { user, currentParty, firebase } = this.props;
+    const fireboss = new Fireboss(firebase)
+    const partyId = currentParty.id
     const { uid } = user;
     const dj_name = `DJ ${user.displayName || 'Anon'}`
     const song = { song_uri, title, artist, dj_name, uid, time_priority: 0, vote_priority: 0};
-    // send to firebase
-    const currentSong = firebase.database().ref('current_song').child(currentParty.id);
-    const topTen = firebase.database().ref('top_ten').child(currentParty.id);
-    const shadowQueue = firebase.database().ref('shadow_queue').child(currentParty.id);
-    const personalQueue = firebase.database().ref('party_djs').child(currentParty.id).child(uid);
 
-    const gettingCurrentSong = currentSong.once('value');
-    const gettingTopTen = topTen.once('value');
-    const gettingShadowQueue = shadowQueue.once('value');
+    const gettingCurrentSong = fireboss.gettingPartyItemSnapshot(partyId, 'current_song')
+    const gettingTopTen = fireboss.gettingPartyItemSnapshot(partyId, 'top_ten')
+    const gettingShadowQueue = fireboss.gettingPartyItemSnapshot(partyId, 'shadow_queue')
 
     Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
     .then(results => {
@@ -89,13 +83,13 @@ class Search extends Component {
       }
 
       if(!currentSongVal) {
-        currentSong.set(song);
+        fireboss.setCurrentSong(partyId, song)
       } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
-        topTen.push(song);
+        fireboss.addToPartyQueue(partyId, 'top_ten', song)
       } else if (!shadowQueueVal || !userSongInShadowQueue) {
-        shadowQueue.push(song);
+        fireboss.addToPartyQueue(partyId, 'shadow_queue', song)
       } else {
-        personalQueue.child('personal_queue').push(song);
+        fireboss.addToPersonalQueue(partyId, user, song)
       }
     });
   }

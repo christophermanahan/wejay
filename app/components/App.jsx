@@ -9,6 +9,10 @@ import Search from './Search';
 import SongList from './SongList';
 import { Tabs, Tab } from 'material-ui/Tabs';
 
+import { Grid, Row, Col } from 'react-flexbox-grid';
+// testing if Row and Col actually render
+
+
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -23,7 +27,16 @@ const App = props => {
 					<SongList />
 			   </Tab>
 			   <Tab label="Live DJs" >
-					<h1>Will Be DJs</h1>
+					<Grid>
+					<Row>
+						<Col md={4}>
+							<h3>Will be DJs</h3>
+						</Col>
+						<Col md={4}>
+							<h3>Another Column</h3>
+						</Col>
+					</Row>
+					</Grid>
 			   </Tab>
 			   <Tab label="My Tracks">
 					<Search />

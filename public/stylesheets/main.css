@@ -1,0 +1,30 @@
+.login-txt {
+  font-family: Roboto;
+  text-align: center; }
+
+.login-btn {
+  width: 300px;
+  margin: 0 auto;
+  margin-bottom: 100px; }
+
+.signup-field {
+  margin: 0 auto; }
+
+#signup-form {
+  margin-top: -100px; }
+
+.guest-player-text {
+  font-family: Roboto;
+  display: inline-block;
+  margin: 0px 15px 0px 15px; }
+
+.guest-player-container {
+  position: absolute;
+  bottom: 1vh;
+  width: 98vw;
+  background: white;
+  display: block; }
+
+.song-list-container {
+  max-height: calc(100vh - 240px);
+  overflow: scroll; }

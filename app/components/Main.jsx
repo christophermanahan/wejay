@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import {MuiThemeProvider} from 'material-ui';
 
+
+import { Grid } from 'react-flexbox-grid';
+
+
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
@@ -10,10 +14,10 @@ injectTapEventPlugin();
 export default props => {
   const { children } = props;
   return (
-    <MuiThemeProvider>
-      <div>
-        { children }
-      </div>
-    </MuiThemeProvider>
+		<Grid>
+	    <MuiThemeProvider>
+	      { children }
+	    </MuiThemeProvider>
+    </Grid>
   );
 };

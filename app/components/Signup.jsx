@@ -4,6 +4,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
+import { Row, Col } from 'react-flexbox-grid/lib/index';
+
+
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
@@ -16,48 +19,80 @@ const DumbSignup = props => {
         onTouchTap={ reset }
       />];
 	return (
-		<div id="signup-form">
-			<form onSubmit={ submitForm }>
-		    <TextField
-		      hintText="avicii@example.dj"
-		      name="email"
-		      type="email"
-		      floatingLabelText="Email"
-		      className="signup-field"
-		      style={{display: "block"}}
-		      onChange={ onType }
-		    />
-		    <TextField
-		      floatingLabelText="Password"
-		      name="password"
-		      type="password"
-					className="signup-field"
-					style={{display: "block"}}
-		      onChange={ onType }
-		    />
-		    <TextField
-		      hintText="DJ ..."
-		      name="djName"
-		      floatingLabelText="DJ Name"
-		      className="signup-field"
-		      style={{display: "block"}}
-		      onChange={ onType }
-		    />
-		    <RaisedButton
-					label="Submit"
-					style={{display: "block"}}
-					className="login-btn"
-					type="submit"
-					onTouchTap={ submitForm }
-		    />
-				<Dialog
-					title="Whoops!"
-					modal={true}
-					actions={actions}
-					open={!!validateMsg}
-				>{ validateMsg }
-				</Dialog>
-	    </form>
+		<div id="signup-container">
+			<Row>
+				<Col xs={12}>
+					<form onSubmit={ submitForm } style={{ height: '100%', width: '100%' }}>
+				    <Row>
+				    <TextField
+				      hintText="avicii@example.dj"
+				      name="email"
+				      type="email"
+				      floatingLabelText="Email"
+				      className="signup-field"
+				      style={{display: "block"}}
+				      inputStyle={{fontSize: '24px'}}
+				      hintStyle={{fontSize: '24px'}}
+				      onChange={ onType }
+				    />
+				    </Row>
+				    <Row>
+				    <TextField
+				      floatingLabelText="Password"
+				      name="password"
+				      type="password"
+							className="signup-field"
+							style={{display: "block"}}
+						  inputStyle={{fontSize: '24px'}}
+				      hintStyle={{fontSize: '24px'}}
+				      onChange={ onType }
+				    />
+				    </Row>
+				    <Row>
+				    <TextField
+				      hintText="DJ ..."
+				      name="djName"
+				      floatingLabelText="DJ Name"
+				      className="signup-field"
+				      style={{display: "block"}}
+				      inputStyle={{fontSize: '24px'}}
+				      hintStyle={{fontSize: '24px'}}
+				      onChange={ onType }
+				    />
+				    </Row>
+				    <Row>
+					    <Col xs={10} xsOffset={1}>
+						    <RaisedButton
+									label="Submit"
+									style={{display: "block"}}
+									className="login-btn"
+									type="submit"
+									onTouchTap={ submitForm }
+			            labelStyle={{
+			              fontSize: '1.5em',
+			              verticalAlign: 'middle'
+			            }}
+			            buttonStyle={{
+			              height: '5vh',
+			            }}
+			            overlayStyle={{
+			              height: '100%'
+			            }}
+						    />
+					    </Col>
+				    </Row>
+				    <Row>
+							<Dialog
+								title="Whoops!"
+								modal={true}
+								actions={actions}
+								open={!!validateMsg}
+							>{ validateMsg }
+							</Dialog>
+						</Row>
+			    </form>
+		    </Col>
+	    </Row>
 		</div>
 	);
 };

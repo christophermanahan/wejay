@@ -21,6 +21,11 @@ import Fireboss from '../utils/fireboss'
 const DumbParties = props => {
   const { parties, partyId, onPartySelect, joinParty, onSubmit } = props;
 
+  //override material ui's inline style elements
+  let btnStyle = {
+    minWidth: "50%"
+  };
+
   // partiesArr is an array with each index representing a party
   // each party has the following data [partyid, {name: '', location: ''}]
   let partiesArr = [];
@@ -49,9 +54,9 @@ const DumbParties = props => {
       </Row>
       <RaisedButton
         className="party-btn"
+        style={btnStyle}
         backgroundColor="#7aa095"
         labelColor="#ffffff"
-        fullWidth={true}
         label="Rage"
         onTouchTap={joinParty}
       />
@@ -67,9 +72,9 @@ const DumbParties = props => {
           />
         <RaisedButton
           className="party-btn"
+          style={btnStyle}
           backgroundColor="#7aa095"
           labelColor="#ffffff"
-          fullWidth={true}
           secondary={true}
           type="submit"
           label="Create Your Own"

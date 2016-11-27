@@ -41,14 +41,10 @@ module.exports = {
   },
   postcss: [autoprefixer],
   plugins: [
-    new ExtractTextPlugin('bundle.css', {allChunks: true}),
+    new ExtractTextPlugin('/public/stylesheets/bundle.css', {allChunks: true}),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.NoErrorsPlugin()
   ]
 };
 
 
-      // {
-      //   test: /(\.scss|\.css)$/,
-      //   loader: ExtractTextPlugin.extract('style', 'css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap')
-      // }

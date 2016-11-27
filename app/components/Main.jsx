@@ -15,9 +15,9 @@ export default props => {
   const { children } = props;
   return (
 	  <MuiThemeProvider>
-	    <Grid style={{width: '99vw', height: '99vh'}} fluid>
+		  <Grid>
 	      { children }
-	    </Grid>
+      </Grid>
 	  </MuiThemeProvider>
   );
 };

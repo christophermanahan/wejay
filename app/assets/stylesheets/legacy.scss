@@ -1,26 +1,20 @@
-.login-txt {
-	font-family: Roboto;
-	text-align: center;
-}
-
-.login-btn {
-	width: 50vw;
-	height: 10vh;
-	margin: 0 auto;
-	margin-bottom: 100px;
-	font-size: 64px;
+.login-btn-container {
+	margin-bottom: 8vh;
 }
 
 #login-title {
 	font-size: 80px;
+	font-family: Roboto;
+	text-align: center;
 }
 
 .signup-field {
 	margin: 0 auto;
 }
 
-#signup-form {
-	margin-top: -100px;
+#signup-container {
+	margin-bottom: 5vh;
+	width: 100%;
 }
 
 .guest-player-text {

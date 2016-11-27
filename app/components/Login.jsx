@@ -11,12 +11,10 @@ import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import Signup from './Signup';
 
-import * as flexGrid from 'react-flexbox-grid';
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbLogin = props => {
-  console.log('flexGrid is', flexGrid)
   const { anonymousSignIn, signUp, logIn, clearError, showDialog, msg, showSignup, firebase, renderError } = props;
   const dialogActions = [
     <FlatButton
@@ -39,15 +37,23 @@ const DumbLogin = props => {
           </Dialog>
         </Col>
       </Row>
-      <Row>
-        <Col xs={6} xsOffset={3}>
+      <Row className="login-btn-container">
+        <Col xs={8} xsOffset={2}>
           <RaisedButton
             secondary={true}
             label="Sign Up"
             onTouchTap={signUp}
             labelStyle={{
-              fontSize: '58px'
+              fontSize: '2.5em',
+              verticalAlign: 'middle'
             }}
+            buttonStyle={{
+              height: '8vh',
+            }}
+            overlayStyle={{
+              height: '100%'
+            }}
+            fullWidth={true}
           />
           </Col>
         </Row>
@@ -56,30 +62,71 @@ const DumbLogin = props => {
             { showSignup && <Signup firebase={firebase} renderError={renderError}/> }
           </Col>
         </Row>
-        <Row>
-          <RaisedButton
-            primary={true}
-            label="Log In with Google"
-            onTouchTap={() => {logIn('google')}}
-            className="login-btn"
-            style={{display: "block"}}
-            icon={<FontIcon className="zmdi zmdi-google" />}
-          />
-          <RaisedButton
-            primary={true}
-            label="Log In with Facebook"
-            onTouchTap={() => {logIn('facebook')}}
-            className="login-btn"
-            style={{display: "block"}}
-            icon={<FontIcon className="zmdi zmdi-facebook" />}
-          />
-          <Divider style={{ marginBottom: "50px" }} />
-          <RaisedButton
-            label="Continue As Guest"
-            className="login-btn"
-            style={{display: "block"}}
-            onTouchTap={anonymousSignIn}
-          />
+        <Row className="login-btn-container">
+          <Col xs={8} xsOffset={2}>
+            <RaisedButton
+              primary={true}
+              label="Log In with Google"
+              onTouchTap={() => {logIn('google')}}
+              icon={<FontIcon className="zmdi zmdi-google" style={{fontSize: '2.5em'}}/>}
+              labelStyle={{
+                fontSize: '2.5em',
+                verticalAlign: 'middle'
+
+              }}
+              buttonStyle={{
+                height: '8vh',
+              }}
+              overlayStyle={{
+                height: '100%'
+              }}
+              fullWidth={true}
+            />
+          </Col>
+        </Row>
+        <Row className="login-btn-container">
+          <Col xs={8} xsOffset={2}>
+            <RaisedButton
+              primary={true}
+              label="Log In with Facebook"
+              onTouchTap={() => {logIn('facebook')}}
+              icon={<FontIcon className="zmdi zmdi-facebook" style={{fontSize: '2.5em'}}/>}
+              labelStyle={{
+                fontSize: '2.5em',
+                verticalAlign: 'middle'
+
+              }}
+              buttonStyle={{
+                height: '8vh',
+              }}
+              overlayStyle={{
+                height: '100%'
+              }}
+              fullWidth={true}
+            />
+            </Col>
+          </Row>
+          <Row>
+            <Divider />
+          </Row>
+          <Row>
+            <Col xs={8} xsOffset={2}>
+              <RaisedButton
+                label="Continue As Guest"
+                onTouchTap={anonymousSignIn}
+                labelStyle={{
+                  fontSize: '2.5em',
+                  verticalAlign: 'middle'
+                }}
+                buttonStyle={{
+                  height: '8vh',
+                }}
+                overlayStyle={{
+                  height: '100%'
+                }}
+                fullWidth={true}
+              />
+            </Col>
           </Row>
         </div>
 

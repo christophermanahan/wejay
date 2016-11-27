@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
 import { TextField } from 'material-ui';
+import { Row, Col } from 'react-flexbox-grid/lib/index';
 import DjList from './DjsList'
 
 /* -----------------    DUMB COMPONENT     ------------------ */
@@ -46,20 +47,28 @@ class DjsComponent extends Component {
     delete otherDjs[user.uid];
 
     return (
-        <div>
-          <h1>Your DJ Data</h1>
-          <p>{user.displayName}</p>
-          <form onSubmit={this.onSubmit}>
-            <label> DJ NAME --- </label>
-            <input value={this.state.value || ''} onChange={this.handleChange}></input>
-            <button type="submit">update my dj name</button>
-          </form>
-          <br />
-          <p>Points: {djPoints}</p>
-          <hr/>
-          <h1> Party DJs</h1>
-          <DjList djs={otherDjs}/>
-        </div>
+        <Row>
+          <Col xs={12}>
+            <Row>
+              <Col xs={6}>
+                <h1>Your DJ Data</h1>
+              </Col>
+              <Col xs={6}>
+                <h1>{user.displayName}</h1>
+              </Col>
+            </Row>
+            <form onSubmit={this.onSubmit}>
+              <label> DJ NAME --- </label>
+              <input value={this.state.value || ''} onChange={this.handleChange}></input>
+              <button type="submit">update my dj name</button>
+            </form>
+            <br />
+            <p>Points: {djPoints}</p>
+            <hr/>
+            <h1> Party DJs</h1>
+            <DjList djs={otherDjs}/>
+          </Col>
+        </Row>
     );
   }
 }

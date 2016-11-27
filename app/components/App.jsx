@@ -7,11 +7,8 @@ import Navbar from './Navbar';
 import Chat from './Chat';
 import Search from './Search';
 import SongList from './SongList';
+import Djs from './djs'
 import { Tabs, Tab } from 'material-ui/Tabs';
-
-import { Grid, Row, Col } from 'react-flexbox-grid';
-// testing if Row and Col actually render
-
 
 
 
@@ -27,16 +24,7 @@ const App = props => {
 					<SongList />
 			   </Tab>
 			   <Tab label="Live DJs" >
-					<Grid>
-					<Row>
-						<Col md={4}>
-							<h3>Will be DJs</h3>
-						</Col>
-						<Col md={4}>
-							<h3>Another Column</h3>
-						</Col>
-					</Row>
-					</Grid>
+						<Djs />
 			   </Tab>
 			   <Tab label="My Tracks">
 					<Search />

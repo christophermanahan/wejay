@@ -9,4 +9,5 @@ public/bundle.js.map
 bones_orig_backup
 npm-debug.log
 /yarn.lock
-/bundle.css*
+public/stylesheets/bundle.css
+public/stylesheets/bundle.css.map

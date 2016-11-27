@@ -13,8 +13,6 @@ import { setDjs } from '../ducks/djs';
 import { setPersonalQueue } from '../ducks/personalQueue';
 import { setMessages } from '../ducks/chat';
 
-import Fireboss from '../utils/fireboss'
-
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
@@ -111,10 +109,9 @@ class Parties extends Component {
 
   joinParty(evt) {
     evt.preventDefault();
-    const { user, firebase, setcurrentparty, setcurrentsong,
+    const { user, fireboss, setcurrentparty, setcurrentsong,
             settopten, setdjs, setpersonalqueue, setmessages } = this.props;
     const { partyId } = this.state;
-    const fireboss = new Fireboss(firebase)
 
     if (!partyId) { return; }
 
@@ -136,9 +133,8 @@ class Parties extends Component {
 
   onSubmit(evt) {
     evt.preventDefault();
-    const { user, firebase, setcurrentparty, setcurrentsong, settopten, setdjs,
+    const { user, fireboss, setcurrentparty, setcurrentsong, settopten, setdjs,
             setpersonalqueue, setmessages } = this.props;
-    const fireboss = new Fireboss(firebase)
 
     // if a user starts the party, that party's uid becomes the partyId
     const partyId = user.uid
@@ -196,7 +192,7 @@ class Parties extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ parties, firebase, user }) => ({ parties, firebase, user });
+const mapStateToProps = ({ parties, fireboss, user }) => ({ parties, fireboss, user });
 const mapDispatchToProps = dispatch => ({
   setcurrentparty: party => dispatch(setCurrentParty(party)),
   setcurrentsong: song => dispatch(setCurrentSong(song)),

@@ -9,9 +9,11 @@ import parties from './parties';
 import currentParty from './currentParty';
 import personalQueue from './personalQueue';
 import djs from './djs';
+import fireboss from './fireboss'
 
 const rootReducer = combineReducers({
   firebase,
+  fireboss,
   user,
   messages,
   topTen,

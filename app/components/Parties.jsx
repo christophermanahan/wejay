@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {SelectField, MenuItem, RaisedButton, TextField} from 'material-ui';
+import {SelectField, MenuItem, RaisedButton, TextField, List, ListItem} from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
@@ -26,6 +26,12 @@ const DumbParties = props => {
     minWidth: "50%"
   };
 
+  let textFieldStyle = {
+    color: "#363836",
+    margin: "5px",
+    width: "98%"
+  }
+
   // partiesArr is an array with each index representing a party
   // each party has the following data [partyid, {name: '', location: ''}]
   let partiesArr = [];
@@ -37,20 +43,21 @@ const DumbParties = props => {
     <div className="party-container">
       <h2 className="party-header">Join</h2>
       <Row>
-        <SelectField
-            floatingLabelText="Select a Sweet Party"
-            value={partyId}
-            onChange={onPartySelect}
-          >
-        {partiesArr && partiesArr.map(party => {
-            return (<MenuItem key={party[0]}
-                              value={party[0]}
-                              primaryText={party[1].name}
-                              secondaryText={party[1].location}
-                              />)
-          })
-        }
-        </SelectField>
+        <List>
+          <ListItem
+            primaryText="Parties"
+            initiallyOpen={false}
+            primaryTogglesNestedList={true}
+            nestedItems={partiesArr && partiesArr.map(party => {
+              return (<ListItem key={party[0]}
+                                value={party[0]}
+                                primaryText={party[1].name}
+                                secondaryText={party[1].location}
+                                />)
+              })
+            }
+          />
+        </List>
       </Row>
       <RaisedButton
         className="party-btn"
@@ -64,12 +71,14 @@ const DumbParties = props => {
       <form onSubmit={onSubmit}>
         <TextField
           id="name"
+          style={textFieldStyle}
           floatingLabelText="Party Name"
-          />
+        />
         <TextField
           id="location"
+          style={textFieldStyle}
           floatingLabelText="Party Location"
-          />
+        />
         <RaisedButton
           className="party-btn"
           style={btnStyle}
@@ -77,7 +86,7 @@ const DumbParties = props => {
           labelColor="#ffffff"
           secondary={true}
           type="submit"
-          label="Create Your Own"
+          label="Start"
         />
        </form>
     </div>
@@ -94,11 +103,11 @@ class Parties extends Component {
     this.joinParty = this.joinParty.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.state = {
-      partyId: ''
+      partyId: '',
+      open: false
     };
 
   }
-
 
   joinParty(evt) {
     evt.preventDefault();

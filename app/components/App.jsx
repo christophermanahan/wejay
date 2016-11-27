@@ -10,6 +10,9 @@ import SongList from './SongList';
 import Djs from './djs'
 import { Tabs, Tab } from 'material-ui/Tabs';
 
+import { Row, Col } from 'react-flexbox-grid/lib/index';
+
+
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -33,7 +36,13 @@ const App = props => {
 					<Chat />
 			   </Tab>
 			 </Tabs>
-      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
+			 <div className="both-player-container">
+				 <Row bottom="xs">
+					 <Col xs="12">
+						 { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
+					 </Col>
+				 </Row>
+			 </div>
     </div>
 	)
 }

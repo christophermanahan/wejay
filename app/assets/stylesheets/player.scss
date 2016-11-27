@@ -1,0 +1,30 @@
+// .guest-player-text {
+// 	font-family: Roboto;
+// 	display: inline-block;
+// 	margin: 0px 15px 0px 15px;
+// }
+//
+// .guest-player-container {
+// 	position: absolute;
+// 	bottom: 1vh;
+// 	width: 98vw;
+// 	background: white;
+// 	display: block;
+// }
+
+.both-player-container {
+	position: absolute;
+	bottom: 0;
+	width: 100vw;
+	background: white;
+	display: block;
+  border: solid 1px;
+}
+
+#host-track-title {
+  font-family: Roboto;
+}
+
+#host-track-user {
+  font-family: Roboto;
+}

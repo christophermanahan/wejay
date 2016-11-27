@@ -25,11 +25,15 @@
   display: block;
   border: solid 1px; }
 
-#host-track-title {
-  font-family: Roboto; }
+#host-player {
+  font-family: Roboto;
+  font-size: 1em; }
 
-#host-track-user {
-  font-family: Roboto; }
+#loading-player {
+  font-size: 100px; }
+
+#player-buttons {
+  float: right; }
 
 #main-grid {
   width: 100vw; }

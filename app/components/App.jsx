@@ -36,13 +36,11 @@ const App = props => {
 					<Chat />
 			   </Tab>
 			 </Tabs>
-			 <div className="both-player-container">
-				 <Row bottom="xs">
-					 <Col xs="12">
-						 { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
-					 </Col>
-				 </Row>
-			 </div>
+			 <Row className="both-player-container" bottom="xs">
+				 <Col xs={12}>
+					 { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
+				 </Col>
+			 </Row>
     </div>
 	)
 }

@@ -17,22 +17,7 @@
 	width: 100%;
 }
 
-.guest-player-text {
-	font-family: Roboto;
-	display: inline-block;
-	margin: 0px 15px 0px 15px;
-}
-
-.guest-player-container {
-	position: absolute;
-	bottom: 1vh;
-	width: 98vw;
-	background: white;
-	display: block;
-}
-
 .song-list-container {
 	max-height: calc(100vh - 240px);
 	overflow: scroll;
 }
-

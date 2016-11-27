@@ -1,0 +1,28 @@
+#navbar-row {
+	background-color: #ec4616;
+	height: 4vh;
+	min-height: 70px;
+
+	h2, h3 {
+		font-family: Roboto;
+		margin: 0;
+		color: #363836;
+	}
+
+	h2 {
+		font-size: 1.2em;
+	}
+
+	h3 {
+		font-size: 1em;
+	}
+
+	icon {
+		color: #363836;
+	}
+}
+
+.navbar-col {
+	display: flex;
+	align-items: center;
+}

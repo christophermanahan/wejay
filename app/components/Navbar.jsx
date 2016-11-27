@@ -7,9 +7,12 @@ import { clearUser } from '../ducks/user';
 import {IconButton, MenuItem, IconMenu} from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
+import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import FontIcon from 'material-ui/FontIcon';
+
 
 
 /* -----------------    DUMB COMPONENT     ------------------ */
@@ -48,30 +51,56 @@ const DumbNavbar = props => {
 
   return (
     <div>
-      <h2>WeJay</h2>
-      <h3>Welcome DJ { user && user.displayName || 'Anon' }</h3>
-      <IconMenu
-        iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-      >
-        <MenuItem value="1">My Settings</MenuItem>
-        <MenuItem value="2" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
-        <MenuItem value="3" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
+      <Row id="navbar-row">
+        <Col xs={1} className="navbar-col">
+          <div>
+            <icon className="zmdi zmdi-album zmdi-hc-lg" />
+          </div>
+        </Col>
+        <Col xs={3} className="navbar-col">
+          <div>
+            <h2>weJay</h2>
+          </div>
+        </Col>
+        <Col xs={7} className="navbar-col">
+          <div>
+            <h3>Welcome DJ { user && user.displayName || 'Anon' }</h3>
+          </div>
+        </Col>
+        <Col xs={1} className="navbar-col">
+          <div>
+            <IconMenu
+              iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+              anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+              targetOrigin={{horizontal: 'right', vertical: 'top'}}
+              iconStyle={{ color: '#363836' }}
+              menuStyle={{ backgroundColor: '#ec4616' }}
 
-      </IconMenu>
-      <Dialog
-        title={`Are you sure you want to leave ${partyName}?`}
-        actions={leaveActions}
-        modal={false}
-        open={dialogOpenLeave}
-        onRequestClose={handleLeaveCancel}
-      />
-      <Dialog
-        title={`If you logout you will leave the party and lose your DJ points. Do you want to logout?`}
-        actions={logoutActions}
-        modal={false}
-        open={dialogOpenLogout}
-        onRequestClose={handleLogoutCancel}
-      />
+            >
+              <MenuItem value="1">My Settings</MenuItem>
+              <MenuItem value="2" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
+              <MenuItem value="3" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
+
+            </IconMenu>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Dialog
+          title={`Are you sure you want to leave ${partyName}?`}
+          actions={leaveActions}
+          modal={false}
+          open={dialogOpenLeave}
+          onRequestClose={handleLeaveCancel}
+        />
+        <Dialog
+          title={`If you logout you will leave the party and lose your DJ points. Do you want to logout?`}
+          actions={logoutActions}
+          modal={false}
+          open={dialogOpenLogout}
+          onRequestClose={handleLogoutCancel}
+        />
+      </Row>
     </div>
   );
 };

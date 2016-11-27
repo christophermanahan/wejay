@@ -32,9 +32,8 @@ firebase.initializeApp(config);
 export const onMainEnter = () => {
   // 1. Set Firebase on Store
   store.dispatch(setFirebase(firebase));
+  const { fireboss } = store.getState()
 
-  const fireboss = new Fireboss(firebase)
-  //console.log(fireboss)
   const dispatch = func => {
     return val => store.dispatch(func(val))
   }

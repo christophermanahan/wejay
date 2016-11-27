@@ -29,7 +29,7 @@ const DumbParties = props => {
 
   return (
     <div>
-      <h1>Party Time</h1>
+      <h2 className="party-header">Join a Rager</h2>
       <SelectField
           floatingLabelText="Select a Sweet Party"
           value={partyId}
@@ -45,7 +45,7 @@ const DumbParties = props => {
       }
       </SelectField>
       <RaisedButton label="Rage" onTouchTap={joinParty}/>
-      <h1>OR...</h1>
+      <h2 className="party-header">Create a Rager</h2>
       <form onSubmit={onSubmit}>
         <TextField
           id="name"

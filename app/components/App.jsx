@@ -7,7 +7,7 @@ import Navbar from './Navbar';
 import Chat from './Chat';
 import Search from './Search';
 import SongList from './SongList';
-import Djs from './djs'
+import Djs from './Djs';
 import { Tabs, Tab } from 'material-ui/Tabs';
 
 

@@ -1,3 +1,7 @@
+body {
+	margin: 0;
+}
+
 .login-btn-container {
 	margin-bottom: 8vh;
 }
@@ -36,3 +40,11 @@
 	overflow: scroll;
 }
 
+.party-header {
+	text-align: center;
+	font-family: Roboto;
+	background: rgba(0,100,100,0.1);
+	margin: 0;
+	padding: 10px;
+	box-shadow: 0px 3px 5px #888888;
+}

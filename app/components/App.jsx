@@ -42,7 +42,7 @@ const App = props => {
 				 </Tabs>
 				</Col>
 			</Row>
-			<Row bottom={xs} className="both-player-container">
+			<Row className="both-player-container">
 				<Col xs={12}>
 		      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
 	      </Col>

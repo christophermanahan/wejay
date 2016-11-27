@@ -54,7 +54,7 @@ const DumbNavbar = props => {
       <Row id="navbar-row">
         <Col xs={1} className="navbar-col">
           <div>
-            <icon className="zmdi zmdi-album zmdi-hc-4x" />
+            <icon className="zmdi zmdi-album zmdi-hc-lg" />
           </div>
         </Col>
         <Col xs={3} className="navbar-col">
@@ -74,6 +74,7 @@ const DumbNavbar = props => {
               anchorOrigin={{horizontal: 'right', vertical: 'top'}}
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
               iconStyle={{ color: '#363836' }}
+              menuStyle={{ backgroundColor: '#ec4616' }}
 
             >
               <MenuItem value="1">My Settings</MenuItem>

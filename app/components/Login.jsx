@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
+
+import { Row, Col } from 'react-flexbox-grid/lib/index';
+
 
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -9,10 +11,12 @@ import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import Signup from './Signup';
 
+import flexGrid from 'react-flexbox-grid';
+
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbLogin = props => {
-
+  console.log('flexGrid is', flexGrid)
   const { anonymousSignIn, signUp, logIn, clearError, showDialog, msg, showSignup, firebase, renderError } = props;
   const dialogActions = [
     <FlatButton
@@ -23,23 +27,33 @@ const DumbLogin = props => {
 
   return (
     <div>
-      <h1 className="login-txt">WEJAY</h1>
-        <div>
-          <Dialog
-            actions={dialogActions}
-            modal={false}
-            open={showDialog}
-            onRequestClose={clearError}
-          >{ msg }
-          </Dialog>
+      <Row>
+        <h1 className="login-txt" id="login-title">WEJAY</h1>
+        <Dialog
+          actions={dialogActions}
+          modal={false}
+          open={showDialog}
+          onRequestClose={clearError}
+        >{ msg }
+        </Dialog>
+      </Row>
+      <Row>
+        <Col xs={8} xsOffset={2}>
           <RaisedButton
             secondary={true}
             label="Sign Up"
             onTouchTap={signUp}
-            className="login-btn"
-            style={{display: "block"}}
+            buttonStyle={{
+              width: '50vw',
+              height: '10vh'
+            }}
+            labelStyle={{
+              fontSize: '58px'
+            }}
           />
+          </Col>
           { showSignup && <Signup firebase={firebase} renderError={renderError}/> }
+        </Row>
           <RaisedButton
             primary={true}
             label="Log In with Google"
@@ -64,7 +78,7 @@ const DumbLogin = props => {
             onTouchTap={anonymousSignIn}
           />
         </div>
-    </div>
+
   );
 }
 

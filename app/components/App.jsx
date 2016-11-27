@@ -27,7 +27,6 @@ const App = props => {
 					<SongList />
 			   </Tab>
 			   <Tab label="Live DJs" >
-					<Grid>
 					<Row>
 						<Col md={4}>
 							<h3>Will be DJs</h3>
@@ -36,7 +35,6 @@ const App = props => {
 							<h3>Another Column</h3>
 						</Col>
 					</Row>
-					</Grid>
 			   </Tab>
 			   <Tab label="My Tracks">
 					<Search />

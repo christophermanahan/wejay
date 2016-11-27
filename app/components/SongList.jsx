@@ -29,11 +29,12 @@ class SongList extends Component {
     topTenArr.push([topTenSong.vote_priority, topTenSong])
     topTenArr.sort((a, b) => (b[0] - a[0]))
   }
-
+  let rank = 1
   return (
     <div className="song-list-container">
       {topTenArr.length && topTenArr.map((song) => (
         song && <Song title={song[1].title}
+                      rank={rank++}
                       artist={song[1].artist}
                       DJ={song[1].DJ}
                       onFire={this.onFire}

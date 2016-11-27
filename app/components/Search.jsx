@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import {RaisedButton, TextField} from 'material-ui';
 import {fetchTrackResults} from '../ducks/searchResults';
-import Fireboss from '../utils/fireboss'
 
 import SearchResults from './SearchResults';
 
@@ -57,8 +56,7 @@ class Search extends Component {
 
   addToQueue(song_uri, title, sc_id, artist) {
     console.log('added something to playlist!', song_uri, title, sc_id);
-    const { user, currentParty, firebase } = this.props;
-    const fireboss = new Fireboss(firebase)
+    const { user, currentParty, fireboss } = this.props;
     const partyId = currentParty.id
     const { uid } = user;
     const dj_name = `DJ ${user.displayName || 'Anon'}`
@@ -114,7 +112,7 @@ class Search extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ searchResults, firebase, user, currentParty }) => ({ searchResults, firebase, user, currentParty });
+const mapStateToProps = ({ searchResults, fireboss, user, currentParty }) => ({ searchResults, fireboss, user, currentParty });
 const mapDispatchToProps = dispatch => ({
   tracksearch: (query) => dispatch(fetchTrackResults(query))
 });

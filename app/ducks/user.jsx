@@ -1,5 +1,3 @@
-// import axios from 'axios';
-
 /* -----------------    ACTIONS     ------------------ */
 
 const SET_USER = 'SET_USER';

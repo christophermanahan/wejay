@@ -34,6 +34,7 @@ export const onMainEnter = () => {
   store.dispatch(setFirebase(firebase));
 
   const fireboss = new Fireboss(firebase)
+  //console.log(fireboss)
   const dispatch = func => {
     return val => store.dispatch(func(val))
   }

@@ -12,6 +12,10 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/player-component-styling-#54
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -43,7 +47,7 @@ const App = props => {
 				 </Tabs>
 				</Col>
 			</Row>
-			<Row>
+			<Row bottom={xs} className="both-player-container">
 				<Col xs={12}>
 		      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
 	      </Col>

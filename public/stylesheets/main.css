@@ -1,0 +1,35 @@
+.login-btn-container {
+  margin-bottom: 8vh; }
+
+#login-title {
+  font-size: 80px;
+  font-family: Roboto;
+  text-align: center; }
+
+.signup-field {
+  margin: 0 auto; }
+
+#signup-container {
+  margin-bottom: 5vh;
+  width: 100%; }
+
+.song-list-container {
+  max-height: calc(100vh - 240px);
+  overflow: scroll; }
+
+.both-player-container {
+  position: absolute;
+  bottom: 0;
+  width: 100vw;
+  background: white;
+  display: block;
+  border: solid 1px; }
+
+#host-track-title {
+  font-family: Roboto; }
+
+#host-track-user {
+  font-family: Roboto; }
+
+#main-grid {
+  width: 100vw; }

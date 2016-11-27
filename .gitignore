@@ -12,3 +12,4 @@ npm-debug.log
 public/stylesheets/bundle.css
 public/stylesheets/bundle.css.map
 public/stylesheets/main.css
+app/components/Player.jsx

@@ -36,6 +36,8 @@ FIREBASE
   CLEAR party_djs (with that partyId)
 
   OTHER USERS
+    listener should live in the Server/admin
+
     send modal to them that theyve been kicked out and redirect to ChoosePartyPage
     GRAB from user_parties (all uid's that have that partyId)
       forEach initiate #1 REG USER LEAVES PARTY flow (above) with event listener
@@ -77,3 +79,19 @@ REG USER LOGS OUT (msg, are you sure you want to log out? you will leave the par
 
     #1 REG USER LEAVES PARTY flow (above) with event listener
     browserHistory push to login page
+
+
+    ---
+
+
+
+
+
+
+logout reg user...
+
+DIALOG
+  change actions/title depending on if logout vs leave party
+
+
+console.log i hit log out

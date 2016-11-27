@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
 import {SelectField, MenuItem, RaisedButton, TextField} from 'material-ui';
+import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
 
@@ -30,21 +31,29 @@ const DumbParties = props => {
   return (
     <div>
       <h2 className="party-header">Join a Rager</h2>
-      <SelectField
-          floatingLabelText="Select a Sweet Party"
-          value={partyId}
-          onChange={onPartySelect}
-        >
-      {partiesArr && partiesArr.map(party => {
-          return (<MenuItem key={party[0]}
-                            value={party[0]}
-                            primaryText={party[1].name}
-                            secondaryText={party[1].location}
-                            />)
-        })
-      }
-      </SelectField>
-      <RaisedButton label="Rage" onTouchTap={joinParty}/>
+      <Row>
+        <SelectField
+            floatingLabelText="Select a Sweet Party"
+            value={partyId}
+            onChange={onPartySelect}
+          >
+        {partiesArr && partiesArr.map(party => {
+            return (<MenuItem key={party[0]}
+                              value={party[0]}
+                              primaryText={party[1].name}
+                              secondaryText={party[1].location}
+                              />)
+          })
+        }
+        </SelectField>
+      </Row>
+      <RaisedButton
+        className="party-btn"
+        secondary={true}
+        fullWidth={true}
+        label="Rage"
+        onTouchTap={joinParty}
+      />
       <h2 className="party-header">Create a Rager</h2>
       <form onSubmit={onSubmit}>
         <TextField
@@ -55,7 +64,13 @@ const DumbParties = props => {
           id="location"
           floatingLabelText="Party Location"
           />
-        <RaisedButton type="submit" label="Create Your Own"/>
+        <RaisedButton
+          className="party-btn"
+          fullWidth={true}
+          secondary={true}
+          type="submit"
+          label="Create Your Own"
+        />
        </form>
     </div>
   );

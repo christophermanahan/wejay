@@ -24,23 +24,25 @@ class SongList extends Component {
   render() {
   const { topTen } = this.props;
   let topTenArr = [];
+  let rank = 1
+
   for (let song in topTen) {
     let topTenSong = Object.assign({}, topTen[song], {id: song})
-    topTenArr.push([topTenSong.vote_priority, topTenSong])
-    topTenArr.sort((a, b) => (b[0] - a[0]))
+    topTenArr.push(topTenSong)
   }
-  let rank = 1
+
+  topTenArr.sort((a, b) => (b.vote_priority - a.vote_priority))
   return (
     <div className="song-list-container">
       {topTenArr.length && topTenArr.map((song) => (
-        song && <Song title={song[1].title}
+        song && <Song title={song.title}
                       rank={rank++}
-                      artist={song[1].artist}
-                      DJ={song[1].DJ}
+                      artist={song.artist}
+                      DJ={song.DJ}
                       onFire={this.onFire}
                       onWater={this.onWater}
-                      id={song[1].id}
-                      key={song[1].id}
+                      id={song.id}
+                      key={song.id}
                 />
       ))}
     </div>

@@ -10,10 +10,6 @@ import SongList from './SongList';
 import Djs from './djs'
 import { Tabs, Tab } from 'material-ui/Tabs';
 
-import { Grid, Row, Col } from 'react-flexbox-grid';
-// testing if Row and Col actually render
-
-
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -28,13 +24,7 @@ const App = props => {
 					<SongList />
 			   </Tab>
 			   <Tab label="Live DJs" >
-					<Grid>
-					<Row>
-						<Col md={12}>
-							<Djs />
-						</Col>
-					</Row>
-					</Grid>
+						<Djs />
 			   </Tab>
 			   <Tab label="My Tracks">
 					<Search />

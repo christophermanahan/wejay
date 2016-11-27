@@ -21,13 +21,19 @@ const DumbParties = props => {
 
   //override material ui's inline style elements
   let btnStyle = {
-    minWidth: "50%"
+    minWidth: "50%",
+    margin: "1em"
   };
 
   let textFieldStyle = {
     color: "#363836",
     margin: "5px",
-    width: "98%"
+    width: "98%",
+    fontSize: "1.2em"
+  }
+
+  let listItemStyle = {
+    fontSize: "0.8em"
   }
 
   // partiesArr is an array with each index representing a party
@@ -41,13 +47,15 @@ const DumbParties = props => {
     <div className="party-container">
       <h2 className="party-header">Join</h2>
       <Row>
-        <List>
+        <List style={textFieldStyle}>
           <ListItem
+            style={textFieldStyle}
             primaryText="Parties"
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={partiesArr && partiesArr.map(party => {
-              return (<ListItem key={party[0]}
+              return (<ListItem style={listItemStyle}
+                                key={party[0]}
                                 value={party[0]}
                                 primaryText={party[1].name}
                                 secondaryText={party[1].location}

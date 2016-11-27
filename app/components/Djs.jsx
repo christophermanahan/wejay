@@ -51,22 +51,34 @@ class DjsComponent extends Component {
           <Col xs={12}>
             <Row>
               <Col xs={6}>
-                <h1>Your DJ Data</h1>
+                <p>Your DJ Data</p>
               </Col>
               <Col xs={6}>
-                <h1>{user.displayName}</h1>
+                <p>{djName}</p>
+                <p>Points: {djPoints}</p>
               </Col>
             </Row>
-            <form onSubmit={this.onSubmit}>
-              <label> DJ NAME --- </label>
-              <input value={this.state.value || ''} onChange={this.handleChange}></input>
-              <button type="submit">update my dj name</button>
-            </form>
+            <Row>
+              <Col xs={6}>
+                <p>DJ NAME</p>
+              </Col>
+              <Col xs={6}>
+                <form onSubmit={this.onSubmit}>
+                  <input value={this.state.value || ''} onChange={this.handleChange}></input>
+                  <button type="submit">update my dj name</button>
+                </form>
+              </Col>
+            </Row>
             <br />
-            <p>Points: {djPoints}</p>
-            <hr/>
-            <h1> Party DJs</h1>
-            <DjList djs={otherDjs}/>
+            <Row>
+              <Col xs={12}>
+                <p>Active DJs</p>
+                <hr/>
+              </Col>
+              <Col xs={12}>
+                <DjList djs={otherDjs}/>
+              </Col>
+            </Row>
           </Col>
         </Row>
     );

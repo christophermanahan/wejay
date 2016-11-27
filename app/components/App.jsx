@@ -7,6 +7,7 @@ import Navbar from './Navbar';
 import Chat from './Chat';
 import Search from './Search';
 import SongList from './SongList';
+import Djs from './djs'
 import { Tabs, Tab } from 'material-ui/Tabs';
 
 
@@ -23,8 +24,7 @@ const App = props => {
 					<SongList />
 			   </Tab>
 			   <Tab label="Live DJs" >
-					<h3>Will be DJs</h3>
-					<h3>Another Column</h3>
+						<Djs />
 			   </Tab>
 			   <Tab label="My Tracks">
 					<Search />

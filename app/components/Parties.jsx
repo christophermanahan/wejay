@@ -29,8 +29,8 @@ const DumbParties = props => {
   }
 
   return (
-    <div>
-      <h2 className="party-header">Join a Rager</h2>
+    <div className="party-container">
+      <h2 className="party-header">Join</h2>
       <Row>
         <SelectField
             floatingLabelText="Select a Sweet Party"
@@ -49,12 +49,13 @@ const DumbParties = props => {
       </Row>
       <RaisedButton
         className="party-btn"
-        secondary={true}
+        backgroundColor="#7aa095"
+        labelColor="#ffffff"
         fullWidth={true}
         label="Rage"
         onTouchTap={joinParty}
       />
-      <h2 className="party-header">Create a Rager</h2>
+      <h2 className="party-header">Create</h2>
       <form onSubmit={onSubmit}>
         <TextField
           id="name"
@@ -66,6 +67,8 @@ const DumbParties = props => {
           />
         <RaisedButton
           className="party-btn"
+          backgroundColor="#7aa095"
+          labelColor="#ffffff"
           fullWidth={true}
           secondary={true}
           type="submit"

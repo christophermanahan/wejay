@@ -35,10 +35,16 @@ body {
 /*-------------Parties-------------*/
 .party-header {
   font-family: Roboto;
-  background: linear-gradient(to right, rgba(0, 100, 100, 0.15), white);
+  color: #ffffff;
+  background: #363836;
   margin: 0;
   padding: 10px;
-  box-shadow: 0px 3px 5px #888888; }
+  box-shadow: 0px 3px 5px #888888;
+  text-align: center; }
 
 .party-btn {
   margin-bottom: 10px; }
+
+.party-container {
+  background: #dae2df;
+  min-height: 100vh; }

@@ -11,7 +11,7 @@ import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import Signup from './Signup';
 
-import flexGrid from 'react-flexbox-grid';
+import * as flexGrid from 'react-flexbox-grid';
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
@@ -28,32 +28,35 @@ const DumbLogin = props => {
   return (
     <div>
       <Row>
-        <h1 className="login-txt" id="login-title">WEJAY</h1>
-        <Dialog
-          actions={dialogActions}
-          modal={false}
-          open={showDialog}
-          onRequestClose={clearError}
-        >{ msg }
-        </Dialog>
+        <Col xs={12}>
+          <h1 className="login-txt" id="login-title">WEJAY</h1>
+          <Dialog
+            actions={dialogActions}
+            modal={false}
+            open={showDialog}
+            onRequestClose={clearError}
+          >{ msg }
+          </Dialog>
+        </Col>
       </Row>
       <Row>
-        <Col xs={8} xsOffset={2}>
+        <Col xs={6} xsOffset={3}>
           <RaisedButton
             secondary={true}
             label="Sign Up"
             onTouchTap={signUp}
-            buttonStyle={{
-              width: '50vw',
-              height: '10vh'
-            }}
             labelStyle={{
               fontSize: '58px'
             }}
           />
           </Col>
-          { showSignup && <Signup firebase={firebase} renderError={renderError}/> }
         </Row>
+        <Row>
+          <Col sm={8} xsOffset={2}>
+            { showSignup && <Signup firebase={firebase} renderError={renderError}/> }
+          </Col>
+        </Row>
+        <Row>
           <RaisedButton
             primary={true}
             label="Log In with Google"
@@ -77,6 +80,7 @@ const DumbLogin = props => {
             style={{display: "block"}}
             onTouchTap={anonymousSignIn}
           />
+          </Row>
         </div>
 
   );

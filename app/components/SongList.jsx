@@ -12,14 +12,13 @@ class SongList extends Component {
 
 
   onFire(songId) {
-    console.log(songId)
-    console.log('fire swag')
+    const { fireboss, currentParty } = this.props
+    fireboss.incrementVotePriority(currentParty.id, songId)
   }
 
   onWater(songId) {
-    console.log(songId)
-
-    console.log('water swag')
+    const { fireboss, currentParty } = this.props
+    fireboss.decrementVotePriority(currentParty.id, songId)
   }
 
   render() {
@@ -50,7 +49,7 @@ class SongList extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ firebase, topTen }) => ({ firebase, topTen });
+const mapStateToProps = ({ fireboss, currentParty, topTen }) => ({ fireboss, currentParty, topTen });
 const SongContainer = connect(mapStateToProps)(SongList);
 
 export default SongContainer;

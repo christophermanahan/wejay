@@ -15,7 +15,7 @@ export default props => {
   const { children } = props;
   return (
 	  <MuiThemeProvider>
-		  <Grid>
+		  <Grid id="main-grid">
 	      { children }
       </Grid>
 	  </MuiThemeProvider>

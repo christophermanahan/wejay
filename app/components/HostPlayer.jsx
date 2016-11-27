@@ -66,16 +66,20 @@ class CustomPlayer extends React.Component {
 
         return (
             <div>
-                <h2>{track.title}</h2>
-                <h3>{track.user.username}</h3>
+              <LinearProgress
+                  mode="determinate"
+                  value={(currentTime / duration) * 100 || 0 }
+              />
+
+                <h2 id="host-track-title">{track.title}</h2>
+                <h3 id="host-track-user">{track.user.username}</h3>
+                  <p>currentTime: {currentTime}</p>
+                  <p>duration: {duration}</p>
                 <IconButton
                     onClick={this.play}>
                     {!playing ? <PlayCircleOutline /> : <PauseCircleOutline />}
                 </IconButton>
-                <LinearProgress
-                    mode="determinate"
-                    value={(currentTime / duration) * 100 || 0 }
-                />
+
             </div>
         );
     }

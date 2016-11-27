@@ -12,11 +12,6 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/player-component-styling-#54
-
 
 /* -----------------    COMPONENT     ------------------ */
 

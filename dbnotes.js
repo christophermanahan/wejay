@@ -10,7 +10,8 @@ currentSong: {
 		title: str,
 		song_uri: str,
 		time_priority: 0,
-		vote_priority: 0
+		vote_priority: 0,
+		artwork_url: str
 	}
 }
 
@@ -24,7 +25,8 @@ topTen: {
 			title: str,
 			song_uri: str,
 			time_priority: 0,
-			vote_priority: 0
+			vote_priority: 0,
+			artwork_url: str
 		}
 	}
 }
@@ -38,7 +40,8 @@ shadowQueue: {
 			title: str,
 			song_uri: str,
 			time_priority: 0,
-			vote_priority: 0
+			vote_priority: 0,
+			artwork_url: str
 		}
 	}
 }
@@ -74,7 +77,7 @@ party_djs: {
 					uid: str,
 					dj_name: str,
 					artist: str,
-					title: str,
+					title: str
 					song_uri: str,
 					time_priority: 0,
 					vote_priority: 0

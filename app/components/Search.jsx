@@ -10,33 +10,34 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 import Snackbar from 'material-ui/Snackbar';
 
 
+const TextFieldStyle = {width: '60%'}
+const RaisedButtonStyle = {width: '20%', marginLeft: '20px'}
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbSearch = props => {
   const { onType, trackSearch } = props;
   return (
-    <div>
       <Row>
         <Col xs={12}>
           <form onSubmit={ trackSearch }>
-          <Row>
-            <Col xs={12}>
-              <TextField
-                onChange={ onType }
-                floatingLabelText="Search By Track"
-              />
-            </Col>
-          </Row>
-          <Row>
-             <Col xs={5} xsOffset={7}>
-               <RaisedButton label="Search" onTouchTap={ trackSearch }/>
-             </Col>
-          </Row>
+            <Row>
+              <Col xs={12}>
+                <TextField
+                  style={TextFieldStyle}
+                  onChange={ onType }
+                  floatingLabelText="Search By Track"
+                />
+                <RaisedButton
+                  label="Search"
+                  onTouchTap={ trackSearch }
+                  style={RaisedButtonStyle}
+                />
+              </Col>
+            </Row>
            </form>
         </Col>
       </Row>
-    </div>
   );
 };
 
@@ -131,12 +132,14 @@ class Search extends Component {
     return (
         <div>
           <Row>
-            <Col xs={8} xsOffset={2}>
+            <Col xs={10} xsOffset={1}>
               <DumbSearch
                 onType={ this.onType }
                 trackSearch={ this.trackSearch }
               />
-              <Snackbar 
+            </Col>
+            <Col xs={8} xsOffset={2}>
+              <Snackbar
                 open={this.state.snackbarOpen}
                 message={this.state.snackbarTitle + this.state.songDestination}
                 autoHideDuration={3000}

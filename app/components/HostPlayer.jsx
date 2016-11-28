@@ -24,6 +24,7 @@ class CustomPlayer extends React.Component {
         super(props);
         this.play = this.play.bind(this);
         this.triggerFirebase = this.triggerFirebase.bind(this);
+        this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
 
         // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
         const { soundCloudAudio } = this.props;
@@ -47,6 +48,10 @@ class CustomPlayer extends React.Component {
     }
 
 
+    //Todo-->FIX: Custom Player renders before track loads
+
+
+
     play() {
         let { soundCloudAudio, playing } = this.props;
         if (playing) {
@@ -65,23 +70,37 @@ class CustomPlayer extends React.Component {
         firebase.database().ref('parties').child(partyId).update({needSong: true})
     }
 
+    mapDurationSecsToMins(num) {
+      let mins = Math.floor(num / 60);
+      let secs = num % 60;
+      return `${mins}:${secs}`
+    }
+
+
+
+
+
+
+
     render() {
-        console.log('props in custom player', this.props)
+        // console.log('props in custom player', this.props)
         let { track, playing, soundCloudAudio, currentTime, duration } = this.props;
+
+        duration = Math.floor(duration)
+        currentTime = Math.floor(currentTime)
+        // console.log("BEFORE: ", duration);
+        duration = this.mapDurationSecsToMins(duration)
+        // console.log("After: ", duration);
+
+
         if (!track) {
-            return <div><i className="zmdi zmdi-soundcloud"></i></div>;
-
-
+            return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
         }
-        console.log("TRACK: ", track);
 
         let progBarStyle = {
           backgroundColor: "#EC4616",
           height: ".3em"
         }
-
-        //Todo-->FIX: Custom Player renders before track loads
-
         let songInfoColStyle = {
           fontFamily: "Roboto",
           fontSize: "0.5em"
@@ -91,16 +110,19 @@ class CustomPlayer extends React.Component {
           marginTop: "0.8em",
           marginBottom: "0.1em"
         }
-        let titleAndArtistStyle = {
+        let titleStyle = {
+          fontFamily: "Carme",
+          marginTop: "0em",
+          marginBottom: "0.1em"
+        }
+        let artistStyle = {
           fontFamily: "Carme",
           marginTop: "0.3em",
           marginBottom: "0.1em"
         }
-        let playerIconStyle = { //WHY ARENT YOU WORKING ?!?!
+        let playerIconStyle = {
           marginTop: "0.4em"
         }
-
-
         const styles = {
           largeIcon: {
             width: 35,
@@ -125,13 +147,13 @@ class CustomPlayer extends React.Component {
 
                 <Row>
                 <Col style={playerIconStyle} xsOffset={1} xs={2}>
-                  {(!track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x"></i> : <img src={track.artwork_url} /> }
+                  {(!track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={track.artwork_url} /> }
                 </Col>
                 <Col xs={5} style={songInfoColStyle}>
 
-                  <p style={durationStyle}> {Math.floor(currentTime)} / {Math.floor(duration)}</p>
-                  <h2 style={titleAndArtistStyle}>{track.title}</h2>
-                  <h3 style={titleAndArtistStyle}>{track.user.username}</h3>
+                  <p style={durationStyle}> {currentTime} / {duration}</p>
+                  <h2 style={titleStyle}>{track.title}</h2>
+                  <h3 style={artistStyle}>{track.user.username}</h3>
 
                 </Col>
 

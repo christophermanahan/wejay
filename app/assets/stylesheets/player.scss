@@ -16,7 +16,13 @@
 	position: fixed;
 	bottom: 0;
 	width: 100vw;
-	height: 10vh;
+	height: 12vh;
 	background: white;
 	display: inline-block;
+}
+
+#playerImgStyle {
+  width: 3em;
+  height: 3em;
+	margin-top: 0.2em;
 }

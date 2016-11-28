@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {SelectField, MenuItem, RaisedButton, TextField, List, ListItem} from 'material-ui';
+import {SelectField, MenuItem, RaisedButton, TextField, List, ListItem, makeSelectable} from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
@@ -50,13 +50,13 @@ const DumbParties = props => {
       <h2 className="party-header">Join</h2>
       <Row>
         <List style={textFieldStyle}>
-          <ListItem
+          <MenuItem
             primaryText="Parties"
             style={listItemStyle}
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={partiesArr && partiesArr.map(party => {
-              return (<ListItem onTouchTap={onPartySelect}
+              return (<MenuItem onTouchTap={onPartySelect}
                                 style={listItemStyle}
                                 key={party[0]}
                                 value={party[0]}
@@ -187,7 +187,8 @@ class Parties extends Component {
   }
 
   onPartySelect(evt, index, value) {
-    console.log('here')
+    console.log(evt.target.value)
+    console.log(value)
     const partyId = value;
     this.setState({ partyId });
   }

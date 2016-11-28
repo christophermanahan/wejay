@@ -18,7 +18,6 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 const App = props => {
 	const { uid, party_id } = props;
 
-
 	const selectTabInkBarStyle = {
 		backgroundColor:"#EC4616",
 		height: ".3em"

@@ -25,36 +25,38 @@ const App = props => {
 	};
 
 	return (
-		<div>
-			<Row >
-				<Col xs={12}>
-		      <Navbar />
-	      </Col>
-	    </Row>
-	    <Row>
-				<Col xs={12}>
-		     <Tabs inkBarStyle={selectTabInkBarStyle}>
-				   <Tab label="Top Ten" >
-						<SongList />
-				   </Tab>
-				   <Tab label="Live DJs" >
-							<Djs />
-				   </Tab>
-				   <Tab label="Add Song">
-						<Search />
-				   </Tab>
-				   <Tab label="My Songs">
-						<MySongs />
-				   </Tab>
-				 </Tabs>
-				</Col>
-			</Row>
-			<Row className="both-player-container" bottom="xs">
-				<Col xs={12}>
-		      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
-	      </Col>
-	    </Row>
-    </div>
+		<Row className="app-no-margin">
+			<Col xs={12}>
+				<Row >
+					<Col xs={12}>
+			      <Navbar />
+		      </Col>
+		    </Row>
+		    <Row>
+					<Col xs={12} className="app-no-margin">
+			     <Tabs inkBarStyle={selectTabInkBarStyle}>
+					   <Tab label="Top Ten" >
+							<SongList />
+					   </Tab>
+					   <Tab label="Live DJs" >
+								<Djs />
+					   </Tab>
+					   <Tab label="Add Song">
+							<Search />
+					   </Tab>
+					   <Tab label="My Songs">
+							<MySongs />
+					   </Tab>
+					 </Tabs>
+					</Col>
+				</Row>
+				<Row className="both-player-container" bottom="xs">
+					<Col xs={12}>
+			      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
+		      </Col>
+		    </Row>
+	    </Col>
+    </Row>
 	)
 }
 

@@ -19,17 +19,9 @@ const App = props => {
 	const { uid, party_id } = props;
 
 
-//override material ui's inline style elements
-	let tabsStyle = {
-    fontSize: "1.2em",
-		marginBottom: "0.5em",
-		marginTop: "0.5em"
-  };
-
-
 	let selectTabInkBarStyle = {
 		backgroundColor:"#EC4616",
-		height: "0.4em"
+		height: ".3em"
 	}
 
 	return (
@@ -42,16 +34,16 @@ const App = props => {
 	    <Row>
 				<Col xs={12}>
 		     <Tabs inkBarStyle={selectTabInkBarStyle}>
-				   <Tab style={tabsStyle} label="Top Ten" >
+				   <Tab label="Top Ten" >
 						<SongList />
 				   </Tab>
-				   <Tab style={tabsStyle} label="Live DJs" >
+				   <Tab label="Live DJs" >
 							<Djs />
 				   </Tab>
-				   <Tab style={tabsStyle} label="My Tracks">
+				   <Tab label="My Tracks">
 						<Search />
 				   </Tab>
-				   <Tab style={tabsStyle} label="Chat">
+				   <Tab label="Chat">
 						<Chat />
 				   </Tab>
 				 </Tabs>

@@ -21,23 +21,20 @@ const App = props => {
 
 //override material ui's inline style elements
 	let tabsStyle = {
-    fontSize: "40px",
-		marginBottom: "20px",
-		marginTop: "20px"
+    fontSize: "1.2em",
+		marginBottom: "0.5em",
+		marginTop: "0.5em"
   };
 
-	let navBarStyle = {
-    paddingBottom: "100px"
-  };
 
 	let selectTabInkBarStyle = {
 		backgroundColor:"#EC4616",
-		height: "12px"
+		height: "0.4em"
 	}
 
 	return (
-		<div style={navBarStyle}>
-			<Row>
+		<div>
+			<Row >
 				<Col xs={12}>
 		      <Navbar />
 	      </Col>

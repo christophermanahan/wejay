@@ -20,7 +20,7 @@ import FlatButton from 'material-ui/FlatButton';
 const DumbNavbar = props => {
   const { dialogOpenLeave, dialogOpenLogout, user, handleOpenLeaveDialog, handleOpenLogoutDialog, handleCancel, handleLeaveParty, handleLogout, partyName, handleLeaveCancel, handleLogoutCancel } = props;
 
-  const menuItemStyle = {fontSize: '1.4em', padding: '10px'};
+  const menuItemStyle = {fontSize: '1em', padding: '10px'};
   const dialogTitleStyle = {fontSize: '1.5em', lineHeight: '1.2em', color: '#363836'};
   const actionStyle = {width: '7em', height: '2.5em'};
   const actionLabelStyleCancel = {fontSize: '1em', color: '#7aa095'};
@@ -63,14 +63,6 @@ const DumbNavbar = props => {
     ];
 
 
-  //override material ui's inline style elements
-	let logoTextStyle = {
-    fontSize: "140px",
-    marginBottom: "20px"
-  };
-  let logoImgStyle = {
-    fontSize: "240px"
-  };
 
 
   return (
@@ -78,12 +70,12 @@ const DumbNavbar = props => {
       <Row id="navbar-row">
         <Col xs={3} className="navbar-col">
           <div className="navbar-icon">
-            <icon style={logoImgStyle} className="zmdi zmdi-album zmdi-hc-lg" />
+            <icon className="zmdi zmdi-album zmdi-hc-lg" />
           </div>
         </Col>
         <Col xs={8} className="navbar-col">
           <div>
-            <h2 style={logoTextStyle}>weJay</h2>
+            <h2>weJay</h2>
           </div>
         </Col>
         <Col xs={1} className="navbar-col">
@@ -92,7 +84,7 @@ const DumbNavbar = props => {
               iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
               anchorOrigin={{horizontal: 'right', vertical: 'top'}}
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
-              iconStyle={{ color: '#363836', width: '60px', height: '60px' }}
+              iconStyle={{ color: '#363836', width: '70px', height: '70px', paddingRight: "50px" }}
               menuStyle={{ backgroundColor: '#ec4616', width: '8em' }}
 
             >

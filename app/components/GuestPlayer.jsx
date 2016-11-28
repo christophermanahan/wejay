@@ -70,17 +70,7 @@ class GuestPlayer extends React.Component {
           marginTop: "0.2em",
           fontSize: "2.3em"
         }
-        const styles = {
-          largeIcon: {
-            width: 35,
-            height: 35,
-          },
-          buttonStyle: {
-            width: 50,
-            height: 50,
-            padding: 5,
-          },
-        };
+
 
 
         return (

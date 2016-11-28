@@ -77,20 +77,14 @@ class CustomPlayer extends React.Component {
     }
 
 
-
-
-
-
-
     render() {
         // console.log('props in custom player', this.props)
         let { track, playing, soundCloudAudio, currentTime, duration } = this.props;
 
         duration = Math.floor(duration)
         currentTime = Math.floor(currentTime)
-        // console.log("BEFORE: ", duration);
-        duration = this.mapDurationSecsToMins(duration)
-        // console.log("After: ", duration);
+        let displayDuration = this.mapDurationSecsToMins(duration)
+
 
 
         if (!track) {
@@ -151,7 +145,7 @@ class CustomPlayer extends React.Component {
                 </Col>
                 <Col xs={5} style={songInfoColStyle}>
 
-                  <p style={durationStyle}> {currentTime} / {duration}</p>
+                  <p style={durationStyle}> {currentTime} / {displayDuration}</p>
                   <h2 style={titleStyle}>{track.title}</h2>
                   <h3 style={artistStyle}>{track.user.username}</h3>
 

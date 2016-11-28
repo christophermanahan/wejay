@@ -19,7 +19,6 @@ const App = props => {
 	const { uid, party_id } = props;
 	return (
 		<div>
-<<<<<<< HEAD
 			<Row>
 				<Col xs={12}>
 		      <Navbar />
@@ -48,7 +47,6 @@ const App = props => {
 		      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
 	      </Col>
 	    </Row>
-=======
       <Navbar />
 	     <Tabs>
 			   <Tab label="Top Ten" >
@@ -69,7 +67,6 @@ const App = props => {
 					 { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
 				 </Col>
 			 </Row>
->>>>>>> master
     </div>
 	)
 }

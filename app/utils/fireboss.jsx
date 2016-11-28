@@ -61,6 +61,7 @@ Fireboss.prototype.addingPartyDJ = function(partyId, user) {
   return this.database.ref('party_djs').child(partyId).child(user.uid)
          .set({
             dj_points: 0,
+            uid: user.uid,
             dj_name: `DJ ${user.displayName || 'Rando'}`,
             personal_queue: {}
           })

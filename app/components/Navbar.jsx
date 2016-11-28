@@ -20,7 +20,7 @@ import FlatButton from 'material-ui/FlatButton';
 const DumbNavbar = props => {
   const { dialogOpenLeave, dialogOpenLogout, user, handleOpenLeaveDialog, handleOpenLogoutDialog, handleCancel, handleLeaveParty, handleLogout, partyName, handleLeaveCancel, handleLogoutCancel } = props;
 
-  const menuItemStyle = {fontSize: '1em', padding: '10px'};
+  const menuItemStyle = {fontSize: '1em'};
   const dialogTitleStyle = {fontSize: '1.5em', lineHeight: '1.2em', color: '#363836'};
   const actionStyle = {width: '7em', height: '2.5em'};
   const actionLabelStyleCancel = {fontSize: '1em', color: '#7aa095'};
@@ -68,9 +68,9 @@ const DumbNavbar = props => {
   return (
     <div>
       <Row id="navbar-row">
-        <Col xs={3} className="navbar-col">
-          <div className="navbar-icon">
-            <icon className="zmdi zmdi-album zmdi-hc-lg" />
+        <Col xs={2} className="navbar-col">
+          <div className="navbar-icon-container">
+            <icon id="album-icon" className="zmdi zmdi-album zmdi-hc-4x" />
           </div>
         </Col>
         <Col xs={8} className="navbar-col">
@@ -79,12 +79,12 @@ const DumbNavbar = props => {
           </div>
         </Col>
         <Col xs={1} className="navbar-col">
-          <div className="navbar-icon">
+          <div className="navbar-icon-container">
             <IconMenu
               iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
               anchorOrigin={{horizontal: 'right', vertical: 'top'}}
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
-              iconStyle={{ color: '#363836', width: '70px', height: '70px', paddingRight: "50px" }}
+              iconStyle={{ color: '#363836', height: '50px', width: '50px' }}
               menuStyle={{ backgroundColor: '#ec4616', width: '8em' }}
 
             >

@@ -11,7 +11,7 @@ import Audiotrack from 'material-ui/svg-icons/image/audiotrack';
 /* -----------------    DUMB COMPONENTS     ------------------ */
 
 const SingleSong = props => {
-  const { title, permalink_url, artist, addToQueue, sc_id } = props;
+  const { title, permalink_url, artist, addToQueue, artwork_url } = props;
   return (
     <div>
 			<ListItem
@@ -19,7 +19,7 @@ const SingleSong = props => {
 				secondaryText={artist}
 				leftAvatar={<Avatar icon={<Audiotrack />}/>}
 				rightIcon={<PlaylistAdd />}
-				onTouchTap={ () => addToQueue(permalink_url, title, sc_id, artist) }
+				onTouchTap={ () => addToQueue(permalink_url, title, artist, artwork_url) }
 			/>
     </div>
   );
@@ -37,11 +37,12 @@ const SearchResults = props => {
 				''
 			}
       { searchResults && searchResults.map(song => (
+
         <SingleSong
 					addToQueue={addToQueue}
 					title={song.title}
 					key={song.id}
-					sc_id={song.id}
+					artwork_url={song.artwork_url}
 					permalink_url={song.permalink_url}
 					artist={song.user.username}
         />

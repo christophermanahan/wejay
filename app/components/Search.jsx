@@ -23,7 +23,6 @@ const DumbSearch = props => {
 };
 
 
-
 /* -----------------    STATEFUL REACT COMPONENT     ------------------ */
 
 class Search extends Component {
@@ -32,7 +31,7 @@ class Search extends Component {
 
     this.state = {
       query: ''
-    }
+    };
 
     this.onType = this.onType.bind(this);
     this.trackSearch = this.trackSearch.bind(this);
@@ -54,17 +53,16 @@ class Search extends Component {
     tracksearch(query);
   }
 
-  addToQueue(song_uri, title, sc_id, artist) {
-    console.log('added something to playlist!', song_uri, title, sc_id);
+  addToQueue(song_uri, title, artist, artwork_url) {
     const { user, currentParty, fireboss } = this.props;
-    const partyId = currentParty.id
+    const partyId = currentParty.id;
     const { uid } = user;
-    const dj_name = `DJ ${user.displayName || 'Anon'}`
-    const song = { song_uri, title, artist, dj_name, uid, time_priority: 0, vote_priority: 0};
+    const { dj_name } = this.props.djs[uid];
+    const song = { song_uri, title, artist, artwork_url, uid, dj_name, time_priority: 0, vote_priority: 0};
 
-    const gettingCurrentSong = fireboss.gettingPartyItemSnapshot(partyId, 'current_song')
+    const gettingCurrentSong = fireboss.gettingPartyItemSnapshot(partyId, 'current_song');
     const gettingTopTen = fireboss.gettingPartyItemSnapshot(partyId, 'top_ten')
-    const gettingShadowQueue = fireboss.gettingPartyItemSnapshot(partyId, 'shadow_queue')
+    const gettingShadowQueue = fireboss.gettingPartyItemSnapshot(partyId, 'shadow_queue');
 
     Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
     .then(results => {
@@ -80,20 +78,20 @@ class Search extends Component {
         }
       }
 
-      if(!currentSongVal) {
-        fireboss.setCurrentSong(partyId, song)
+      if (!currentSongVal) {
+        fireboss.setCurrentSong(partyId, song);
       } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
-        fireboss.addToPartyQueue(partyId, 'top_ten', song)
+        fireboss.addToPartyQueue(partyId, 'top_ten', song);
       } else if (!shadowQueueVal || !userSongInShadowQueue) {
-        fireboss.addToPartyQueue(partyId, 'shadow_queue', song)
+        fireboss.addToPartyQueue(partyId, 'shadow_queue', song);
       } else {
-        fireboss.addToPersonalQueue(partyId, user, song)
+        fireboss.addToPersonalQueue(partyId, user, song);
       }
     });
   }
 
   render() {
-    const { searchResults } = this.props
+    const { searchResults } = this.props;
     return (
         <div>
           <DumbSearch
@@ -112,7 +110,7 @@ class Search extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ searchResults, fireboss, user, currentParty }) => ({ searchResults, fireboss, user, currentParty });
+const mapStateToProps = ({ searchResults, fireboss, user, currentParty, djs }) => ({ searchResults, fireboss, user, currentParty, djs });
 const mapDispatchToProps = dispatch => ({
   tracksearch: (query) => dispatch(fetchTrackResults(query))
 });

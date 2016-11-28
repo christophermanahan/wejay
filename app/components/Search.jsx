@@ -5,19 +5,34 @@ import {fetchTrackResults} from '../ducks/searchResults';
 
 import SearchResults from './SearchResults';
 
+import { Row, Col } from 'react-flexbox-grid/lib/index';
+
+
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbSearch = props => {
   const { onType, trackSearch } = props;
   return (
     <div>
-      <form onSubmit={ trackSearch }>
-        <TextField
-          onChange={ onType }
-          floatingLabelText="Search By Track"
-        />
-         <RaisedButton label="Search" onTouchTap={ trackSearch }/>
-       </form>
+      <Row>
+        <Col xs={12}>
+          <form onSubmit={ trackSearch }>
+          <Row>
+            <Col xs={12}>
+              <TextField
+                onChange={ onType }
+                floatingLabelText="Search By Track"
+              />
+            </Col>
+          </Row>
+          <Row>
+             <Col xs={5} xsOffset={7}>
+               <RaisedButton label="Search" onTouchTap={ trackSearch }/>
+             </Col>
+          </Row>
+           </form>
+        </Col>
+      </Row>
     </div>
   );
 };
@@ -80,12 +95,16 @@ class Search extends Component {
 
       if (!currentSongVal) {
         fireboss.setCurrentSong(partyId, song);
+        console.log(`added ${title} to Current Song!`)
       } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
         fireboss.addToPartyQueue(partyId, 'top_ten', song);
+        console.log(`added ${title} to Top Ten!`)
       } else if (!shadowQueueVal || !userSongInShadowQueue) {
         fireboss.addToPartyQueue(partyId, 'shadow_queue', song);
+        console.log(`added ${title} to Suggestions!`)
       } else {
         fireboss.addToPersonalQueue(partyId, user, song);
+        console.log(`added ${title} to My Songs!`)
       }
     });
   }
@@ -94,14 +113,20 @@ class Search extends Component {
     const { searchResults } = this.props;
     return (
         <div>
-          <DumbSearch
-            onType={ this.onType }
-            trackSearch={ this.trackSearch }
-          />
-          <SearchResults
-            searchResults={ searchResults }
-            addToQueue={ this.addToQueue }
-          />
+          <Row>
+            <Col xs={8} xsOffset={2}>
+              <DumbSearch
+                onType={ this.onType }
+                trackSearch={ this.trackSearch }
+              />
+            </Col>
+            <Col xs={12}>
+              <SearchResults
+                searchResults={ searchResults }
+                addToQueue={ this.addToQueue }
+              />
+            </Col>
+          </Row>
         </div>
     );
   }

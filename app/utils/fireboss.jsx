@@ -62,6 +62,7 @@ Fireboss.prototype.addingPartyDJ = function(partyId, user) {
          .set({
             dj_points: 0,
             uid: user.uid,
+            photo: user.photoURL || "https://thumbnailer.mixcloud.com/unsafe/318x318/extaudio/0/9/b/f/ce50-0b29-40a3-a31b-95b1b9b38c5c",
             dj_name: `DJ ${user.displayName || 'Rando'}`,
             personal_queue: {}
           })

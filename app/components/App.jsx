@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import HostPlayer from './HostPlayer';
 import GuestPlayer from './GuestPlayer';
 import Navbar from './Navbar';
-import Chat from './Chat';
+import MySongs from './MySongs';
 import Search from './Search';
 import SongList from './SongList';
 import Djs from './Djs';
@@ -19,10 +19,10 @@ const App = props => {
 	const { uid, party_id } = props;
 
 
-	let selectTabInkBarStyle = {
+	const selectTabInkBarStyle = {
 		backgroundColor:"#EC4616",
 		height: ".3em"
-	}
+	};
 
 	return (
 		<div>
@@ -40,11 +40,11 @@ const App = props => {
 				   <Tab label="Live DJs" >
 							<Djs />
 				   </Tab>
-				   <Tab label="My Tracks">
+				   <Tab label="Add Song">
 						<Search />
 				   </Tab>
-				   <Tab label="Chat">
-						<Chat />
+				   <Tab label="My Songs">
+						<MySongs />
 				   </Tab>
 				 </Tabs>
 				</Col>

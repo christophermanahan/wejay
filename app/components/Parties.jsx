@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {SelectField, MenuItem, RaisedButton, TextField, List, ListItem} from 'material-ui';
+import {SelectField, MenuItem, RaisedButton, TextField, List, ListItem, makeSelectable} from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
@@ -22,20 +22,15 @@ const DumbParties = props => {
   //override material ui's inline style elements
   let btnStyle = {
     minWidth: "50%",
-    margin: "1em",
-    fontSize: "0.8em"
+    height: "1.4em"
   };
 
   let textFieldStyle = {
     color: "#363836",
-    margin: "5px",
-    width: "98%",
-    fontSize: "1em"
+    width: "98%"
   }
 
-  let listItemStyle = {
-    fontSize: "1em"
-  }
+  let listItemStyle = {}
 
   // partiesArr is an array with each index representing a party
   // each party has the following data [partyid, {name: '', location: ''}]
@@ -51,13 +46,13 @@ const DumbParties = props => {
         <List style={textFieldStyle}>
           <ListItem
             primaryText="Parties"
-            ListStyle={listItemStyle}
+            style={listItemStyle}
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={partiesArr && partiesArr.map(party => {
-              return (<ListItem nestedListStyle={listItemStyle}
+              return (<MenuItem onTouchTap={() => onPartySelect(party[0])}
+                                style={listItemStyle}
                                 key={party[0]}
-                                value={party[0]}
                                 primaryText={party[1].name}
                                 secondaryText={party[1].location}
                                 />)
@@ -117,6 +112,7 @@ class Parties extends Component {
   }
 
   joinParty(evt) {
+    console.log('also here')
     evt.preventDefault();
     const { user, fireboss, setcurrentparty, setcurrentsong,
             settopten, setdjs, setpersonalqueue, setmessages } = this.props;
@@ -178,8 +174,8 @@ class Parties extends Component {
       });
   }
 
-  onPartySelect(evt, index, value) {
-    const partyId = value;
+  onPartySelect(partyId) {
+    console.log(partyId);
     this.setState({ partyId });
   }
 

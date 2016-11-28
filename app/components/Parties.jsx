@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {SelectField, MenuItem, RaisedButton, TextField, List, ListItem} from 'material-ui';
+import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox} from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
@@ -21,20 +21,21 @@ const DumbParties = props => {
 
   //override material ui's inline style elements
   let btnStyle = {
-    minWidth: "50%",
-    margin: "1em",
-    fontSize: "0.8em"
+    minWidth: "50%"
   };
 
   let textFieldStyle = {
     color: "#363836",
-    margin: "5px",
     width: "98%",
-    fontSize: "1em"
+    margin: "0.2em"
   }
 
   let listItemStyle = {
     fontSize: "1em"
+  }
+
+  let nestedListItemStyle = {
+    right: "1em"
   }
 
   // partiesArr is an array with each index representing a party
@@ -51,16 +52,20 @@ const DumbParties = props => {
         <List style={textFieldStyle}>
           <ListItem
             primaryText="Parties"
-            ListStyle={listItemStyle}
+            style={listItemStyle}
             initiallyOpen={false}
             primaryTogglesNestedList={true}
-            nestedItems={partiesArr && partiesArr.map(party => {
-              return (<ListItem nestedListStyle={listItemStyle}
-                                key={party[0]}
-                                value={party[0]}
-                                primaryText={party[1].name}
-                                secondaryText={party[1].location}
-                                />)
+            nestedItems={
+              partiesArr && partiesArr.map(party => {
+                return (
+                  <MenuItem
+                    className="party-nested-item"
+                    onClick={() => onPartySelect(party[0])}
+                    style={nestedListItemStyle}
+                    key={party[0]}
+                    primaryText={party[1].name}
+                    secondaryText={party[1].location}
+                  />)
               })
             }
           />
@@ -68,6 +73,7 @@ const DumbParties = props => {
       </Row>
       <RaisedButton
         className="party-btn"
+        primary={true}
         style={btnStyle}
         backgroundColor="#7aa095"
         labelColor="#ffffff"
@@ -89,9 +95,8 @@ const DumbParties = props => {
         <RaisedButton
           className="party-btn"
           style={btnStyle}
-          backgroundColor="#7aa095"
+          backgroundColor="#ec4616"
           labelColor="#ffffff"
-          secondary={true}
           type="submit"
           label="Start"
         />
@@ -178,8 +183,8 @@ class Parties extends Component {
       });
   }
 
-  onPartySelect(evt, index, value) {
-    const partyId = value;
+  onPartySelect(partyId) {
+    console.log(partyId)
     this.setState({ partyId });
   }
 

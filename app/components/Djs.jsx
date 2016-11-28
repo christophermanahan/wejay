@@ -28,32 +28,33 @@ class DjsComponent extends Component {
   componentWillReceiveProps(nextProps) {
     const { djs, user } = nextProps;
     let djName = djs[user.uid] && djs[user.uid].dj_name;
-    this.setState({value: djName, showEditor: this.state.showEditor });
+    this.setState({value: djName});
   }
 
   toggleEditor(evt) {
     evt.preventDefault();
-    this.setState({
-      value: this.state.value,
-      showEditor: !this.state.showEditor
-    })
+    this.setState({showEditor: !this.state.showEditor})
   }
 
   onSubmit(evt) {
     evt.preventDefault();
     const { firebase, currentParty, user } = this.props
+    this.setState({showEditor: false})
     firebase.database().ref('party_djs').child(currentParty.id).child(user.uid)
-    .update({dj_name: this.state.value, showEditor: false })
+    .update({dj_name: this.state.value})
+
+
   }
 
   handleChange(evt) {
     evt.preventDefault();
-    this.setState({value: evt.target.value, showEditor: this.state.showEditor })
+    this.setState({value: evt.target.value})
   }
 
 
   render() {
     const { djs, user } = this.props;
+    console.log('photo', user.photoURL)
     let djArr = []
     for (let dj in djs) { djArr.push(djs[dj]) }
     djArr.sort((a, b) => (b.dj_points - a.dj_points))

@@ -51,12 +51,12 @@ const DumbNavbar = props => {
   return (
     <div>
       <Row id="navbar-row">
-        <Col xs={1} className="navbar-col">
+        <Col xs={2} className="navbar-col">
           <div className="navbar-icon">
             <icon className="zmdi zmdi-album zmdi-hc-lg" />
           </div>
         </Col>
-        <Col xs={10} className="navbar-col">
+        <Col xs={8} className="navbar-col">
           <div>
             <h2>weJay</h2>
           </div>

@@ -4,7 +4,6 @@ import LinearProgress from 'material-ui/LinearProgress';
 import IconButton from 'material-ui/IconButton';
 import PlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 import PauseCircleOutline from 'material-ui/svg-icons/av/pause-circle-outline';
-import PrevSongButton from 'material-ui/svg-icons/av/skip-previous';
 import NextSongButton from 'material-ui/svg-icons/av/skip-next';
 // import PlaylistAudioImg from 'material-ui/svg-icons/av/playlist-audio';
 
@@ -59,9 +58,7 @@ class CustomPlayer extends React.Component {
     next() {
       console.log("YOU PRESSED NEXT SONG");
     }
-    prev(){
-      console.log("YOU PRESSED PREVIOUS SONG");
-    }
+
 
     triggerFirebase() {
         const { firebase, partyId } = this.props;
@@ -97,8 +94,10 @@ class CustomPlayer extends React.Component {
                   />
 
                 <Row>
-                  {(!track.artwork_url) ? <i class="zmdi zmdi-playlist-audio"></i> : <img src={track.artwork_url} /> }
-                <Col xsOffset={1} xs={6}>
+                <Col xsOffset={1} xs={2}>
+                  {(!track.artwork_url) ? <i className="zmdi zmdi-playlist-audio"></i> : <img src={track.artwork_url} /> }
+                </Col>
+                <Col xs={6}>
                   <Row>
                     <p> {Math.floor(currentTime)} / {Math.floor(duration)}</p>
                   </Row>
@@ -109,13 +108,9 @@ class CustomPlayer extends React.Component {
                 </Col>
 
 
-                <Col xsOffset={9} xs={2}>
+                <Col xs={2}>
 
                   <Row id="player-buttons">
-                    <IconButton
-                      onClick={this.prev}>
-                      <PrevSongButton />
-                    </IconButton>
                     <IconButton
                       onClick={this.play}>
                       {!playing ? <PlayCircleOutline /> : <PauseCircleOutline />}

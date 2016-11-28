@@ -42,31 +42,11 @@ const App = props => {
 				 </Tabs>
 				</Col>
 			</Row>
-			<Row className="both-player-container">
+			<Row className="both-player-container" bottom="xs">
 				<Col xs={12}>
 		      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
 	      </Col>
 	    </Row>
-      <Navbar />
-	     <Tabs>
-			   <Tab label="Top Ten" >
-					<SongList />
-			   </Tab>
-			   <Tab label="Live DJs" >
-						<Djs />
-			   </Tab>
-			   <Tab label="My Tracks">
-					<Search />
-			   </Tab>
-			   <Tab label="Chat">
-					<Chat />
-			   </Tab>
-			 </Tabs>
-			 <Row className="both-player-container" bottom="xs">
-				 <Col xs={12}>
-					 { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
-				 </Col>
-			 </Row>
     </div>
 	)
 }

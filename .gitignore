@@ -11,6 +11,8 @@ npm-debug.log
 /yarn.lock
 public/stylesheets/bundle.css
 public/stylesheets/bundle.css.map
+public/stylesheets/main.css
+app/components/Player.jsx
 bundle.css
 bundle.css.map
 public/stylesheets/main.css

@@ -17,16 +17,23 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 const App = props => {
 	const { uid, party_id } = props;
+
+
+	let selectTabInkBarStyle = {
+		backgroundColor:"#EC4616",
+		height: ".3em"
+	}
+
 	return (
 		<div>
-			<Row>
+			<Row >
 				<Col xs={12}>
 		      <Navbar />
 	      </Col>
 	    </Row>
 	    <Row>
 				<Col xs={12}>
-		     <Tabs>
+		     <Tabs inkBarStyle={selectTabInkBarStyle}>
 				   <Tab label="Top Ten" >
 						<SongList />
 				   </Tab>

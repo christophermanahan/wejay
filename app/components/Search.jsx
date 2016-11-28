@@ -7,6 +7,9 @@ import SearchResults from './SearchResults';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
+import Snackbar from 'material-ui/Snackbar';
+
+
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
@@ -45,18 +48,32 @@ class Search extends Component {
     super(props);
 
     this.state = {
-      query: ''
+      query: '',
+      snackbarOpen: false,
+      snackbarTitle: '',
+      songDestination: ''
     };
 
     this.onType = this.onType.bind(this);
     this.trackSearch = this.trackSearch.bind(this);
     this.addToQueue = this.addToQueue.bind(this);
+    this.openSnackbar = this.openSnackbar.bind(this);
+    this.closeSnackbar = this.closeSnackbar.bind(this);
+
   }
 
   onType(evt) {
     evt.preventDefault();
     let query = evt.target.value;
     this.setState({ query });
+  }
+
+  openSnackbar(snackbarTitle, songDestination) {
+    this.setState({snackbarOpen: true, snackbarTitle, songDestination});
+  }
+
+  closeSnackbar() {
+    this.setState({snackbarOpen: false, snackbarTitle: '', songDestination: ''})
   }
 
 
@@ -95,16 +112,16 @@ class Search extends Component {
 
       if (!currentSongVal) {
         fireboss.setCurrentSong(partyId, song);
-        console.log(`added ${title} to Current Song!`)
+        this.openSnackbar(title, ' set to current song!');
       } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
         fireboss.addToPartyQueue(partyId, 'top_ten', song);
-        console.log(`added ${title} to Top Ten!`)
+        this.openSnackbar(title, ' added to Top Ten!');
       } else if (!shadowQueueVal || !userSongInShadowQueue) {
         fireboss.addToPartyQueue(partyId, 'shadow_queue', song);
-        console.log(`added ${title} to Suggestions!`)
+        this.openSnackbar(title, ' sent as a recommendation!');
       } else {
         fireboss.addToPersonalQueue(partyId, user, song);
-        console.log(`added ${title} to My Songs!`)
+        this.openSnackbar(title, ' added to My Songs!');
       }
     });
   }
@@ -118,6 +135,12 @@ class Search extends Component {
               <DumbSearch
                 onType={ this.onType }
                 trackSearch={ this.trackSearch }
+              />
+              <Snackbar 
+                open={this.state.snackbarOpen}
+                message={this.state.snackbarTitle + this.state.songDestination}
+                autoHideDuration={3000}
+                onRequestClose={this.closeSnackbar}
               />
             </Col>
             <Col xs={12}>

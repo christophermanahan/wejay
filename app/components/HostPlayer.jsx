@@ -93,10 +93,9 @@ class CustomPlayer extends React.Component {
         // console.log("After: ", duration);
 
 
-                //IS THIS MESSING UP MY GUEST PLAYER SOMEHOW???
-        // if (!track) {
-        //     return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
-        // }
+        if (!track) {
+            return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
+        }
 
         let progBarStyle = {
           backgroundColor: "#EC4616",

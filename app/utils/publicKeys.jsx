@@ -17,3 +17,5 @@ const productionKeys = {
 }
 
 const publicKeys = livePublicKeys
+
+export default publicKeys

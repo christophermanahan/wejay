@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox} from 'material-ui';
+import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox} from 'material-ui';\
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
@@ -21,7 +21,8 @@ const DumbParties = props => {
 
   //override material ui's inline style elements
   let btnStyle = {
-    minWidth: "50%"
+    minWidth: "50%",
+    height: "1.4em"
   };
 
   let textFieldStyle = {
@@ -30,9 +31,7 @@ const DumbParties = props => {
     margin: "0.2em"
   }
 
-  let listItemStyle = {
-    fontSize: "1em"
-  }
+  let listItemStyle = {}
 
   let nestedListItemStyle = {
     right: "1em"
@@ -59,7 +58,6 @@ const DumbParties = props => {
               partiesArr && partiesArr.map(party => {
                 return (
                   <MenuItem
-                    className="party-nested-item"
                     onClick={() => onPartySelect(party[0])}
                     style={nestedListItemStyle}
                     key={party[0]}
@@ -122,6 +120,7 @@ class Parties extends Component {
   }
 
   joinParty(evt) {
+    console.log('also here')
     evt.preventDefault();
     const { user, fireboss, setcurrentparty, setcurrentsong,
             settopten, setdjs, setpersonalqueue, setmessages } = this.props;
@@ -184,7 +183,6 @@ class Parties extends Component {
   }
 
   onPartySelect(partyId) {
-    console.log(partyId)
     this.setState({ partyId });
   }
 

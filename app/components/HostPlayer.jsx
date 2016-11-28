@@ -69,7 +69,7 @@ class CustomPlayer extends React.Component {
         console.log('props in custom player', this.props)
         let { track, playing, soundCloudAudio, currentTime, duration } = this.props;
         if (!track) {
-            return <div id="loading-player"><i className="zmdi zmdi-soundcloud"></i></div>;
+            return <div><i className="zmdi zmdi-soundcloud"></i></div>;
 
 
         }
@@ -77,15 +77,45 @@ class CustomPlayer extends React.Component {
 
         let progBarStyle = {
           backgroundColor: "#EC4616",
-          height: "8px"
+          height: ".3em"
         }
 
         //Todo-->FIX: Custom Player renders before track loads
 
+        let songInfoColStyle = {
+          fontFamily: "Roboto",
+          fontSize: "0.5em"
+        }
+        let durationStyle = {
+          fontFamily: "Roboto",
+          marginTop: "0.8em",
+          marginBottom: "0.1em"
+        }
+        let titleAndArtistStyle = {
+          fontFamily: "Carme",
+          marginTop: "0.3em",
+          marginBottom: "0.1em"
+        }
+        let playerIconStyle = { //WHY ARENT YOU WORKING ?!?!
+          marginTop: "0.4em"
+        }
+
+
+        const styles = {
+          largeIcon: {
+            width: 35,
+            height: 35,
+          },
+          buttonStyle: {
+            width: 50,
+            height: 50,
+            padding: 5,
+          },
+        };
 
 
         return (
-            <div id="host-player">
+            <div>
 
                 <LinearProgress
                   mode="determinate"
@@ -94,31 +124,36 @@ class CustomPlayer extends React.Component {
                   />
 
                 <Row>
-                <Col xsOffset={1} xs={2}>
-                  {(!track.artwork_url) ? <i className="zmdi zmdi-playlist-audio"></i> : <img src={track.artwork_url} /> }
+                <Col style={playerIconStyle} xsOffset={1} xs={2}>
+                  {(!track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x"></i> : <img src={track.artwork_url} /> }
                 </Col>
-                <Col xs={6}>
-                  <Row>
-                    <p> {Math.floor(currentTime)} / {Math.floor(duration)}</p>
-                  </Row>
+                <Col xs={5} style={songInfoColStyle}>
 
-                  <h2>{track.title}</h2>
-                  <h3>{track.user.username}</h3>
+                  <p style={durationStyle}> {Math.floor(currentTime)} / {Math.floor(duration)}</p>
+                  <h2 style={titleAndArtistStyle}>{track.title}</h2>
+                  <h3 style={titleAndArtistStyle}>{track.user.username}</h3>
 
                 </Col>
 
+                <Col xs={2} style={playerIconStyle}>
 
-                <Col xs={2}>
-
-                  <Row id="player-buttons">
-                    <IconButton
-                      onClick={this.play}>
-                      {!playing ? <PlayCircleOutline /> : <PauseCircleOutline />}
-                    </IconButton>
-                    <IconButton
-                      onClick={this.next}>
-                      <NextSongButton />
-                    </IconButton>
+                  <Row between="xs">
+                    <Col xs={1}>
+                      <IconButton
+                        iconStyle={styles.largeIcon}
+                        style={styles.buttonStyle}
+                        onClick={this.play}>
+                        {!playing ? <PlayCircleOutline /> : <PauseCircleOutline />}
+                      </IconButton>
+                    </Col>
+                    <Col xs={1}>
+                      <IconButton
+                        iconStyle={styles.largeIcon}
+                        style={styles.buttonStyle}
+                        onClick={this.next}>
+                        <NextSongButton />
+                      </IconButton>
+                    </Col>
 
                   </Row>
 

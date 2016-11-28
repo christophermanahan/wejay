@@ -13,23 +13,10 @@
 // }
 
 .both-player-container {
-	position: absolute;
+	position: fixed;
 	bottom: 0;
 	width: 100vw;
+	height: 10vh;
 	background: white;
-	display: block;
-  border: solid 1px;
-}
-
-#host-player {
-  font-family: Roboto;
-  font-size: 1em;
-}
-
-#loading-player {
-  font-size: 100px;
-}
-
-#player-buttons {
-  font-size: 100px;
+	display: inline-block;
 }

@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import { TextField, RaisedButton } from 'material-ui';
+import Create from 'material-ui/svg-icons/content/create';
+
+import { TextField, RaisedButton, IconButton, FontIcon } from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 import DjList from './DjsList'
 
-/* -----------------    DUMB COMPONENT     ------------------ */
+/* -----------------    STYLES     ------------------ */
+const TextFieldStyle = {width: '60%'}
+const RaisedButtonStyle = {width: '20%', marginLeft: '20px'}
 
 /* -----------------    STATEFUL REACT COMPONENT     ------------------ */
 
@@ -15,27 +19,36 @@ class DjsComponent extends Component {
     const { djs, user } = this.props;
     let djName = djs[user.uid] && djs[user.uid].dj_name;
 
-    this.state = { value: djName }
+    this.state = { value: djName, showEditor: false }
     this.onSubmit = this.onSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.toggleEditor = this.toggleEditor.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     const { djs, user } = nextProps;
     let djName = djs[user.uid] && djs[user.uid].dj_name;
-    this.setState({value: djName});
+    this.setState({value: djName, showEditor: this.state.showEditor });
+  }
+
+  toggleEditor(evt) {
+    evt.preventDefault();
+    this.setState({
+      value: this.state.value,
+      showEditor: !this.state.showEditor
+    })
   }
 
   onSubmit(evt) {
     evt.preventDefault();
     const { firebase, currentParty, user } = this.props
     firebase.database().ref('party_djs').child(currentParty.id).child(user.uid)
-    .update({dj_name: this.state.value})
+    .update({dj_name: this.state.value, showEditor: false })
   }
-j
+
   handleChange(evt) {
     evt.preventDefault();
-    this.setState({value: evt.target.value})
+    this.setState({value: evt.target.value, showEditor: this.state.showEditor })
   }
 
 
@@ -46,28 +59,45 @@ j
     djArr.sort((a, b) => (b.dj_points - a.dj_points))
     const userRank = djArr.length && (djArr.indexOf(djs[user.uid]) + 1)
     return (
-        <Row>
+        <Row className="dj-container">
           <Col xs={12}>
             <Row>
-              <Col xs={5}>
+              <Col xs={1}>
+                <p style={{marginLeft: '10px'}}>
+                  <IconButton iconStyle={{padding: 0, height: 15, width: 15}} style={{padding: 0, height: 15, width: 15}} onTouchTap={this.toggleEditor}>
+                    <Create />
+                  </IconButton>
+                </p>
+              </Col>
+              <Col xs={6}>
                 <p>{djs[user.uid] && djs[user.uid].dj_name}</p>
+              </Col>
+              <Col xs={5}>
                 <p>DJ Rank: {userRank} of {djArr.length}</p>
               </Col>
-              <Col xs={7}>
-                <p>Change Name</p>
-                  <form onSubmit={this.onSubmit}>
-                    <TextField
-                      id="text-field-default"
-                      value={this.state.value || ''}
-                      onChange={this.handleChange}
-                    />
-                    <RaisedButton
-                      label="update"
-                      type="submit"
-                    />
-                  </form>
-              </Col>
             </Row>
+            {this.state.showEditor ?
+              <Row>
+                <Col xsOffset={1} xs={10}>
+                    <form onSubmit={this.onSubmit}>
+                      <TextField
+                        style={TextFieldStyle}
+                        id="text-field-default"
+                        value={this.state.value || ''}
+                        onChange={this.handleChange}
+                      />
+                      <RaisedButton
+                        style={RaisedButtonStyle}
+                        label="update"
+                        type="submit"
+                      />
+                    </form>
+                </Col>
+              </Row>
+              :
+              <div></div>
+            }
+
             <Row>
               <Col xs={12}>
                 <DjList user={user} djs={djArr}/>

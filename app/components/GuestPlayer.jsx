@@ -3,51 +3,32 @@ import { connect } from 'react-redux';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 
+
+// import LinearProgress from 'material-ui/LinearProgress';
+
+
 /* -----------------    DUMB COMPONENT     ------------------ */
 
-class GuestPlayer extends React.Component {
+const GuestPlayer = props => {
+  const { currentSong } = props;
 
-  constructor(props) {
-      super(props);
-      this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
 
-      const { currentSong } = this.props;
-      console.log("THIS PROPS: ", this.props);
-      console.log("CURRENT SONG: ", currentSong);
-  }
+  return (
+    <div>
 
-  mapDurationSecsToMins(num) {
-    let mins = Math.floor(num / 60);
-    let secs = num % 60;
-    return `${mins}:${secs}`
-  }
 
-  /*
-  title,
-  artist,
-  artwork,
-  DJ,
-    up/down votes
-  */
 
-  
-  render() {
-    return (
-      <div className="guest-player-container">
-        <FontIcon className="zmdi zmdi-hearing animated infinite pulse" />
-        <h4 className="guest-player-text"> Song: { currentSong.title } </h4>
-        <h4 className="guest-player-text"> Artist: { currentSong.artist } </h4>
-        <h4 className="guest-player-text"> DJ: { currentSong.dj_name } </h4>
-        <div>
-          <h4 className="guest-player-text">Heat: { currentSong.vote_priority } </h4>
-          <IconButton iconClassName="zmdi zmdi-fire" />
-          <IconButton iconClassName="zmdi zmdi-thumb-down" />
-        </div>
+      <FontIcon className="zmdi zmdi-hearing animated infinite pulse" />
+      <h4> Song: { currentSong.title } </h4>
+      <h4> Artist: { currentSong.artist } </h4>
+      <h4> DJ: { currentSong.dj_name } </h4>
+      <div>
+        <h4 className="guest-player-text">Heat: { currentSong.vote_priority } </h4>
+        <IconButton iconClassName="zmdi zmdi-fire" />
+        <IconButton iconClassName="zmdi zmdi-thumb-down" />
       </div>
-    );
-
-  }
-
+    </div>
+  );
 };
 
 /* -----------------    CONTAINER     ------------------ */

@@ -93,9 +93,10 @@ class CustomPlayer extends React.Component {
         // console.log("After: ", duration);
 
 
-        if (!track) {
-            return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
-        }
+                //IS THIS MESSING UP MY GUEST PLAYER SOMEHOW???
+        // if (!track) {
+        //     return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
+        // }
 
         let progBarStyle = {
           backgroundColor: "#EC4616",
@@ -147,7 +148,7 @@ class CustomPlayer extends React.Component {
 
                 <Row>
                 <Col style={playerIconStyle} xsOffset={1} xs={2}>
-                  {(!track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={track.artwork_url} /> }
+                  {(track && !track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={track.artwork_url} /> }
                 </Col>
                 <Col xs={5} style={songInfoColStyle}>
 

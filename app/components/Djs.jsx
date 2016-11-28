@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import { TextField } from 'material-ui';
+import { TextField, RaisedButton } from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 import DjList from './DjsList'
 
@@ -32,7 +32,7 @@ class DjsComponent extends Component {
     firebase.database().ref('party_djs').child(currentParty.id).child(user.uid)
     .update({dj_name: this.state.value})
   }
-
+j
   handleChange(evt) {
     evt.preventDefault();
     this.setState({value: evt.target.value})
@@ -41,42 +41,36 @@ class DjsComponent extends Component {
 
   render() {
     const { djs, user } = this.props;
-    const djPoints = djs[user.uid] && djs[user.uid].dj_points;
-    let djName = djs[user.uid] && djs[user.uid].dj_name;
-    const otherDjs = Object.assign({}, djs)
-    delete otherDjs[user.uid];
-
+    let djArr = []
+    for (let dj in djs) { djArr.push(djs[dj]) }
+    djArr.sort((a, b) => (b.dj_points - a.dj_points))
+    const userRank = djArr.length && (djArr.indexOf(djs[user.uid]) + 1)
     return (
         <Row>
           <Col xs={12}>
             <Row>
-              <Col xs={6}>
-                <p>Your DJ Data</p>
+              <Col xs={5}>
+                <p>{djs[user.uid] && djs[user.uid].dj_name}</p>
+                <p>DJ Rank: {userRank} of {djArr.length}</p>
               </Col>
-              <Col xs={6}>
-                <p>{djName}</p>
-                <p>Points: {djPoints}</p>
+              <Col xs={7}>
+                <p>Change Name</p>
+                  <form onSubmit={this.onSubmit}>
+                    <TextField
+                      id="text-field-default"
+                      value={this.state.value || ''}
+                      onChange={this.handleChange}
+                    />
+                    <RaisedButton
+                      label="update"
+                      type="submit"
+                    />
+                  </form>
               </Col>
             </Row>
             <Row>
-              <Col xs={6}>
-                <p>DJ NAME</p>
-              </Col>
-              <Col xs={6}>
-                <form onSubmit={this.onSubmit}>
-                  <input value={this.state.value || ''} onChange={this.handleChange}></input>
-                  <button type="submit">update my dj name</button>
-                </form>
-              </Col>
-            </Row>
-            <br />
-            <Row>
               <Col xs={12}>
-                <p>Active DJs</p>
-                <hr/>
-              </Col>
-              <Col xs={12}>
-                <DjList djs={otherDjs}/>
+                <DjList user={user} djs={djArr}/>
               </Col>
             </Row>
           </Col>
@@ -90,4 +84,3 @@ class DjsComponent extends Component {
 const mapStateToProps = ({ firebase, user, djs, currentParty }) => ({ firebase, user, djs, currentParty });
 
 export default connect(mapStateToProps)(DjsComponent);
-

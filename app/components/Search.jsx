@@ -5,19 +5,37 @@ import {fetchTrackResults} from '../ducks/searchResults';
 
 import SearchResults from './SearchResults';
 
+import { Row, Col } from 'react-flexbox-grid/lib/index';
+
+import Snackbar from 'material-ui/Snackbar';
+
+
+
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbSearch = props => {
   const { onType, trackSearch } = props;
   return (
     <div>
-      <form onSubmit={ trackSearch }>
-        <TextField
-          onChange={ onType }
-          floatingLabelText="Search By Track"
-        />
-         <RaisedButton label="Search" onTouchTap={ trackSearch }/>
-       </form>
+      <Row>
+        <Col xs={12}>
+          <form onSubmit={ trackSearch }>
+          <Row>
+            <Col xs={12}>
+              <TextField
+                onChange={ onType }
+                floatingLabelText="Search By Track"
+              />
+            </Col>
+          </Row>
+          <Row>
+             <Col xs={5} xsOffset={7}>
+               <RaisedButton label="Search" onTouchTap={ trackSearch }/>
+             </Col>
+          </Row>
+           </form>
+        </Col>
+      </Row>
     </div>
   );
 };
@@ -30,18 +48,32 @@ class Search extends Component {
     super(props);
 
     this.state = {
-      query: ''
+      query: '',
+      snackbarOpen: false,
+      snackbarTitle: '',
+      songDestination: ''
     };
 
     this.onType = this.onType.bind(this);
     this.trackSearch = this.trackSearch.bind(this);
     this.addToQueue = this.addToQueue.bind(this);
+    this.openSnackbar = this.openSnackbar.bind(this);
+    this.closeSnackbar = this.closeSnackbar.bind(this);
+
   }
 
   onType(evt) {
     evt.preventDefault();
     let query = evt.target.value;
     this.setState({ query });
+  }
+
+  openSnackbar(snackbarTitle, songDestination) {
+    this.setState({snackbarOpen: true, snackbarTitle, songDestination});
+  }
+
+  closeSnackbar() {
+    this.setState({snackbarOpen: false, snackbarTitle: '', songDestination: ''})
   }
 
 
@@ -80,12 +112,16 @@ class Search extends Component {
 
       if (!currentSongVal) {
         fireboss.setCurrentSong(partyId, song);
+        this.openSnackbar(title, ' set to current song!');
       } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
         fireboss.addToPartyQueue(partyId, 'top_ten', song);
+        this.openSnackbar(title, ' added to Top Ten!');
       } else if (!shadowQueueVal || !userSongInShadowQueue) {
         fireboss.addToPartyQueue(partyId, 'shadow_queue', song);
+        this.openSnackbar(title, ' sent as a recommendation!');
       } else {
         fireboss.addToPersonalQueue(partyId, user, song);
+        this.openSnackbar(title, ' added to My Songs!');
       }
     });
   }
@@ -94,14 +130,26 @@ class Search extends Component {
     const { searchResults } = this.props;
     return (
         <div>
-          <DumbSearch
-            onType={ this.onType }
-            trackSearch={ this.trackSearch }
-          />
-          <SearchResults
-            searchResults={ searchResults }
-            addToQueue={ this.addToQueue }
-          />
+          <Row>
+            <Col xs={8} xsOffset={2}>
+              <DumbSearch
+                onType={ this.onType }
+                trackSearch={ this.trackSearch }
+              />
+              <Snackbar 
+                open={this.state.snackbarOpen}
+                message={this.state.snackbarTitle + this.state.songDestination}
+                autoHideDuration={3000}
+                onRequestClose={this.closeSnackbar}
+              />
+            </Col>
+            <Col xs={12}>
+              <SearchResults
+                searchResults={ searchResults }
+                addToQueue={ this.addToQueue }
+              />
+            </Col>
+          </Row>
         </div>
     );
   }

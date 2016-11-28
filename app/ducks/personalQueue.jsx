@@ -16,7 +16,7 @@ export const setPersonalQueue = personal_queue => ({
 const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_PERSONAL_QUEUE:
-        return action.personal_queue;
+        return Object.assign({}, action.personal_queue);
 
     case LEAVE_PARTY:
       return {}

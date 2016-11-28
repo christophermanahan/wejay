@@ -22,21 +22,15 @@ const DumbParties = props => {
   //override material ui's inline style elements
   let btnStyle = {
     minWidth: "50%",
-    margin: "1em",
-    height: "70px"
+    height: "1.4em"
   };
 
   let textFieldStyle = {
     color: "#363836",
-    margin: "35px",
-    width: "98%",
-    fontSize: "1em"
+    width: "98%"
   }
 
-  let listItemStyle = {
-    margin: "35px",
-    fontSize: "1em"
-  }
+  let listItemStyle = {}
 
   // partiesArr is an array with each index representing a party
   // each party has the following data [partyid, {name: '', location: ''}]
@@ -50,16 +44,15 @@ const DumbParties = props => {
       <h2 className="party-header">Join</h2>
       <Row>
         <List style={textFieldStyle}>
-          <MenuItem
+          <ListItem
             primaryText="Parties"
             style={listItemStyle}
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={partiesArr && partiesArr.map(party => {
-              return (<MenuItem onTouchTap={onPartySelect}
+              return (<MenuItem onTouchTap={() => onPartySelect(party[0])}
                                 style={listItemStyle}
                                 key={party[0]}
-                                value={party[0]}
                                 primaryText={party[1].name}
                                 secondaryText={party[1].location}
                                 />)
@@ -68,19 +61,14 @@ const DumbParties = props => {
           />
         </List>
       </Row>
-      {/*<RaisedButton
+      <RaisedButton
         className="party-btn"
         style={btnStyle}
         backgroundColor="#7aa095"
         labelColor="#ffffff"
         label="Rage"
         onTouchTap={joinParty}
-      />*/}
-      <button
-        className="party-btn-mod"
-        onTouchTap={joinParty}
-      >RAGE
-      </button>
+      />
       <h2 className="party-header">Create</h2>
       <form onSubmit={onSubmit}>
         <TextField
@@ -186,10 +174,8 @@ class Parties extends Component {
       });
   }
 
-  onPartySelect(evt, index, value) {
-    console.log(evt.target.value)
-    console.log(value)
-    const partyId = value;
+  onPartySelect(partyId) {
+    console.log(partyId);
     this.setState({ partyId });
   }
 

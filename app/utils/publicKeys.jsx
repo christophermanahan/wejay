@@ -7,7 +7,7 @@ const livePublicKeys = {
   SC_CLIENT_ID: "033e31e2d036e02f39242e1aa1dd2fa9"
 }
 
-const productionKeys = {
+const devKeys = {
   FIREBASE_API_KEY: "AIzaSyCiLc4HnRXwvVzeAoBQTOjiID2i8Drd-IM",
   FIREBASE_AUTH_DOMAIN: "wejay-ac08c.firebaseapp.com",
   FIREBASE_DATABASE_URL: "https://wejay-ac08c.firebaseio.com",

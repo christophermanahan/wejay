@@ -48,17 +48,28 @@ const DumbNavbar = props => {
       />,
     ];
 
+
+  //override material ui's inline style elements
+	let logoTextStyle = {
+    fontSize: "140px",
+    marginBottom: "20px"
+  };
+  let logoImgStyle = {
+    fontSize: "240px"
+  };
+
+
   return (
     <div>
       <Row id="navbar-row">
-        <Col xs={2} className="navbar-col">
+        <Col xs={3} className="navbar-col">
           <div className="navbar-icon">
-            <icon className="zmdi zmdi-album zmdi-hc-lg" />
+            <icon style={logoImgStyle} className="zmdi zmdi-album zmdi-hc-lg" />
           </div>
         </Col>
         <Col xs={8} className="navbar-col">
           <div>
-            <h2>weJay</h2>
+            <h2 style={logoTextStyle}>weJay</h2>
           </div>
         </Col>
         <Col xs={1} className="navbar-col">

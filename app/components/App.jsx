@@ -17,8 +17,26 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 const App = props => {
 	const { uid, party_id } = props;
+
+
+//override material ui's inline style elements
+	let tabsStyle = {
+    fontSize: "40px",
+		marginBottom: "20px",
+		marginTop: "20px"
+  };
+
+	let navBarStyle = {
+    paddingBottom: "100px"
+  };
+
+	let selectTabInkBarStyle = {
+		backgroundColor:"#EC4616",
+		height: "12px"
+	}
+
 	return (
-		<div>
+		<div style={navBarStyle}>
 			<Row>
 				<Col xs={12}>
 		      <Navbar />
@@ -26,17 +44,17 @@ const App = props => {
 	    </Row>
 	    <Row>
 				<Col xs={12}>
-		     <Tabs>
-				   <Tab label="Top Ten" >
+		     <Tabs inkBarStyle={selectTabInkBarStyle}>
+				   <Tab style={tabsStyle} label="Top Ten" >
 						<SongList />
 				   </Tab>
-				   <Tab label="Live DJs" >
+				   <Tab style={tabsStyle} label="Live DJs" >
 							<Djs />
 				   </Tab>
-				   <Tab label="My Tracks">
+				   <Tab style={tabsStyle} label="My Tracks">
 						<Search />
 				   </Tab>
-				   <Tab label="Chat">
+				   <Tab style={tabsStyle} label="Chat">
 						<Chat />
 				   </Tab>
 				 </Tabs>

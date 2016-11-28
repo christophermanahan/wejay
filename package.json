@@ -9,7 +9,7 @@
     "test-watch": "check-node-version --node '>= 6.7.0' && bin/setup && mocha --compilers js:babel-register --watch app/**/*.test.js app/**/*.test.jsx db/**/*.test.js server/**/*.test.js",
     "build": "check-node-version --node '>= 6.7.0' && bin/setup && webpack",
     "build-watch": "check-node-version --node '>= 6.7.0' && bin/setup && webpack -w",
-    "start": "check-node-version --node '>= 6.7.0' && bin/setup && webpack && nodemon server/start.js",
+    "start": "check-node-version --node '>= 6.7.0' && bin/setup && webpack && node-sass  app/assets/main/ -o public/stylesheets && nodemon server/start.js",
     "seed": "node db/seed.js"
   },
   "repository": {
@@ -77,18 +77,18 @@
     "sinon-chai": "^2.8.0",
     "soundcloud-audio": "^1.0.4",
     "volleyball": "^1.4.1",
-    "webpack": "^1.13.3"
-  },
-  "devDependencies": {
-    "babel-polyfill": "^6.16.0",
-    "chai": "^3.5.0",
+    "webpack": "^1.13.3",
     "css-loader": "^0.26.0",
-    "mocha": "^3.1.2",
-    "node-sass": "^3.13.0",
-    "npm": "^4.0.2",
+    "babel-polyfill": "^6.16.0",
     "postcss-loader": "^1.1.1",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
+    "node-sass": "^3.13.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
+    "npm": "^4.0.2",
     "supertest": "^2.0.1",
     "supertest-as-promised": "^4.0.1"
   }

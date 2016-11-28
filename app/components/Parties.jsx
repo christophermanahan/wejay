@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox} from 'material-ui';\
+import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox} from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
@@ -21,8 +21,7 @@ const DumbParties = props => {
 
   //override material ui's inline style elements
   let btnStyle = {
-    minWidth: "50%",
-    height: "1.4em"
+    minWidth: "50%"
   };
 
   let textFieldStyle = {
@@ -34,7 +33,7 @@ const DumbParties = props => {
   let listItemStyle = {}
 
   let nestedListItemStyle = {
-    right: "1em"
+    right: "0.8em"
   }
 
   // partiesArr is an array with each index representing a party

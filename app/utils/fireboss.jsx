@@ -61,6 +61,7 @@ Fireboss.prototype.addingPartyDJ = function(partyId, user) {
   return this.database.ref('party_djs').child(partyId).child(user.uid)
          .set({
             dj_points: 0,
+            uid: user.uid,
             dj_name: `DJ ${user.displayName || 'Rando'}`,
             personal_queue: {}
           })
@@ -94,10 +95,19 @@ Fireboss.prototype.addToPersonalQueue = function(partyId, user, song) {
 
 Fireboss.prototype.incrementVotePriority = function(partyId, songId) {
   const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
-  // get snapshot of song, then add 1 to vote priority
+  // get snapshot of song, then add 1 to vote priority and djPoints
   partyTopTenSongRef.once('value')
     .then(snapshot => {
       const currentVotes = snapshot && snapshot.val().vote_priority
+      const userId = snapshot && snapshot.val().uid
+
+      this.database.ref('party_djs').child(partyId).child(userId).once('value')
+        .then(snapshot => {
+          const currentDjPoints = snapshot && snapshot.val().dj_points
+          this.database.ref('party_djs').child(partyId).child(userId)
+            .update({dj_points: (currentDjPoints + 1)})
+        })
+
       return partyTopTenSongRef.update({vote_priority: (currentVotes + 1)})
     })
     .then(() => {console.log('vote added!')})
@@ -109,6 +119,15 @@ Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
   partyTopTenSongRef.once('value')
     .then(snapshot => {
       const currentVotes = snapshot && snapshot.val().vote_priority
+      const userId = snapshot && snapshot.val().uid
+
+      this.database.ref('party_djs').child(partyId).child(userId).once('value')
+        .then(snapshot => {
+          const currentDjPoints = snapshot && snapshot.val().dj_points
+          this.database.ref('party_djs').child(partyId).child(userId)
+            .update({dj_points: (currentDjPoints - 1)})
+        })
+
       return partyTopTenSongRef.update({vote_priority: (currentVotes - 1)})
     })
     .then(() => {console.log('vote added!')})

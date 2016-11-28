@@ -19,6 +19,7 @@ const App = props => {
 	const { uid, party_id } = props;
 	return (
 		<div>
+<<<<<<< HEAD
 			<Row>
 				<Col xs={12}>
 		      <Navbar />
@@ -47,6 +48,28 @@ const App = props => {
 		      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
 	      </Col>
 	    </Row>
+=======
+      <Navbar />
+	     <Tabs>
+			   <Tab label="Top Ten" >
+					<SongList />
+			   </Tab>
+			   <Tab label="Live DJs" >
+						<Djs />
+			   </Tab>
+			   <Tab label="My Tracks">
+					<Search />
+			   </Tab>
+			   <Tab label="Chat">
+					<Chat />
+			   </Tab>
+			 </Tabs>
+			 <Row className="both-player-container" bottom="xs">
+				 <Col xs={12}>
+					 { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
+				 </Col>
+			 </Row>
+>>>>>>> master
     </div>
 	)
 }

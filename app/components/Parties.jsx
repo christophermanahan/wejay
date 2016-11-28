@@ -23,17 +23,18 @@ const DumbParties = props => {
   let btnStyle = {
     minWidth: "50%",
     margin: "1em",
-    fontSize: "0.8em"
+    height: "70px"
   };
 
   let textFieldStyle = {
     color: "#363836",
-    margin: "5px",
+    margin: "35px",
     width: "98%",
     fontSize: "1em"
   }
 
   let listItemStyle = {
+    margin: "35px",
     fontSize: "1em"
   }
 
@@ -51,11 +52,12 @@ const DumbParties = props => {
         <List style={textFieldStyle}>
           <ListItem
             primaryText="Parties"
-            ListStyle={listItemStyle}
+            style={listItemStyle}
             initiallyOpen={false}
             primaryTogglesNestedList={true}
             nestedItems={partiesArr && partiesArr.map(party => {
-              return (<ListItem nestedListStyle={listItemStyle}
+              return (<ListItem onTouchTap={onPartySelect}
+                                style={listItemStyle}
                                 key={party[0]}
                                 value={party[0]}
                                 primaryText={party[1].name}
@@ -66,14 +68,19 @@ const DumbParties = props => {
           />
         </List>
       </Row>
-      <RaisedButton
+      {/*<RaisedButton
         className="party-btn"
         style={btnStyle}
         backgroundColor="#7aa095"
         labelColor="#ffffff"
         label="Rage"
         onTouchTap={joinParty}
-      />
+      />*/}
+      <button
+        className="party-btn-mod"
+        onTouchTap={joinParty}
+      >RAGE
+      </button>
       <h2 className="party-header">Create</h2>
       <form onSubmit={onSubmit}>
         <TextField
@@ -117,6 +124,7 @@ class Parties extends Component {
   }
 
   joinParty(evt) {
+    console.log('also here')
     evt.preventDefault();
     const { user, fireboss, setcurrentparty, setcurrentsong,
             settopten, setdjs, setpersonalqueue, setmessages } = this.props;
@@ -179,6 +187,7 @@ class Parties extends Component {
   }
 
   onPartySelect(evt, index, value) {
+    console.log('here')
     const partyId = value;
     this.setState({ partyId });
   }

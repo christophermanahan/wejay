@@ -11,7 +11,6 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import FontIcon from 'material-ui/FontIcon';
 
 
 
@@ -53,28 +52,23 @@ const DumbNavbar = props => {
     <div>
       <Row id="navbar-row">
         <Col xs={1} className="navbar-col">
-          <div>
+          <div className="navbar-icon">
             <icon className="zmdi zmdi-album zmdi-hc-lg" />
           </div>
         </Col>
-        <Col xs={3} className="navbar-col">
+        <Col xs={10} className="navbar-col">
           <div>
             <h2>weJay</h2>
           </div>
         </Col>
-        <Col xs={7} className="navbar-col">
-          <div>
-            <h3>Welcome DJ { user && user.displayName || 'Anon' }</h3>
-          </div>
-        </Col>
         <Col xs={1} className="navbar-col">
-          <div>
+          <div className="navbar-icon">
             <IconMenu
               iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
               anchorOrigin={{horizontal: 'right', vertical: 'top'}}
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
-              iconStyle={{ color: '#363836' }}
-              menuStyle={{ backgroundColor: '#ec4616' }}
+              iconStyle={{ color: '#363836', width: '60px', height: '60px' }}
+              menuStyle={{ backgroundColor: '#ec4616', fontSize: '1em' }}
 
             >
               <MenuItem value="1">My Settings</MenuItem>

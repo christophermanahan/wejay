@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {SelectField, MenuItem, RaisedButton, TextField} from 'material-ui';
+import {SelectField, MenuItem, RaisedButton, TextField, List, ListItem} from 'material-ui';
+import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
 
@@ -18,6 +19,24 @@ import { setMessages } from '../ducks/chat';
 const DumbParties = props => {
   const { parties, partyId, onPartySelect, joinParty, onSubmit } = props;
 
+  //override material ui's inline style elements
+  let btnStyle = {
+    minWidth: "50%",
+    margin: "1em",
+    fontSize: "0.8em"
+  };
+
+  let textFieldStyle = {
+    color: "#363836",
+    margin: "5px",
+    width: "98%",
+    fontSize: "1em"
+  }
+
+  let listItemStyle = {
+    fontSize: "1em"
+  }
+
   // partiesArr is an array with each index representing a party
   // each party has the following data [partyid, {name: '', location: ''}]
   let partiesArr = [];
@@ -26,34 +45,56 @@ const DumbParties = props => {
   }
 
   return (
-    <div>
-      <h1>Party Time</h1>
-      <SelectField
-          floatingLabelText="Select a Sweet Party"
-          value={partyId}
-          onChange={onPartySelect}
-        >
-      {partiesArr && partiesArr.map(party => {
-          return (<MenuItem key={party[0]}
-                            value={party[0]}
-                            primaryText={party[1].name}
-                            secondaryText={party[1].location}
-                            />)
-        })
-      }
-      </SelectField>
-      <RaisedButton label="Rage" onTouchTap={joinParty}/>
-      <h1>OR...</h1>
+    <div className="party-container">
+      <h2 className="party-header">Join</h2>
+      <Row>
+        <List style={textFieldStyle}>
+          <ListItem
+            primaryText="Parties"
+            ListStyle={listItemStyle}
+            initiallyOpen={false}
+            primaryTogglesNestedList={true}
+            nestedItems={partiesArr && partiesArr.map(party => {
+              return (<ListItem nestedListStyle={listItemStyle}
+                                key={party[0]}
+                                value={party[0]}
+                                primaryText={party[1].name}
+                                secondaryText={party[1].location}
+                                />)
+              })
+            }
+          />
+        </List>
+      </Row>
+      <RaisedButton
+        className="party-btn"
+        style={btnStyle}
+        backgroundColor="#7aa095"
+        labelColor="#ffffff"
+        label="Rage"
+        onTouchTap={joinParty}
+      />
+      <h2 className="party-header">Create</h2>
       <form onSubmit={onSubmit}>
         <TextField
           id="name"
+          style={textFieldStyle}
           floatingLabelText="Party Name"
-          />
+        />
         <TextField
           id="location"
+          style={textFieldStyle}
           floatingLabelText="Party Location"
-          />
-        <RaisedButton type="submit" label="Create Your Own"/>
+        />
+        <RaisedButton
+          className="party-btn"
+          style={btnStyle}
+          backgroundColor="#7aa095"
+          labelColor="#ffffff"
+          secondary={true}
+          type="submit"
+          label="Start"
+        />
        </form>
     </div>
   );
@@ -69,11 +110,11 @@ class Parties extends Component {
     this.joinParty = this.joinParty.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.state = {
-      partyId: ''
+      partyId: '',
+      open: false
     };
 
   }
-
 
   joinParty(evt) {
     evt.preventDefault();

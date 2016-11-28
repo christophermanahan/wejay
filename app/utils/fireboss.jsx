@@ -93,4 +93,26 @@ Fireboss.prototype.addToPersonalQueue = function(partyId, user, song) {
   .push(song);
 }
 
+Fireboss.prototype.incrementVotePriority = function(partyId, songId) {
+  const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
+  // get snapshot of song, then add 1 to vote priority
+  partyTopTenSongRef.once('value')
+    .then(snapshot => {
+      const currentVotes = snapshot && snapshot.val().vote_priority
+      return partyTopTenSongRef.update({vote_priority: (currentVotes + 1)})
+    })
+    .then(() => {console.log('vote added!')})
+}
+
+Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
+  const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
+  // get snapshot of song, then subtract 1 from vote priority
+  partyTopTenSongRef.once('value')
+    .then(snapshot => {
+      const currentVotes = snapshot && snapshot.val().vote_priority
+      return partyTopTenSongRef.update({vote_priority: (currentVotes - 1)})
+    })
+    .then(() => {console.log('vote added!')})
+}
+
 export default Fireboss

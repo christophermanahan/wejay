@@ -38,12 +38,11 @@ const partiesRef = db.ref('parties');
 partiesRef.on('child_added', (snapshot) => {
 
 	const partyId = snapshot.val() && snapshot.val().id
-	console.log('partyId', partyId)
 	if(!partyId) { return; }
 
 	const newPartyRef = db.ref('parties').child(partyId)
 	newPartyRef.on('value', (snapshot) => {
-		// console.log("newPartyRef snap: ", snapshot.val());
+
 		const needSong = snapshot.val() ? snapshot.val().needSong : false;
 		if(!needSong){
 			return
@@ -58,7 +57,7 @@ partiesRef.on('child_added', (snapshot) => {
 
 				const topTen = snapshot && snapshot.val();
 				let nextSong;
-				let nextSongPriority = -1;		//needs to address --> collisions when priority scores are equal
+				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
 				let nextSongId;
 
 				if (!topTen) return;
@@ -90,7 +89,7 @@ partiesRef.on('child_added', (snapshot) => {
 				if(!shadowQueue) return;
 
 				let nextSong;
-				let nextSongPriority = -1;		//needs to address --> collisions when priority scores are equal
+				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
 				let nextSongId;
 
 				for (let song in shadowQueue){

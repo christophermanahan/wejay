@@ -60,7 +60,7 @@ class DjsComponent extends Component {
     djArr.sort((a, b) => (b.dj_points - a.dj_points))
     const userRank = djArr.length && (djArr.indexOf(djs[user.uid]) + 1)
     return (
-        <Row className="dj-container">
+        <Row className="dj-container dj-list-container">
           <Col xs={12}>
             <Row>
               <Col xs={1}>
@@ -78,7 +78,7 @@ class DjsComponent extends Component {
               </Col>
             </Row>
             {this.state.showEditor ?
-              <Row>
+              <Row className="dj-you">
                 <Col xsOffset={1} xs={10}>
                     <form onSubmit={this.onSubmit}>
                       <TextField
@@ -96,7 +96,7 @@ class DjsComponent extends Component {
                 </Col>
               </Row>
               :
-              <div></div>
+              <Row className="dj-you"></Row>
             }
 
             <Row>

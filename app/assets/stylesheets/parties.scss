@@ -1,6 +1,6 @@
 .party-header {
 	font-size: 2em;
-	font-family: Roboto;
+	font-family: Montserrat;
 	color: #ffffff;
 	background: rgba(54, 56, 54, 1);
 	margin: 0;
@@ -19,4 +19,14 @@
 .party-container {
 	background: #dae2df;
 	min-height: 100vh;
+	padding-top: 1em;
+}
+
+#parties-title {
+	font-size: 4em;
+	font-family: Montserrat;
+	text-align: center;
+  color: white;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }

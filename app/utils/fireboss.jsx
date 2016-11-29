@@ -239,4 +239,8 @@ Fireboss.prototype.decrementCurrSongDjPoints = function(userId, partyId) {
   .then(() => {console.log('vote added!')});
 }
 
+Fireboss.prototype.triggerNeedSong = function(partyId) {
+  this.database.ref('parties').child(partyId).update({needSong: true})
+}
+
 export default Fireboss

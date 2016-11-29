@@ -131,92 +131,90 @@ const DumbCustomPlayer = props => {
 /* -----------------    STATEFUL REACT COMPONENT     ------------------ */
 
 class CustomPlayer extends React.Component {
-    constructor(props) {
-        super(props);
-        this.play = this.play.bind(this);
-        this.triggerFirebase = this.triggerFirebase.bind(this);
-        this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
-        this.onFire = this.onFire.bind(this);
-        this.onWater = this.onWater.bind(this);
-        // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
-        const { soundCloudAudio } = this.props;
-        soundCloudAudio.audio.addEventListener('ended', () => {
-            console.log('SONG ENDED!!!');
-            this.triggerFirebase();
-        });
-    }
+  constructor(props) {
+      super(props);
+      this.play = this.play.bind(this);
+      this.triggerFirebase = this.triggerFirebase.bind(this);
+      this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
+      this.onFire = this.onFire.bind(this);
+      this.onWater = this.onWater.bind(this);
+      // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
+      const { soundCloudAudio } = this.props;
+      soundCloudAudio.audio.addEventListener('ended', () => {
+          console.log('SONG ENDED!!!');
+          this.triggerFirebase();
+      });
+  }
 
-    componentWillReceiveProps(nextProps) {
-        // trigger play only after current song has been updated and the audio object
-        // has been received from SoundCloud
-        if (this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
-            console.log('-------- there is a new song -----------')
-            this.props.soundCloudAudio.resolve(nextProps.song_uri, () => {
-                this.play()
-            })
-        }
-        // EDGE CASE: this fails to autoplay if the same song is played 2x in a row
-        // SOLUTION: every song on top ten needs to have unique id
-    }
-
-
-    //Todo-->FIX: Custom Player renders before track loads
+  componentWillReceiveProps(nextProps) {
+      // trigger play only after current song has been updated and the audio object
+      // has been received from SoundCloud
+      if (this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
+          console.log('-------- there is a new song -----------')
+          this.props.soundCloudAudio.resolve(nextProps.song_uri, () => {
+              this.play()
+          })
+      }
+      // EDGE CASE: this fails to autoplay if the same song is played 2x in a row
+      // SOLUTION: every song on top ten needs to have unique id
+  }
 
 
-
-    play() {
-        let { soundCloudAudio, playing } = this.props;
-        if (playing) {
-            soundCloudAudio.pause();
-        } else {
-            soundCloudAudio.play();
-        }
-    }
-    next() {
-      console.log("YOU PRESSED NEXT SONG");
-    }
+  //Todo-->FIX: Custom Player renders before track loads
 
 
-    triggerFirebase() {
-        const { firebase, partyId } = this.props;
-        firebase.database().ref('parties').child(partyId).update({needSong: true})
-    }
 
-    mapDurationSecsToMins(num) {
-      let mins = Math.floor(num / 60);
-      let secs = num % 60;
-      return `${mins}:${secs}`
-    }
+  play() {
+      let { soundCloudAudio, playing } = this.props;
+      if (playing) {
+          soundCloudAudio.pause();
+      } else {
+          soundCloudAudio.play();
+      }
+  }
 
-    onFire() {
-      const { fireboss, currentSong, currentParty } = this.props;
-      fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
-    }
 
-    onWater() {
-      const { fireboss, currentSong, currentParty } = this.props;
-      console.log(fireboss)
-      fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
-    }
+  triggerFirebase() {
+      const { fireboss, partyId } = this.props;
+      // fireboss.database().ref('parties').child(partyId).update({needSong: true})
+      fireboss.triggerNeedSong(partyId)
+  }
 
-    render() {
-        const { track, playing, soundCloudAudio, currentTime, duration } = this.props;
-        return (
-            <DumbCustomPlayer
-              track={track}
-              playing={playing}
-              soundCloudAudio={soundCloudAudio}
-              currentTime={currentTime}
-              duration={duration}
-              onFire={this.onFire}
-              onWater={this.onWater}
-              mapDurationSecsToMins={this.mapDurationSecsToMins}
-              play={this.play}
-              next={this.next}
-              triggerFirebase={this.triggerFirebase}
-            />
-        );
-    }
+  mapDurationSecsToMins(num) {
+    let mins = Math.floor(num / 60);
+    let secs = num % 60;
+    return `${mins}:${secs}`
+  }
+
+  onFire() {
+    const { fireboss, currentSong, currentParty } = this.props;
+    fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+  }
+
+  onWater() {
+    const { fireboss, currentSong, currentParty } = this.props;
+    console.log(fireboss)
+    fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+  }
+
+  render() {
+    const { track, playing, soundCloudAudio, currentTime, duration } = this.props;
+    return (
+      <DumbCustomPlayer
+        track={track}
+        playing={playing}
+        soundCloudAudio={soundCloudAudio}
+        currentTime={currentTime}
+        duration={duration}
+        onFire={this.onFire}
+        onWater={this.onWater}
+        mapDurationSecsToMins={this.mapDurationSecsToMins}
+        play={this.play}
+        next={this.next}
+        triggerFirebase={this.triggerFirebase}
+      />
+    );
+  }
 }
 /* -----------------    CUSTOM WRAPPER COMPONENT     ------------------ */
 
@@ -235,7 +233,7 @@ class CustomPlayerWrapper extends React.Component {
                 resolveUrl={song_uri}
                 clientId={clientId}>
                 <CustomPlayer
-                  firebase={this.props.firebase}
+                  fireboss={this.props.fireboss}
                   song_uri={song_uri}
                   partyId={this.props.currentParty.id}
                   fireboss={this.props.fireboss}

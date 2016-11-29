@@ -137,11 +137,11 @@ const DumbLogin = props => {
                 labelStyle={{
                   fontSize: '1.2em',
                   verticalAlign: 'middle',
-                  color: 'white'
+                  color: '#363836'
                 }}
                 buttonStyle={{
                   height: '8vh',
-                  backgroundColor: '#35F2B9'
+                  backgroundColor: '#DAE2DF'
                 }}
                 overlayStyle={{
                   height: '100%'

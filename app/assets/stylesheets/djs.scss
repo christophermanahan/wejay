@@ -6,7 +6,10 @@
 
 
 .single-dj {
-  border: 1px solid black;
+  border-bottom: 1px solid black;
+}
+.dj-you {
+  border-bottom: 1px solid black;
 }
 
 .dj-img {
@@ -14,4 +17,9 @@
   height: 75px;
   width: 75px;
   position: relative;
+}
+
+.dj-list-container {
+  max-height: calc(100vh - 240px);
+  overflow: scroll;
 }

@@ -149,6 +149,10 @@ class Navbar extends Component {
     if(partyId === uid) {
       console.log("you can't leave host bro")
       fireboss.endParty(partyId)
+      fireboss.auth.signOut()
+        .then(() => {browserHistory.push('/login')},
+              () =>{console.log('error')}
+        )
     }
     else {
       fireboss.removeUserParty(partyId, user)
@@ -176,8 +180,6 @@ class Navbar extends Component {
         .catch(console.error)
     }
   }
-
-
 
   handleLeaveParty() {
     const { currentParty, fireboss, leaveParty, user } = this.props

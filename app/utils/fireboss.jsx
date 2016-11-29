@@ -48,8 +48,10 @@ Fireboss.prototype.endPartyListener = function(partyId, user, leaveParty, clearU
             clearUser();
             this.auth.signOut()
               .then(() => {
-                alert('the host has ended this party')
-                browserHistory.push('/parties')
+                if(partyId !== user.uid) {
+                  alert('the host has ended this party')
+                  browserHistory.push('/parties')
+                }
               },
                () =>{console.log('error')}
               )

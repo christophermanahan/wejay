@@ -97,12 +97,12 @@ class GuestPlayer extends React.Component {
         // });
     }
 
-    onFire(songId) {
+    onFire() {
       const { fireboss, currentSong } = this.props;
       fireboss.incrementCurrSongDjPoints(currentParty.id, songId);
     }
 
-    onWater(songId) {
+    onWater() {
       const { fireboss, currentSong } = this.props;
       fireboss.decrementVotePriority(currentParty.id, songId);
     }
@@ -128,8 +128,8 @@ class GuestPlayer extends React.Component {
             <div>
                 <DumbGuestPlayer
                   currentSong={currentSong}
-                  onFire={onFire}
-                  onWater={onWater}
+                  onFire={this.onFire}
+                  onWater={this.onWater}
                 />
             </div>
         );

@@ -82,7 +82,7 @@ Fireboss.prototype.removePartyListeners = function(partyId, user) {
 }
 
 
-/* ------------------- SETTERS RETURNING PROMISES ------------------- */
+/* ------------------- SNAPSHOTS (PROMISE & NO PROMISE) ------------------- */
 
 Fireboss.prototype.gettingPartyItemSnapshot = function(partyId, item) {
   return this.database.ref(item).child(partyId).once('value');
@@ -91,6 +91,14 @@ Fireboss.prototype.gettingPartyItemSnapshot = function(partyId, item) {
 Fireboss.prototype.checkingUserParty = function(user) {
   return this.database.ref('user_parties').child(user.uid).once('value');
 }
+
+Fireboss.prototype.getCurrentPartySnapshot = function(partyId, callback) {
+  this.database.ref('parties').child(partyId).once('value', snapshot => {
+    callback(snapshot.val());
+  });
+}
+
+/* ------------------- SETTERS RETURNING PROMISES ------------------- */
 
 Fireboss.prototype.addingPartyDJ = function(partyId, user) {
   return this.database.ref('party_djs').child(partyId).child(user.uid)
@@ -124,12 +132,6 @@ Fireboss.prototype.removePartyDj = function(partyId, user) {
 }
 
 /* ------------------- SETTERS (NO PROMISES) ------------------- */
-
-Fireboss.prototype.getCurrentPartySnapshot = function(partyId, callback) {
-  this.database.ref('parties').child(partyId).once('value', snapshot => {
-    callback(snapshot.val());
-  });
-}
 
 Fireboss.prototype.setCurrentSong = function(partyId, song) {
   this.database.ref('current_song').child(partyId).set(song)

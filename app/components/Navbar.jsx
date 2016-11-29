@@ -147,7 +147,7 @@ class Navbar extends Component {
     const partyId = currentParty.id
 
     if(partyId === uid) {
-      console.log("you can't leave host bro")
+      // console.log("you are the host")
       fireboss.endParty(partyId)
       fireboss.auth.signOut()
         .then(() => {
@@ -189,7 +189,7 @@ class Navbar extends Component {
     const partyId = currentParty.id
 
     if(partyId === uid) {
-      console.log("you can't leave host bro")
+      // console.log("you are the host")
       fireboss.endParty(partyId)
       browserHistory.push('/parties');
     }

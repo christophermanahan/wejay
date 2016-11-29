@@ -201,5 +201,12 @@ Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
     .then(() => {console.log('vote added!')})
 }
 
+Fireboss.prototype.incrementCurrSongDjPoints = function() {
+
+}
+
+Fireboss.prototype.decrementCurrSongDjPoints = function() {
+  
+}
 
 export default Fireboss

@@ -73,7 +73,7 @@ const DumbCustomPlayer = props => {
   const iconStyle = {fontSize: '30px'};
 
   return (
-    <Row>
+    <div>
 
       <LinearProgress
         mode="determinate"
@@ -124,7 +124,7 @@ const DumbCustomPlayer = props => {
           </Row>
         </Col>
       </Row>
-    </Row>
+    </div>
   )
 }
 

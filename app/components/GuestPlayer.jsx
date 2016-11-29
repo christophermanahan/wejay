@@ -52,7 +52,7 @@ const DumbGuestPlayer = props => {
   const iconStyle = {fontSize: '30px'};
 
   return (
-    <Row>
+    <div>
       <LinearProgress
         mode="determinate"
         style={progBarStyle}
@@ -84,7 +84,7 @@ const DumbGuestPlayer = props => {
           </Row>
         </Col>
       </Row>
-    </Row>  
+    </div>  
   )
 };
 

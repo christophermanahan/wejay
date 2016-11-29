@@ -202,21 +202,41 @@ Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
 }
 
 Fireboss.prototype.incrementCurrSongDjPoints = function(userId, partyId) {
-  this.database.ref('party_djs').child(partyId).child(userId).once('value')
+  const currentSongRef = this.database.ref('current_song').child(partyId);
+
+  currentSongRef.once('value')
   .then(snapshot => {
-    const currentDjPoints = snapshot && snapshot.val().dj_points;
-    this.database.ref('party_djs').child(partyId).child(userId)
-    .update({dj_points: (currentDjPoints + 1)});
-  });
+    const currentVotes = snapshot && snapshot.val().vote_priority
+
+    this.database.ref('party_djs').child(partyId).child(userId).once('value')
+    .then(snapshot => {
+      const currentDjPoints = snapshot && snapshot.val().dj_points;
+      this.database.ref('party_djs').child(partyId).child(userId)
+      .update({dj_points: (currentDjPoints + 1)});
+    });
+
+    return currentSongRef.update({vote_priority: (currentVotes + 1)})
+  })
+  .then(() => {console.log('vote added!')});
 }
 
 Fireboss.prototype.decrementCurrSongDjPoints = function(userId, partyId) {
-  this.database.ref('party_djs').child(partyId).child(userId).once('value')
+  const currentSongRef = this.database.ref('current_song').child(partyId);
+
+  currentSongRef.once('value')
   .then(snapshot => {
-    const currentDjPoints = snapshot && snapshot.val().dj_points;
-    this.database.ref('party_djs').child(partyId).child(userId)
-    .update({dj_points: (currentDjPoints - 1)});
-  });
+    const currentVotes = snapshot && snapshot.val().vote_priority
+
+    this.database.ref('party_djs').child(partyId).child(userId).once('value')
+    .then(snapshot => {
+      const currentDjPoints = snapshot && snapshot.val().dj_points;
+      this.database.ref('party_djs').child(partyId).child(userId)
+      .update({dj_points: (currentDjPoints - 1)});
+    });
+
+    return currentSongRef.update({vote_priority: (currentVotes - 1)})
+  })
+  .then(() => {console.log('vote added!')});
 }
 
 export default Fireboss

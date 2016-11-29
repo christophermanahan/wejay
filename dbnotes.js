@@ -1,7 +1,7 @@
 /*
 
 
-// -----------------    QUEUES     ------------------ //
+// -----------------    CURRENT SONG & QUEUES     ------------------ //
 currentSong: {
 	partyID: {
 		uid: str,
@@ -62,7 +62,8 @@ parties: {
     name: '',
     location: '',
     id: partyID, // maybe change this? born of necessity
-    needSong: bool
+    needSong: bool,
+    active: bool
   }
 }
 

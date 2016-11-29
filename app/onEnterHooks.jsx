@@ -7,6 +7,7 @@ import Fireboss from './utils/fireboss'
 import { setFirebase } from './ducks/firebase';
 import { setUser, clearUser } from './ducks/user';
 import { setMessages } from './ducks/chat';
+import { leaveParty } from './ducks/global';
 import { setTopTen } from './ducks/topTen';
 import { setCurrentSong } from './ducks/currentSong';
 import { setParties } from './ducks/parties';
@@ -42,8 +43,7 @@ export const onMainEnter = () => {
   fireboss.createPartiesListener(dispatch(setParties))
 
   // 3. Check if user is authenticated
-  const auth = firebase.auth();
-  auth.onAuthStateChanged(user => {
+  fireboss.auth.onAuthStateChanged(user => {
     if (!user) { // if not authenticated, send to login
       store.dispatch(clearUser());
       browserHistory.push('/login');
@@ -63,6 +63,7 @@ export const onMainEnter = () => {
           fireboss.createPartyListener(partyId,'current_song', dispatch(setCurrentSong))
           fireboss.createPartyListener(partyId,'top_ten', dispatch(setTopTen))
           fireboss.createPartyListener(partyId,'party_djs', dispatch(setDjs))
+          fireboss.endPartyListener(partyId, user, dispatch(leaveParty), browserHistory)
           fireboss.createPersonalQueueListener(partyId, user, dispatch(setPersonalQueue))
           fireboss.createMessagesListener(dispatch(setMessages))
           browserHistory.push('/app');

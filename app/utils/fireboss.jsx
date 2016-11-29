@@ -1,5 +1,5 @@
 /* Fireboss is a firebase database manager. It allows us to DRYly implement
-   our core functionality and perfom tests using firebase-mock.
+   our core functionality.
 
    Fireboss can:
      - create listeners for parties
@@ -8,20 +8,53 @@
 
 const Fireboss = function(firebase) {
   this.database = firebase.database()
+  this.auth = firebase.auth()
 }
 
 
 /* -------------------------- LISTENERS -------------------------- */
 
 Fireboss.prototype.createPartiesListener = function(onChangeFunc) {
-    this.database.ref('parties').on('value', snapshot => {
+  this.database.ref('parties').on('value', snapshot => {
     onChangeFunc(snapshot.val());
   });
 }
 
 Fireboss.prototype.createPartyListener = function(partyId, type, onChangeFunc) {
-    this.database.ref(type).child(partyId).on('value', snapshot => {
+  this.database.ref(type).child(partyId).on('value', snapshot => {
     onChangeFunc(snapshot.val());
+  });
+}
+
+Fireboss.prototype.endPartyListener = function(partyId, user, leaveParty, browserHistory) {
+  this.database.ref('parties').child(partyId).child('active').on('value', snapshot => {
+    if(snapshot.val()) {
+      console.log('party still raging')
+    } else {
+      this.removeUserParty(partyId, user)
+        .then(err => {
+          if(err){
+            throw new Error(err)
+          } else {
+            return this.removePartyDj(partyId, user)
+          }
+        })
+        .then(err => {
+          if(err){
+            throw new Error(err)
+          } else {
+            this.removePartyListeners(partyId, user)
+            leaveParty();
+            if(partyId !== user.uid) {
+              alert('the host has ended this party')
+              browserHistory.push('/parties')
+            } else {
+              console.log('you ended the party')
+            }
+          }
+        })
+        .catch(console.error)
+      }
   });
 }
 
@@ -37,14 +70,19 @@ Fireboss.prototype.createPersonalQueueListener = function(partyId, user, onChang
   });
 }
 
-
-/* -------------------------- SNAPSHOTS -------------------------- */
-
-Fireboss.prototype.getCurrentPartySnapshot = function(partyId, callback) {
-  this.database.ref('parties').child(partyId).once('value', snapshot => {
-    callback(snapshot.val());
-  });
+Fireboss.prototype.removePartyListeners = function(partyId, user) {
+  this.database.ref('current_song').child(partyId).off()
+  this.database.ref('top_ten').child(partyId).off()
+  this.database.ref('party_djs').child(partyId).off()
+  this.database.ref('messages').off()
+  this.database.ref('parties').child(partyId).child('partyEnded').off()
+  this.database.ref('party_djs').child(partyId).child(user.uid)
+    .child('personal_queue').off()
+  console.log('listeners removed!')
 }
+
+
+/* ------------------- SNAPSHOTS (PROMISE & NO PROMISE) ------------------- */
 
 Fireboss.prototype.gettingPartyItemSnapshot = function(partyId, item) {
   return this.database.ref(item).child(partyId).once('value');
@@ -54,8 +92,13 @@ Fireboss.prototype.checkingUserParty = function(user) {
   return this.database.ref('user_parties').child(user.uid).once('value');
 }
 
+Fireboss.prototype.getCurrentPartySnapshot = function(partyId, callback) {
+  this.database.ref('parties').child(partyId).once('value', snapshot => {
+    callback(snapshot.val());
+  });
+}
 
-/* --------------------------- SETTERS --------------------------- */
+/* ------------------- SETTERS RETURNING PROMISES ------------------- */
 
 Fireboss.prototype.addingPartyDJ = function(partyId, user) {
   return this.database.ref('party_djs').child(partyId).child(user.uid)
@@ -80,8 +123,32 @@ Fireboss.prototype.creatingParty = function(partyId, party) {
   return this.database.ref('parties').child(partyId).set(party)
 }
 
+Fireboss.prototype.removeUserParty = function(partyId, user) {
+  return this.database.ref('user_parties').child(user.uid).remove()
+}
+
+Fireboss.prototype.removePartyDj = function(partyId, user) {
+  return this.database.ref(partyId).child(user.uid).remove()
+}
+
+/* ------------------- SETTERS (NO PROMISES) ------------------- */
+
 Fireboss.prototype.setCurrentSong = function(partyId, song) {
   this.database.ref('current_song').child(partyId).set(song)
+}
+
+Fireboss.prototype.endParty = function(partyId) {
+  this.database.ref('parties').child(partyId).remove()
+    .then(err => {
+        if(err){
+          throw new Error(err)
+        } else {
+          this.database.ref('current_song').child(partyId).remove()
+          this.database.ref('top_ten').child(partyId).remove()
+          this.database.ref('party_djs').child(partyId).remove()
+          this.database.ref('shadow_queue').child(partyId).remove()
+        }
+      })
 }
 
 Fireboss.prototype.addToPartyQueue = function(partyId, type, song) {
@@ -133,6 +200,7 @@ Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
     })
     .then(() => {console.log('vote added!')})
 }
+
 
 Fireboss.prototype.triggerNeedSong = function(partyId) {
   this.database.ref('parties').child(partyId).update({needSong: true})

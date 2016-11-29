@@ -9,8 +9,9 @@ import Avatar from 'material-ui/Avatar';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const Song = props => {
-	const {title, artist, DJ, onFire, onWater, id, rank, heatIndex} = props;
+	const {title, artist, dj_name, onFire, onWater, id, rank, heatIndex} = props;
 	const iconStyle = {fontSize: '30px'};
+	const buttonStyle = {paddingTop: '20px'}
 
 	const heatColor = (heatIndex > 0) ?
              `rgba(236, 70, 22, ${heatIndex})` :
@@ -37,12 +38,17 @@ const Song = props => {
 				<Col xs={3} className="top-ten-col">
 					<Row>
 						<Col xs={6}>
-				      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => onWater(id)}/>
+				      <IconButton style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => onWater(id)}/>
 						</Col>
 						<Col xs={6}>
-				      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={() => onFire(id)} />
+				      <IconButton style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={() => onFire(id)} />
 						</Col>
 					</Row>
+				</Col>
+			</Row>
+			<Row className="top-ten-dj">
+				<Col xs={8} xsOffset={2}>
+					<h4>chosen by: { dj_name }</h4>
 				</Col>
 			</Row>
 		</Col>

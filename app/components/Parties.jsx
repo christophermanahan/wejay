@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox} from 'material-ui';
+import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox, AutoComplete} from 'material-ui';
+
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {browserHistory} from 'react-router';
@@ -38,67 +39,80 @@ const DumbParties = props => {
 
   // partiesArr is an array with each index representing a party
   // each party has the following data [partyid, {name: '', location: ''}]
-  let partiesArr = [];
+
+  let autofillArr = [];
+
   for (let index in parties) {
-      partiesArr.push([index, parties[index]]);
+    autofillArr.push({textKey: parties[index].name, valueKey: parties[index].id});
+  }
+
+  const autofillConfig = {
+    text: 'textKey',
+    value: 'valueKey'
   }
 
   return (
-    <div className="party-container">
-      <h2 className="party-header">Join</h2>
-      <Row>
-        <List style={textFieldStyle}>
-          <ListItem
-            primaryText="Parties"
-            style={listItemStyle}
-            initiallyOpen={false}
-            primaryTogglesNestedList={true}
-            nestedItems={
-              partiesArr && partiesArr.map(party => {
-                return (
-                  <MenuItem
-                    onClick={() => onPartySelect(party[0])}
-                    style={nestedListItemStyle}
-                    key={party[0]}
-                    primaryText={party[1].name}
-                    secondaryText={party[1].location}
-                  />)
-              })
-            }
-          />
-        </List>
-      </Row>
-      <RaisedButton
-        className="party-btn"
-        primary={true}
-        style={btnStyle}
-        backgroundColor="#7aa095"
-        labelColor="#ffffff"
-        label="Rage"
-        onTouchTap={joinParty}
-      />
-      <h2 className="party-header">Create</h2>
-      <form onSubmit={onSubmit}>
-        <TextField
-          id="name"
-          style={textFieldStyle}
-          floatingLabelText="Party Name"
-        />
-        <TextField
-          id="location"
-          style={textFieldStyle}
-          floatingLabelText="Party Location"
-        />
-        <RaisedButton
-          className="party-btn"
-          style={btnStyle}
-          backgroundColor="#ec4616"
-          labelColor="#ffffff"
-          type="submit"
-          label="Start"
-        />
-       </form>
-    </div>
+    <Row id="login-grad" className="party-container">
+      <Col xsOffset={1} xs={10}>
+        <Row>
+          <Col xs={12}>
+            <h1 id="parties-title">weJay</h1>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12}>
+            <h2 className="party-header">Join</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col xsOffset={1} xs={10}>
+            <AutoComplete
+              floatingLabelText="Find your party..."
+              filter={AutoComplete.fuzzyFilter}
+              openOnFocus={true}
+              dataSource={autofillArr}
+              dataSourceConfig={autofillConfig}
+              onNewRequest={onPartySelect}
+            />
+          </Col>
+
+        </Row>
+
+
+
+            <RaisedButton
+              className="party-btn"
+              primary={true}
+              style={btnStyle}
+              backgroundColor="#7aa095"
+              labelColor="#ffffff"
+              label="Join"
+              onTouchTap={joinParty}
+              />
+            <h2 className="party-header">Create</h2>
+            <form onSubmit={onSubmit}>
+              <TextField
+                id="name"
+                style={textFieldStyle}
+                floatingLabelText="Party Name"
+                />
+              <TextField
+                id="location"
+                style={textFieldStyle}
+                floatingLabelText="Party Location"
+                />
+              <RaisedButton
+                className="party-btn"
+                style={btnStyle}
+                backgroundColor="#ec4616"
+                labelColor="#ffffff"
+                type="submit"
+                label="Start"
+                />
+            </form>
+      </Col>
+    </Row>
+
   );
 };
 
@@ -181,8 +195,9 @@ class Parties extends Component {
       });
   }
 
-  onPartySelect(partyId) {
-    this.setState({ partyId });
+  onPartySelect(autofillObj) {
+    if(!autofillObj || !autofillObj.valueKey) return;
+    this.setState({ partyId : autofillObj.valueKey });
   }
 
   render() {
@@ -215,3 +230,30 @@ const mapDispatchToProps = dispatch => ({
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Parties);
+
+
+
+/*
+<Row>
+  <List style={textFieldStyle}>
+    <ListItem
+      primaryText="Parties"
+      style={listItemStyle}
+      initiallyOpen={false}
+      primaryTogglesNestedList={true}
+      nestedItems={
+        partiesArr && partiesArr.map(party => {
+          return (
+            <MenuItem
+              onClick={() => onPartySelect(party[0])}
+              style={nestedListItemStyle}
+              key={party[0]}
+              primaryText={party[1].name}
+              secondaryText={party[1].location}
+              />)
+            })
+          }
+          />
+      </List>
+    </Row>
+*/

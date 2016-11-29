@@ -24,10 +24,10 @@ const DumbLogin = props => {
     />]
 
   return (
-    <div>
+    <div id="login-grad">
       <Row>
         <Col xs={12}>
-          <h1 className="login-txt" id="login-title">WEJAY</h1>
+          <h1 id="login-title">weJay</h1>
           <Dialog
             actions={dialogActions}
             modal={false}

@@ -1,0 +1,18 @@
+#login-grad {
+    background: #ec4616; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#ec4616, white); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#ec4616, white); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#ec4616, white); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#ec4616, white); /* Standard syntax */
+}
+
+.login-btn-container {
+	margin-bottom: 8vh;
+}
+
+#login-title {
+	font-size: 9em;
+	font-family: Montserret;
+	text-align: center;
+  font-style: oblique;
+}

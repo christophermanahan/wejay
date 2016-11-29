@@ -202,4 +202,8 @@ Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
 }
 
 
+Fireboss.prototype.triggerNeedSong = function(partyId) {
+  this.database.ref('parties').child(partyId).update({needSong: true})
+}
+
 export default Fireboss

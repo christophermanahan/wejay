@@ -60,14 +60,12 @@ class CustomPlayer extends React.Component {
             soundCloudAudio.play();
         }
     }
-    next() {
-      console.log("YOU PRESSED NEXT SONG");
-    }
 
 
     triggerFirebase() {
-        const { firebase, partyId } = this.props;
-        firebase.database().ref('parties').child(partyId).update({needSong: true})
+        const { fireboss, partyId } = this.props;
+        // fireboss.database().ref('parties').child(partyId).update({needSong: true})
+        fireboss.triggerNeedSong(partyId)
     }
 
     mapDurationSecsToMins(num) {
@@ -167,7 +165,7 @@ class CustomPlayer extends React.Component {
                       <IconButton
                         iconStyle={styles.largeIcon}
                         style={styles.buttonStyle}
-                        onClick={this.next}>
+                        onClick={this.triggerFirebase}>
                         <NextSongButton />
                       </IconButton>
                     </Col>
@@ -206,7 +204,7 @@ class CustomPlayerWrapper extends React.Component {
                 resolveUrl={song_uri}
                 clientId={clientId}>
                 <CustomPlayer
-                  firebase={this.props.firebase}
+                  fireboss={this.props.fireboss}
                   song_uri={song_uri}
                   partyId={this.props.currentParty.id}
                 />
@@ -217,7 +215,7 @@ class CustomPlayerWrapper extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, firebase, currentParty }) => ({ currentSong, firebase, currentParty })
+const mapStateToProps = ({ currentSong, fireboss, currentParty }) => ({ currentSong, fireboss, currentParty })
 
 const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 

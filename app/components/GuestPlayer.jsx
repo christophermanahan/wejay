@@ -43,6 +43,12 @@ const DumbGuestPlayer = props => {
     fontSize: "2.3em"
   }
 
+  let voteStyle = {
+    fontFamily: "Roboto",
+    position: "relative",
+    bottom: "10%"
+  }
+
   const iconStyle = {fontSize: '30px'};
 
   return (
@@ -65,7 +71,7 @@ const DumbGuestPlayer = props => {
         <Col xs={5} style={playerIconStyle}>
           <Row>
             <Col xs={2}>
-              <FontIcon style={hearingIconStyle} className="zmdi zmdi-hearing animated infinite wobble zmdi-hc-fw" />
+              <h2 style={voteStyle}>{ currentSong && currentSong.vote_priority > 0 ? `+${currentSong.vote_priority}` : currentSong.vote_priority }</h2>
             </Col>
 
             <Col xsOffset={2} xs={2}>

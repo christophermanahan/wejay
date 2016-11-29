@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import {MenuItem, RaisedButton, TextField, List, ListItem, Checkbox, AutoComplete} from 'material-ui';
+import { RaisedButton, TextField, AutoComplete, Dialog} from 'material-ui';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
@@ -18,7 +18,8 @@ import { setMessages } from '../ducks/chat';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbParties = props => {
-  const { parties, partyId, onPartySelect, joinParty, onSubmit } = props;
+  const { parties, onPartySelect, joinParty, onSubmit, onPartyNameType, onPartyLocationType,
+        dialogOpen, validationMsg, onDialogClose } = props;
 
   //override material ui's inline style elements
   let btnStyle = {
@@ -29,16 +30,8 @@ const DumbParties = props => {
     color: "#363836",
     width: "98%",
     margin: "0.2em"
-  }
+  };
 
-  let listItemStyle = {}
-
-  let nestedListItemStyle = {
-    right: "0.8em"
-  }
-
-  // partiesArr is an array with each index representing a party
-  // each party has the following data [partyid, {name: '', location: ''}]
 
   let autofillArr = [];
 
@@ -49,7 +42,15 @@ const DumbParties = props => {
   const autofillConfig = {
     text: 'textKey',
     value: 'valueKey'
-  }
+  };
+
+  const dialogActions = [
+    <RaisedButton
+      label="OK"
+      primary={true}
+      onTouchTap={onDialogClose}
+    />
+  ];
 
   return (
     <Row id="login-grad" className="party-container">
@@ -61,7 +62,7 @@ const DumbParties = props => {
         </Row>
         <Row>
           <Col xs={12}>
-            <h2 className="party-header">Join</h2>
+            <h2 className="party-header">Join Party</h2>
           </Col>
         </Row>
         <Row>
@@ -89,17 +90,19 @@ const DumbParties = props => {
               label="Join"
               onTouchTap={joinParty}
               />
-            <h2 className="party-header">Create</h2>
+            <h2 className="party-header">Create Party</h2>
             <form onSubmit={onSubmit}>
               <TextField
                 id="name"
                 style={textFieldStyle}
                 floatingLabelText="Party Name"
+                onChange={onPartyNameType}
                 />
               <TextField
                 id="location"
                 style={textFieldStyle}
                 floatingLabelText="Party Location"
+                onChange={onPartyLocationType}
                 />
               <RaisedButton
                 className="party-btn"
@@ -110,12 +113,19 @@ const DumbParties = props => {
                 label="Start"
                 />
             </form>
+            <Dialog
+              title="Whoops!"
+              open={dialogOpen}
+              modal={true}
+              actions={dialogActions}
+            >
+              { validationMsg }
+            </Dialog>
       </Col>
     </Row>
 
   );
 };
-
 
 
 /* -----------------    STATEFUL REACT COMPONENT     ------------------ */
@@ -125,15 +135,21 @@ class Parties extends Component {
     this.onPartySelect = this.onPartySelect.bind(this);
     this.joinParty = this.joinParty.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onPartyNameType = this.onPartyNameType.bind(this);
+    this.onPartyLocationType = this.onPartyLocationType.bind(this);
+    this.onDialogClose = this.onDialogClose.bind(this);
+
     this.state = {
       partyId: '',
-      open: false
+      newPartyName: '',
+      newPartyLocation: '',
+      dialogOpen: false,
+      validationMsgArr: []
     };
 
   }
 
   joinParty(evt) {
-    console.log('also here')
     evt.preventDefault();
     const { user, fireboss, setcurrentparty, setcurrentsong,
             settopten, setdjs, setpersonalqueue, setmessages } = this.props;
@@ -142,7 +158,7 @@ class Parties extends Component {
     if (!partyId) { return; }
 
     const associatingPartyAndUser = fireboss.associatingPartyAndUser(partyId, user)
-    const addingPartyDJ = fireboss.addingPartyDJ(partyId, user)
+    const addingPartyDJ = fireboss.addingPartyDJ(partyId, user);
 
     Promise.all([associatingPartyAndUser, addingPartyDJ])
       .then(() => {
@@ -157,38 +173,79 @@ class Parties extends Component {
       .catch(err => console.error(err)) // TODO: need real error handling
   }
 
+  onPartyNameType(evt) {
+    evt.preventDefault();
+    const newPartyName = evt.target.value;
+    this.setState({newPartyName});
+  }
+
+  onPartyLocationType(evt) {
+    evt.preventDefault();
+    const newPartyLocation = evt.target.value;
+    this.setState({newPartyLocation});
+  }
+
+  onFailedValidation(msg) {
+    this.setState(prevState => {
+      return { validationMsgArr: prevState.validationMsgArr.concat(msg) };
+    });
+  }
+
+  onDialogClose() {
+    this.setState({dialogOpen: false, validationMsgArr: []});
+  }
+
   onSubmit(evt) {
     evt.preventDefault();
-    const { user, fireboss, setcurrentparty, setcurrentsong, settopten, setdjs,
+    const { user, fireboss, parties, setcurrentparty, setcurrentsong, settopten, setdjs,
             setpersonalqueue, setmessages } = this.props;
 
     // if a user starts the party, that party's uid becomes the partyId
-    const partyId = user.uid
-    const name = evt.target.name.value;
-    const location = evt.target.location.value;
+    const partyId = user.uid;
+    const name = this.state.newPartyName;
+    const location = this.state.newPartyLocation;
 
-    const partyObj = {id: user.uid, name, location, needSong: false }
-    const initialSong = {uid: user.uid, dj_name: 'DJ Init', artist: 'dazzel-almond',
-                         title: 'Melody of Lies',
-                         song_uri: 'https://soundcloud.com/dazzel-almond/melody-of-lies',
-                         time_priority: 0,
-                         vote_priority: 0
-                       }
+    // check to see if name submitted is unique or not
+    let duplicateName = false;
+    for (let index in parties) {
+      if (parties[index].name === name) {
+        duplicateName = true;
+      }
+    }
+
+    // custom validation to ensure that each party has a name and location
+    if (!name || !location || duplicateName) {
+      if (!name) {
+        this.onFailedValidation('Your party needs a name!');
+      }
+
+      if (duplicateName) {
+        this.onFailedValidation('That name is taken, please choose another!')
+      }
+
+      if (!location) {
+        this.onFailedValidation('Your party needs a location!');
+      }
+
+      return this.setState({dialogOpen: true});
+    }
+
+    const partyObj = {id: user.uid, name, location, needSong: false };
+
 
     fireboss.creatingParty(partyId, partyObj)
       .then(() => {
-        const addingHostDJ = fireboss.addingPartyDJ(partyId, user)
+        const addingHostDJ = fireboss.addingPartyDJ(partyId, user);
         const associatingPartyAndHost = fireboss.associatingPartyAndUser(partyId, user)
-        const settingCurrentSong = fireboss.settingCurrentSong(partyId, initialSong)
 
-        Promise.all([addingHostDJ, associatingPartyAndHost, settingCurrentSong])
+        Promise.all([addingHostDJ, associatingPartyAndHost])
           .then(() => {
-            fireboss.getCurrentPartySnapshot(partyId, setcurrentparty)
-            fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
-            fireboss.createPartyListener(partyId,'top_ten', settopten)
-            fireboss.createPartyListener(partyId,'party_djs', setdjs)
-            fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
-            fireboss.createMessagesListener(setmessages)
+            fireboss.getCurrentPartySnapshot(partyId, setcurrentparty);
+            fireboss.createPartyListener(partyId,'current_song', setcurrentsong);
+            fireboss.createPartyListener(partyId,'top_ten', settopten);
+            fireboss.createPartyListener(partyId,'party_djs', setdjs);
+            fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue);
+            fireboss.createMessagesListener(setmessages);
             browserHistory.push('/app');
           })
           .catch(console.error) // TODO: real error handling
@@ -196,8 +253,8 @@ class Parties extends Component {
   }
 
   onPartySelect(autofillObj) {
-    if(!autofillObj || !autofillObj.valueKey) return;
-    this.setState({ partyId : autofillObj.valueKey });
+    if (!autofillObj || !autofillObj.valueKey) return;
+    this.setState({ partyId: autofillObj.valueKey });
   }
 
   render() {
@@ -209,6 +266,11 @@ class Parties extends Component {
                      createSickParty={this.createSickParty}
                      parties={this.props.parties}
                      joinParty={this.joinParty}
+                     onPartyNameType={this.onPartyNameType}
+                     onPartyLocationType={this.onPartyLocationType}
+                     dialogOpen={this.state.dialogOpen}
+                     validationMsg={this.state.validationMsgArr.join(' ')}
+                     onDialogClose={this.onDialogClose}
                      />
       </div>
     );
@@ -231,29 +293,3 @@ const mapDispatchToProps = dispatch => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(Parties);
 
-
-
-/*
-<Row>
-  <List style={textFieldStyle}>
-    <ListItem
-      primaryText="Parties"
-      style={listItemStyle}
-      initiallyOpen={false}
-      primaryTogglesNestedList={true}
-      nestedItems={
-        partiesArr && partiesArr.map(party => {
-          return (
-            <MenuItem
-              onClick={() => onPartySelect(party[0])}
-              style={nestedListItemStyle}
-              key={party[0]}
-              primaryText={party[1].name}
-              secondaryText={party[1].location}
-              />)
-            })
-          }
-          />
-      </List>
-    </Row>
-*/

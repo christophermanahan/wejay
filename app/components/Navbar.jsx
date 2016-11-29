@@ -150,7 +150,10 @@ class Navbar extends Component {
       console.log("you can't leave host bro")
       fireboss.endParty(partyId)
       fireboss.auth.signOut()
-        .then(() => {browserHistory.push('/login')},
+        .then(() => {
+          clearUser();
+          browserHistory.push('/login')
+        },
               () =>{console.log('error')}
         )
     }
@@ -167,7 +170,6 @@ class Navbar extends Component {
           if(err){
             throw new Error(err)
           } else {
-            // this.setState({dialogOpenLeave: false})
             fireboss.removePartyListeners(partyId, user)
             leaveParty();
             clearUser();
@@ -204,7 +206,6 @@ class Navbar extends Component {
             if(err){
               throw new Error(err)
             } else {
-              // this.setState({dialogOpenLeave: false});
               fireboss.removePartyListeners(partyId, user)
               leaveParty()
               browserHistory.push('/parties');

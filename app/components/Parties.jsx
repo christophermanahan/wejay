@@ -9,7 +9,6 @@ import {browserHistory} from 'react-router';
 import { setCurrentParty } from '../ducks/currentParty';
 import { setCurrentSong } from '../ducks/currentSong';
 import { leaveParty } from '../ducks/global';
-import { clearUser } from '../ducks/user';
 
 import { setTopTen } from '../ducks/topTen';
 import { setDjs } from '../ducks/djs';
@@ -124,7 +123,7 @@ class Parties extends Component {
     console.log('also here')
     evt.preventDefault();
     const { user, fireboss, setcurrentparty, setcurrentsong,
-            settopten, setdjs, setpersonalqueue, setmessages, leaveparty, clearuser } = this.props;
+            settopten, setdjs, setpersonalqueue, setmessages, leaveparty } = this.props;
     const { partyId } = this.state;
 
     if (!partyId) { return; }
@@ -138,7 +137,7 @@ class Parties extends Component {
           fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
           fireboss.createPartyListener(partyId,'top_ten', settopten)
           fireboss.createPartyListener(partyId,'party_djs', setdjs)
-          fireboss.endPartyListener(partyId, user, leaveparty, clearuser, browserHistory)
+          fireboss.endPartyListener(partyId, user, leaveparty, browserHistory)
           fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
           fireboss.createMessagesListener(setmessages)
           browserHistory.push('/app');
@@ -149,7 +148,7 @@ class Parties extends Component {
   onSubmit(evt) {
     evt.preventDefault();
     const { user, fireboss, setcurrentparty, setcurrentsong, settopten, setdjs,
-            setpersonalqueue, setmessages, leaveparty, clearuser } = this.props;
+            setpersonalqueue, setmessages, leaveparty } = this.props;
 
     // if a user starts the party, that party's uid becomes the partyId
     const partyId = user.uid
@@ -176,7 +175,7 @@ class Parties extends Component {
             fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
             fireboss.createPartyListener(partyId,'top_ten', settopten)
             fireboss.createPartyListener(partyId,'party_djs', setdjs)
-            fireboss.endPartyListener(partyId, user, leaveparty, clearuser, browserHistory)
+            fireboss.endPartyListener(partyId, user, leaveparty, browserHistory)
             fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
             fireboss.createMessagesListener(setmessages)
             browserHistory.push('/app');
@@ -215,8 +214,7 @@ const mapDispatchToProps = dispatch => ({
   setdjs: djs => dispatch(setDjs(djs)),
   setpersonalqueue: queue => dispatch(setPersonalQueue(queue)),
   setmessages: messages => dispatch(setMessages(messages)),
-  leaveparty: () => dispatch(leaveParty()),
-  clearuser: () => dispatch(clearUser())
+  leaveparty: () => dispatch(leaveParty())
 });
 
 

@@ -26,7 +26,7 @@ Fireboss.prototype.createPartyListener = function(partyId, type, onChangeFunc) {
   });
 }
 
-Fireboss.prototype.endPartyListener = function(partyId, user, leaveParty, clearUser, browserHistory) {
+Fireboss.prototype.endPartyListener = function(partyId, user, leaveParty, browserHistory) {
   this.database.ref('parties').child(partyId).child('active').on('value', snapshot => {
     if(snapshot.val()) {
       console.log('party still raging')
@@ -45,16 +45,12 @@ Fireboss.prototype.endPartyListener = function(partyId, user, leaveParty, clearU
           } else {
             this.removePartyListeners(partyId, user)
             leaveParty();
-            clearUser();
-            this.auth.signOut()
-              .then(() => {
-                if(partyId !== user.uid) {
-                  alert('the host has ended this party')
-                  browserHistory.push('/parties')
-                }
-              },
-               () =>{console.log('error')}
-              )
+            if(partyId !== user.uid) {
+              alert('the host has ended this party')
+              browserHistory.push('/parties')
+            } else {
+              console.log('you ended the party')
+            }
           }
         })
         .catch(console.error)

@@ -151,70 +151,78 @@ class Navbar extends Component {
 
 
   handleLogout() {
+    const { currentParty, firebase, fireboss, leaveParty, clearUser, user } = this.props
+    const { uid } = user
+    const partyId = currentParty.id
 
-    // const { uid } = this.props.user
-    // const { currentParty } = this.props
-    // let isPartyHost;
-    //
-    // (uid === currentParty.id) ? isPartyHost = true : isPartyHost = false
-    // console.log("isPartyHost: ", isPartyHost);
-    // console.log("LOGOUT MADE IT ");
-
-
-
-    const { uid } = this.props.user
-    const { currentParty, firebase, leaveParty, clearUser } = this.props
     const userPartiesRef = firebase.database().ref('user_parties').child(uid);
     const partyDjsRef = firebase.database().ref(currentParty.id).child(uid);
 
-    userPartiesRef.remove()
-    .then(err => {
-      if(err){
-        throw new Error(err)
-      } else {
-        return partyDjsRef.remove()
-      }
-    })
-    .then(err => {
-      if(err){
-        throw new Error(err)
-      } else {
-        this.setState({dialogOpenLeave: false});
-        leaveParty();
-        clearUser();
-        browserHistory.push('/login');
-      }
-    })
-    .catch(console.error)
+    if(partyId === uid) {
+      alert("you can't leave host bro")
+    }
+    else {
+      userPartiesRef.remove()
+        .then(err => {
+          if(err){
+            throw new Error(err)
+          } else {
+            return partyDjsRef.remove()
+          }
+        })
+        .then(err => {
+          if(err){
+            throw new Error(err)
+          } else {
+            // this.setState({dialogOpenLeave: false})
+            fireboss.removePartyListeners(partyId, user)
+            leaveParty();
+            clearUser();
+            fireboss.auth.signOut()
+              .then(() => {browserHistory.push('/login')},
+                    () =>{console.log('error')}
+              )
+          }
+        })
+        .catch(console.error)
+    }
   }
 
 
 
   handleLeaveParty() {
+    const { currentParty, firebase, fireboss, leaveParty, user } = this.props
+    const { uid } = user
+    const partyId = currentParty.id
 
-    const { uid } = this.props.user
-    const { currentParty, firebase, leaveParty } = this.props
     const userPartiesRef = firebase.database().ref('user_parties').child(uid);
     const partyDjsRef = firebase.database().ref(currentParty.id).child(uid);
 
-    userPartiesRef.remove()
-    .then(err => {
-      if(err){
-        throw new Error(err)
-      } else {
-        return partyDjsRef.remove()
-      }
-    })
-    .then(err => {
-      if(err){
-        throw new Error(err)
-      } else {
-        this.setState({dialogOpenLeave: false});
-        leaveParty()
-        browserHistory.push('/parties');
-      }
-    })
-    .catch(console.error)
+    if(partyId === uid) {
+      alert("you can't leave host bro")
+    }
+    else {
+      userPartiesRef.remove()
+        .then(err => {
+            if(err){
+              throw new Error(err)
+            } else {
+              return partyDjsRef.remove()
+            }
+          })
+          .then(err => {
+            if(err){
+              throw new Error(err)
+            } else {
+              // this.setState({dialogOpenLeave: false});
+              fireboss.removePartyListeners(partyId, user)
+              leaveParty()
+              browserHistory.push('/parties');
+            }
+          })
+        .catch(console.error)
+    }
+
   }
 
 
@@ -251,7 +259,7 @@ class Navbar extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ user, firebase, currentParty }) => ({ user, firebase, currentParty });
+const mapStateToProps = ({ user, firebase, fireboss, currentParty }) => ({ user, firebase, fireboss, currentParty });
 const mapDispatchToProps = (dispatch) => ({
   leaveParty: () => dispatch(leaveParty()),
   clearUser: () => dispatch(clearUser())

@@ -42,8 +42,7 @@ export const onMainEnter = () => {
   fireboss.createPartiesListener(dispatch(setParties))
 
   // 3. Check if user is authenticated
-  const auth = firebase.auth();
-  auth.onAuthStateChanged(user => {
+  fireboss.auth.onAuthStateChanged(user => {
     if (!user) { // if not authenticated, send to login
       store.dispatch(clearUser());
       browserHistory.push('/login');

@@ -8,19 +8,22 @@
 
 const Fireboss = function(firebase) {
   this.database = firebase.database()
+  this.auth = firebase.auth()
 }
+
+/* ---------------------------- AUTH ---------------------------- */
 
 
 /* -------------------------- LISTENERS -------------------------- */
 
 Fireboss.prototype.createPartiesListener = function(onChangeFunc) {
-    this.database.ref('parties').on('value', snapshot => {
+  this.database.ref('parties').on('value', snapshot => {
     onChangeFunc(snapshot.val());
   });
 }
 
 Fireboss.prototype.createPartyListener = function(partyId, type, onChangeFunc) {
-    this.database.ref(type).child(partyId).on('value', snapshot => {
+  this.database.ref(type).child(partyId).on('value', snapshot => {
     onChangeFunc(snapshot.val());
   });
 }
@@ -36,6 +39,17 @@ Fireboss.prototype.createPersonalQueueListener = function(partyId, user, onChang
     onChangeFunc(snapshot.val());
   });
 }
+
+Fireboss.prototype.removePartyListeners = function(partyId, user) {
+  this.database.ref('current_song').child(partyId).off()
+  this.database.ref('top_ten').child(partyId).off()
+  this.database.ref('party_djs').child(partyId).off()
+  this.database.ref('messages').off()
+  this.database.ref('party_djs').child(partyId).child(user.uid)
+    .child('personal_queue').off()
+  console.log('listeners removed!')
+}
+
 
 
 /* -------------------------- SNAPSHOTS -------------------------- */

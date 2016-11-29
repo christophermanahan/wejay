@@ -12,7 +12,8 @@ import {List, ListItem} from 'material-ui/List';
 
 const DumbSongList = props => {
 
-  const { topTenArr, netHeat, calcHeatIndex, onFire, onWater } = props;
+  const { topTenArr, calcNetHeat, calcHeatIndex, onFire, onWater } = props;
+  const netHeat = calcNetHeat(topTenArr);
   return (
     <Row className="app-no-margin song-list-container">
       {topTenArr && topTenArr.map((song, index) => (
@@ -40,6 +41,8 @@ class SongList extends Component {
     this.onFire = this.onFire.bind(this);
     this.onWater = this.onWater.bind(this);
     this.calcHeatIndex = this.calcHeatIndex.bind(this);
+    this.calcNetHeat = this.calcNetHeat.bind(this);
+
   }
 
 
@@ -60,7 +63,9 @@ class SongList extends Component {
 
   calcHeatIndex(song, netHeat) {
     const songHeat = +song.vote_priority + +song.time_priority;
-    return songHeat / netHeat;
+    const absSongHeat = Math.abs(songHeat / netHeat);
+    // return val is > 0 when net priority is positive, and vice-versa
+    return (songHeat > 0) ? absSongHeat : absSongHeat * -1;
   }
 
   render() {
@@ -73,13 +78,11 @@ class SongList extends Component {
     }
     topTenArr.sort((a, b) => ((+b.vote_priority + +b.time_priority) - (+a.vote_priority + +a.time_priority)));
 
-    const netHeat = this.calcNetHeat(topTenArr);
-
     return (
       <DumbSongList
         topTenArr={ topTenArr }
         calcHeatIndex={ this.calcHeatIndex }
-        netHeat={ netHeat }
+        calcNetHeat={ this.calcNetHeat }
         onFire={ this.onFire }
         onWater={ this.onWater }
       />

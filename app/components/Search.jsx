@@ -10,8 +10,8 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 import Snackbar from 'material-ui/Snackbar';
 
 
-const TextFieldStyle = {width: '60%'}
-const RaisedButtonStyle = {width: '20%', marginLeft: '20px'}
+const TextFieldStyle = {width: '60%'};
+const RaisedButtonStyle = {width: '20%', marginLeft: '20px'};
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 

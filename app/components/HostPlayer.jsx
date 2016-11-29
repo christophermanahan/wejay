@@ -128,6 +128,7 @@ class CustomPlayer extends React.Component {
             padding: 5,
           },
         };
+        const iconStyle = {fontSize: '30px'};
 
 
         return (
@@ -140,7 +141,7 @@ class CustomPlayer extends React.Component {
                   />
 
                 <Row>
-                <Col style={playerIconStyle} xsOffset={1} xs={2}>
+                <Col style={playerIconStyle} xs={2}>
                   {(track && !track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={track.artwork_url} /> }
                 </Col>
                 <Col xs={5} style={songInfoColStyle}>
@@ -151,7 +152,7 @@ class CustomPlayer extends React.Component {
 
                 </Col>
 
-                <Col xs={2} style={playerIconStyle}>
+                <Col xs={4} style={playerIconStyle}>
 
                   <Row between="xs">
                     <Col xs={1}>
@@ -170,6 +171,13 @@ class CustomPlayer extends React.Component {
                         <NextSongButton />
                       </IconButton>
                     </Col>
+                    <Col xs={1}>
+                      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => console.log("No fuego :(")}/>
+                    </Col>
+                    <Col xs={1}>
+                      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={() => console.log("FUEGO!!!!")} />
+                    </Col>
+
 
                   </Row>
 

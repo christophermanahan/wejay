@@ -13,6 +13,7 @@ public/stylesheets/bundle.css
 public/stylesheets/bundle.css.map
 public/stylesheets/main.css
 app/components/Player.jsx
+app/utils/publicKeys.jsx
 bundle.css
 bundle.css.map
 public/stylesheets/main.css

@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 
 import {List, ListItem} from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import PlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import Audiotrack from 'material-ui/svg-icons/image/audiotrack';
 
 
 import {cyan500} from 'material-ui/styles/colors';
-
-
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
 

@@ -16,8 +16,8 @@ const SingleDj = props => {
                 </div>
               </Col>
               <Col xs={6}>
-                <p><strong>You</strong></p>
-                <p>Points: {dj.dj_points}</p>
+                <p><strong>{dj.dj_name} (You)</strong></p>
+                <p><strong>Points: {dj.dj_points}</strong></p>
               </Col>
             </Row>
         :
@@ -29,7 +29,7 @@ const SingleDj = props => {
               </Col>
               <Col xs={6}>
                 <p>{dj.dj_name}</p>
-                <p><strong>Points: {dj.dj_points}</strong></p>
+                <p>Points: {dj.dj_points}</p>
               </Col>
             </Row>
       }

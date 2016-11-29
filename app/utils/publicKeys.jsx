@@ -16,6 +16,6 @@ const devKeys = {
   SC_CLIENT_ID: "033e31e2d036e02f39242e1aa1dd2fa9"
 }
 
-const publicKeys = livePublicKeys
+const publicKeys = devKeys
 
 export default publicKeys

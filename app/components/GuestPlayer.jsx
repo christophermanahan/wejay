@@ -70,6 +70,7 @@ class GuestPlayer extends React.Component {
           marginTop: "0.2em",
           fontSize: "2.3em"
         }
+        const iconStyle = {fontSize: '30px'};
 
 
 
@@ -80,10 +81,10 @@ class GuestPlayer extends React.Component {
                   style={progBarStyle}
                   />
                 <Row>
-                <Col style={playerIconStyle} xsOffset={1} xs={2}>
+                <Col style={playerIconStyle} xsOffset={0} xs={2}>
                   {(currentSong && !currentSong.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={currentSong.artwork_url} /> }
                 </Col>
-                <Col xs={6} style={songInfoColStyle}>
+                <Col xs={5} style={songInfoColStyle}>
 
                   <h2 style={titleStyle}>{currentSong.title}</h2>
                   <h3 style={artistStyle}>by: {currentSong.artist }</h3>
@@ -91,11 +92,18 @@ class GuestPlayer extends React.Component {
 
                 </Col>
 
-                <Col xs={2} style={playerIconStyle}>
+                <Col xs={5} style={playerIconStyle}>
 
-                  <Row between="xs">
+                  <Row>
                     <Col xs={2}>
                       <FontIcon style={hearingIconStyle} className="zmdi zmdi-hearing animated infinite wobble zmdi-hc-fw" />
+                    </Col>
+
+                    <Col xsOffset={2} xs={2}>
+                      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => console.log("No fuego :(")}/>
+                    </Col>
+                    <Col xsOffset={1} xs={1}>
+                      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={() => console.log("FUEGO!!!!")} />
                     </Col>
 
                   </Row>

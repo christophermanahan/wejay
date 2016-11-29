@@ -33,18 +33,18 @@ const db = admin.database();
 
 /* -----------------    DB LISTENERS     ------------------ */
 
-
-
 const partiesRef = db.ref('parties');
 
 partiesRef.on('child_added', (snapshot) => {
 
-	const partyId = snapshot.val().id
+	const partyId = snapshot.val() && snapshot.val().id
+	if(!partyId) { return; }
 
 	const newPartyRef = db.ref('parties').child(partyId)
 	newPartyRef.on('value', (snapshot) => {
-		// console.log("newPartyRef snap: ", snapshot.val());
-		if(!snapshot || !snapshot.val().needSong){
+
+		const needSong = snapshot.val() ? snapshot.val().needSong : false;
+		if(!needSong){
 			return
 		} else {
 
@@ -57,7 +57,7 @@ partiesRef.on('child_added', (snapshot) => {
 
 				const topTen = snapshot && snapshot.val();
 				let nextSong;
-				let nextSongPriority = -1;		//needs to address --> collisions when priority scores are equal
+				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
 				let nextSongId;
 
 				if (!topTen) return;
@@ -75,17 +75,13 @@ partiesRef.on('child_added', (snapshot) => {
 
 				currentSongRef.set(nextSong);
 				newPartyRef.update({ needSong: false })
-
 				return topTenRef.child(nextSongId).remove()
 			})
 			.then((err) => {
 				if(err){
 					throw new Error(err);
 				} else {
-
-
 					return shadowQueueRef.once('value')
-
 				}
 			})
 			.then(snapshot => {
@@ -93,7 +89,7 @@ partiesRef.on('child_added', (snapshot) => {
 				if(!shadowQueue) return;
 
 				let nextSong;
-				let nextSongPriority = -1;		//needs to address --> collisions when priority scores are equal
+				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
 				let nextSongId;
 
 				for (let song in shadowQueue){
@@ -113,6 +109,8 @@ partiesRef.on('child_added', (snapshot) => {
 				return uidOfNewSQSong												//We need to fix this....
 			})
 			.then((uidOfNewSQSong) => {
+				console.log('should not be undefined', uidOfNewSQSong)
+				if (!uidOfNewSQSong) { return; }
 				const pQRef = db.ref('party_djs').child(partyId).child(uidOfNewSQSong).child('personal_queue')
 				pQRef.once('value')
 				.then(snapshot => {
@@ -128,14 +126,10 @@ partiesRef.on('child_added', (snapshot) => {
 						throw new Error(err)
 					}
 				})
-
 			})
 			.catch(console.error)
 		}
 	})
-
-
-
 })
 
 

@@ -239,7 +239,7 @@ class Parties extends Component {
     fireboss.creatingParty(partyId, partyObj)
       .then(() => {
         const addingHostDJ = fireboss.addingPartyDJ(partyId, user);
-        const associatingPartyAndHost = fireboss.associatingPartyAndUser(partyId, user)
+        const associatingPartyAndHost = fireboss.associatingPartyAndUser(partyId, user);
 
         Promise.all([addingHostDJ, associatingPartyAndHost])
           .then(() => {

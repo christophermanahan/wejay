@@ -62,9 +62,6 @@ const DumbNavbar = props => {
       />,
     ];
 
-
-
-
   return (
     <div>
       <Row id="navbar-row">
@@ -86,12 +83,10 @@ const DumbNavbar = props => {
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
               iconStyle={{ color: '#363836', height: '50px', width: '50px' }}
               menuStyle={{ backgroundColor: '#ec4616', width: '8em' }}
-
             >
               <MenuItem style={menuItemStyle} value="1">My Settings</MenuItem>
               <MenuItem style={menuItemStyle} value="2" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
               <MenuItem style={menuItemStyle} value="3" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
-
             </IconMenu>
           </div>
         </Col>
@@ -112,7 +107,6 @@ const DumbNavbar = props => {
           open={dialogOpenLogout}
           onRequestClose={handleLogoutCancel}
           titleStyle={dialogTitleStyle}
-
         />
       </Row>
     </div>
@@ -147,27 +141,22 @@ class Navbar extends Component {
     this.setState({dialogOpenLogout: true});
   }
 
-
-
-
   handleLogout() {
-    const { currentParty, firebase, fireboss, leaveParty, clearUser, user } = this.props
+    const { currentParty, fireboss, leaveParty, clearUser, user } = this.props
     const { uid } = user
     const partyId = currentParty.id
 
-    const userPartiesRef = firebase.database().ref('user_parties').child(uid);
-    const partyDjsRef = firebase.database().ref(currentParty.id).child(uid);
-
     if(partyId === uid) {
-      alert("you can't leave host bro")
+      console.log("you can't leave host bro")
+      fireboss.endParty(partyId)
     }
     else {
-      userPartiesRef.remove()
+      fireboss.removeUserParty(partyId, user)
         .then(err => {
           if(err){
             throw new Error(err)
           } else {
-            return partyDjsRef.remove()
+            return fireboss.removePartyDj(partyId, user)
           }
         })
         .then(err => {
@@ -191,23 +180,22 @@ class Navbar extends Component {
 
 
   handleLeaveParty() {
-    const { currentParty, firebase, fireboss, leaveParty, user } = this.props
+    const { currentParty, fireboss, leaveParty, user } = this.props
     const { uid } = user
     const partyId = currentParty.id
 
-    const userPartiesRef = firebase.database().ref('user_parties').child(uid);
-    const partyDjsRef = firebase.database().ref(currentParty.id).child(uid);
-
     if(partyId === uid) {
-      alert("you can't leave host bro")
+      console.log("you can't leave host bro")
+      fireboss.endParty(partyId)
+      browserHistory.push('/parties');
     }
     else {
-      userPartiesRef.remove()
+      fireboss.removeUserParty(partyId, user)
         .then(err => {
             if(err){
               throw new Error(err)
             } else {
-              return partyDjsRef.remove()
+              return fireboss.removePartyDj(partyId, user)
             }
           })
           .then(err => {

@@ -51,7 +51,6 @@ class Search extends Component {
     this.state = {
       query: '',
       snackbarOpen: false,
-      snackbarTitle: '',
       songDestination: ''
     };
 
@@ -69,12 +68,12 @@ class Search extends Component {
     this.setState({ query });
   }
 
-  openSnackbar(snackbarTitle, songDestination) {
-    this.setState({snackbarOpen: true, snackbarTitle, songDestination});
+  openSnackbar(songDestination) {
+    this.setState({snackbarOpen: true, songDestination});
   }
 
   closeSnackbar() {
-    this.setState({snackbarOpen: false, snackbarTitle: '', songDestination: ''})
+    this.setState({snackbarOpen: false, songDestination: ''})
   }
 
 
@@ -113,16 +112,16 @@ class Search extends Component {
 
       if (!currentSongVal) {
         fireboss.setCurrentSong(partyId, song);
-        this.openSnackbar(title, ' set to current song!');
+        this.openSnackbar('Nice!!! Song now playing!');
       } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
         fireboss.addToPartyQueue(partyId, 'top_ten', song);
-        this.openSnackbar(title, ' added to Top Ten!');
+        this.openSnackbar('Added to Top Ten!');
       } else if (!shadowQueueVal || !userSongInShadowQueue) {
         fireboss.addToPartyQueue(partyId, 'shadow_queue', song);
-        this.openSnackbar(title, ' sent as a recommendation!');
+        this.openSnackbar('Sent as a recommendation!');
       } else {
         fireboss.addToPersonalQueue(partyId, user, song);
-        this.openSnackbar(title, ' added to My Songs!');
+        this.openSnackbar('Added to My Songs!');
       }
     });
   }
@@ -141,9 +140,11 @@ class Search extends Component {
             <Col xs={8} xsOffset={2}>
               <Snackbar
                 open={this.state.snackbarOpen}
-                message={this.state.snackbarTitle + this.state.songDestination}
-                autoHideDuration={3000}
+                message={this.state.songDestination}
+                autoHideDuration={4000}
                 onRequestClose={this.closeSnackbar}
+                contentStyle={{ fontSize: '1.2em' }}
+                bodyStyle={{ height: '2.5em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               />
             </Col>
             <Col xs={12}>

@@ -26,7 +26,7 @@ const serviceAccount = {
 
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
-	databaseURL: 'https://wejay-ac08c.firebaseio.com'
+	databaseURL: 'https://wejay-live.firebaseio.com'
 });
 
 const db = admin.database();

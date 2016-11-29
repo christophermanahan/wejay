@@ -28,6 +28,12 @@ Fireboss.prototype.createPartyListener = function(partyId, type, onChangeFunc) {
   });
 }
 
+Fireboss.prototype.endPartyListener = function(partyId, onChangeFunc) {
+  this.database.ref('parties').child(partyId).child('partyEnded').on('value', snapshot => {
+    console.log('party over? ', snapshot.val())
+  });
+}
+
 Fireboss.prototype.createMessagesListener = function(onChangeFunc) {
   this.database.ref('messages').on('value', snapshot => {
     onChangeFunc(snapshot.val());

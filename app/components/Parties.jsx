@@ -136,6 +136,7 @@ class Parties extends Component {
           fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
           fireboss.createPartyListener(partyId,'top_ten', settopten)
           fireboss.createPartyListener(partyId,'party_djs', setdjs)
+          fireboss.endPartyListener(partyId)
           fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
           fireboss.createMessagesListener(setmessages)
           browserHistory.push('/app');
@@ -173,6 +174,7 @@ class Parties extends Component {
             fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
             fireboss.createPartyListener(partyId,'top_ten', settopten)
             fireboss.createPartyListener(partyId,'party_djs', setdjs)
+            fireboss.endPartyListener(partyId)
             fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
             fireboss.createMessagesListener(setmessages)
             browserHistory.push('/app');

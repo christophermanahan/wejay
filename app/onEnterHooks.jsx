@@ -62,6 +62,7 @@ export const onMainEnter = () => {
           fireboss.createPartyListener(partyId,'current_song', dispatch(setCurrentSong))
           fireboss.createPartyListener(partyId,'top_ten', dispatch(setTopTen))
           fireboss.createPartyListener(partyId,'party_djs', dispatch(setDjs))
+          fireboss.endPartyListener(partyId)
           fireboss.createPersonalQueueListener(partyId, user, dispatch(setPersonalQueue))
           fireboss.createMessagesListener(dispatch(setMessages))
           browserHistory.push('/app');

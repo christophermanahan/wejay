@@ -201,12 +201,22 @@ Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
     .then(() => {console.log('vote added!')})
 }
 
-Fireboss.prototype.incrementCurrSongDjPoints = function() {
-
+Fireboss.prototype.incrementCurrSongDjPoints = function(userId, partyId) {
+  this.database.ref('party_djs').child(partyId).child(userId).once('value')
+  .then(snapshot => {
+    const currentDjPoints = snapshot && snapshot.val().dj_points;
+    this.database.ref('party_djs').child(partyId).child(userId)
+    .update({dj_points: (currentDjPoints + 1)});
+  });
 }
 
-Fireboss.prototype.decrementCurrSongDjPoints = function() {
-  
+Fireboss.prototype.decrementCurrSongDjPoints = function(userId, partyId) {
+  this.database.ref('party_djs').child(partyId).child(userId).once('value')
+  .then(snapshot => {
+    const currentDjPoints = snapshot && snapshot.val().dj_points;
+    this.database.ref('party_djs').child(partyId).child(userId)
+    .update({dj_points: (currentDjPoints - 1)});
+  });
 }
 
 export default Fireboss

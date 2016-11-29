@@ -23,6 +23,21 @@ const DumbLogin = props => {
       onTouchTap={clearError}
     />]
 
+
+
+  let signupBtnStyle = {
+    color: 'white'
+  }
+  let googleBtnStyle = {
+    color: 'white'
+  }
+  let facebookBtnStyle = {
+    color: 'white'
+  }
+  let guestBtnStyle = {
+    color: 'white'
+  }
+
   return (
     <div id="login-grad">
       <Row>
@@ -44,11 +59,14 @@ const DumbLogin = props => {
             label="Sign Up"
             onTouchTap={signUp}
             labelStyle={{
-              fontSize: '2.5em',
-              verticalAlign: 'middle'
+              fontSize: '1.3em',
+              verticalAlign: 'middle',
+              color: '#363836'
             }}
             buttonStyle={{
               height: '8vh',
+              backgroundColor: 'white',
+              color: 'black'
             }}
             overlayStyle={{
               height: '100%'
@@ -57,6 +75,7 @@ const DumbLogin = props => {
           />
           </Col>
         </Row>
+
         <Row>
           <Col sm={8} xsOffset={2}>
             { showSignup && <Signup firebase={firebase} renderError={renderError}/> }
@@ -70,12 +89,13 @@ const DumbLogin = props => {
               onTouchTap={() => {logIn('google')}}
               icon={<FontIcon className="zmdi zmdi-google" style={{fontSize: '2.5em'}}/>}
               labelStyle={{
-                fontSize: '2.5em',
+                fontSize: '1em',
                 verticalAlign: 'middle'
 
               }}
               buttonStyle={{
                 height: '8vh',
+                color: 'white'
               }}
               overlayStyle={{
                 height: '100%'
@@ -92,12 +112,14 @@ const DumbLogin = props => {
               onTouchTap={() => {logIn('facebook')}}
               icon={<FontIcon className="zmdi zmdi-facebook" style={{fontSize: '2.5em'}}/>}
               labelStyle={{
-                fontSize: '2.5em',
-                verticalAlign: 'middle'
+                fontSize: '1em',
+                verticalAlign: 'middle',
+                color: 'white'
 
               }}
               buttonStyle={{
                 height: '8vh',
+                backgroundColor: '#3B5998'
               }}
               overlayStyle={{
                 height: '100%'
@@ -106,20 +128,20 @@ const DumbLogin = props => {
             />
             </Col>
           </Row>
-          <Row>
-            <Divider />
-          </Row>
+
           <Row>
             <Col xs={8} xsOffset={2}>
               <RaisedButton
                 label="Continue As Guest"
                 onTouchTap={anonymousSignIn}
                 labelStyle={{
-                  fontSize: '2.5em',
-                  verticalAlign: 'middle'
+                  fontSize: '1.2em',
+                  verticalAlign: 'middle',
+                  color: 'white'
                 }}
                 buttonStyle={{
                   height: '8vh',
+                  backgroundColor: '#35F2B9'
                 }}
                 overlayStyle={{
                   height: '100%'

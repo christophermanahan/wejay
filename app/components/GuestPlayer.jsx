@@ -66,10 +66,10 @@ const DumbGuestPlayer = props => {
         </Col>
 
         <Col xsOffset={2} xs={2}>
-          <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => console.log("No fuego :(")}/>
+          <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater}/>
         </Col>
         <Col xsOffset={1} xs={1}>
-          <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={() => console.log("FUEGO!!!!")} />
+          <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={onFire} />
         </Col>
 
       </Row>
@@ -99,12 +99,12 @@ class GuestPlayer extends React.Component {
 
     onFire() {
       const { fireboss, currentSong } = this.props;
-      fireboss.incrementCurrSongDjPoints(currentParty.id, songId);
+      fireboss.incrementCurrSongDjPoints(currentSong, currentParty);
     }
 
     onWater() {
       const { fireboss, currentSong } = this.props;
-      fireboss.decrementVotePriority(currentParty.id, songId);
+      fireboss.decrementCurrSongDjPoints(currentSong, currentParty);
     }
 
     render() {
@@ -139,6 +139,6 @@ class GuestPlayer extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, fireboss }) => ({ currentSong, fireboss });
+const mapStateToProps = ({ currentParty, currentSong, fireboss }) => ({ currentSong, fireboss });
 
 export default connect(mapStateToProps)(GuestPlayer);

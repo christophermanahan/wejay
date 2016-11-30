@@ -5,6 +5,9 @@ import Song from './Song';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import {List, ListItem} from 'material-ui/List';
+import {cyan500} from 'material-ui/styles/colors';
+import FontIcon from 'material-ui/FontIcon';
+
 
 
 
@@ -16,18 +19,38 @@ const DumbSongList = props => {
   const netHeat = calcNetHeat(topTenArr);
   return (
     <Row className="app-no-margin song-list-container">
-      {topTenArr && topTenArr.map((song, index) => (
-        song && <Song title={song.title}
-                      rank={index + 1}
-                      artist={song.artist}
-                      dj_name={song.dj_name}
-                      onFire={onFire}
-                      onWater={onWater}
-                      id={song.id}
-                      key={song.id}
-                      heatIndex={calcHeatIndex(song, netHeat)}
-                />
-      ))}
+      {
+        topTenArr && topTenArr.length ?
+          topTenArr && topTenArr.map((song, index) => (
+          song && <Song title={song.title}
+                        rank={index + 1}
+                        artist={song.artist}
+                        dj_name={song.dj_name}
+                        onFire={onFire}
+                        onWater={onWater}
+                        id={song.id}
+                        key={song.id}
+                        heatIndex={calcHeatIndex(song, netHeat)}
+                  />
+          ))
+        :
+        <Col xs={12}>
+          <Row>
+            <Col xs={6} xsOffset={3}>
+              <h4 className="songlist-fail">Add some songs!</h4>
+              <h4 className="songlist-fail">Vote for songs you like!</h4>
+              <h4 className="songlist-fail">Earn DJ points!</h4>
+
+            </Col>
+            <Col xs={12} className="mysongs-col">
+              <FontIcon style={{ fontSize: '120px' }}
+                        className="zmdi zmdi-mood zmdi-hc-4x"
+                        color={cyan500}
+              />
+            </Col>
+          </Row>
+        </Col>
+      }
     </Row>
   );
 };

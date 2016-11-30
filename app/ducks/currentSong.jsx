@@ -20,8 +20,8 @@ const reducer = (state = {}, action) => {
     case SET_CURRENT_SONG:
       return action.currentSong;
 
-    // case LEAVE_PARTY:        //if you try to leave, soundCloudPlayer still needs url (edge case for host)
-    //   return {}
+    case LEAVE_PARTY:        //if you try to leave, soundCloudPlayer still needs url (edge case for host)
+      return {}
 
     default:
         return state;

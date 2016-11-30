@@ -13,7 +13,7 @@ export const setShadowQueue = songs => ({
 
 /* ------------       REDUCER     ------------------ */
 
-const reducer = (state = [], action) => {
+const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_SHADOW_QUEUE:
       return action.songs;

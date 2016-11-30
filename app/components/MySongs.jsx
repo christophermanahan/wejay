@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
+import Divider from 'material-ui/Divider';
 import FontIcon from 'material-ui/FontIcon';
 
 import Audiotrack from 'material-ui/svg-icons/image/audiotrack';
@@ -13,7 +14,7 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
 const DumbSong = props => {
-  const { title, artist, artwork_url } = props;
+  const { title, artist, artwork_url, heat } = props;
   return (
     <div>
       <ListItem
@@ -26,23 +27,84 @@ const DumbSong = props => {
 };
 
 const DumbMySongs = props => {
-  const { personalQueue } = props;
-  let songArr = [];
-  for (let song in personalQueue) { songArr.push(personalQueue[song]) }
+  const { personalQueue, shadowQueue, topTen, uid } = props;
+  let pQArr = [];
+  for (let song in personalQueue) { pQArr.push(personalQueue[song]) }
+
+  let sQArr = [];
+  for (let song in shadowQueue) { sQArr.push(shadowQueue[song]) }
+
+  let topTenArr = [];
+  for (let song in topTen) {
+    if (topTen[song].uid === uid) {
+      topTenArr.push(topTen[song]);
+    }
+  }
+
 
   return (
     <Row>
       <Col xs={12}>
-      { songArr && songArr.length ?
+      { pQArr && pQArr.length && sQArr && sQArr.length && topTenArr && topTenArr.length ?
         <List>
-        { songArr && songArr.map((song, i) => (
-          <DumbSong
-            title={song.title}
-            artist={song.artist}
-            artwork_url={song.artwork_url}
-            key={i}
-          />
-        ))}
+          {
+            topTenArr.length ?
+            <h4 className="mysongs-divider">In the Top Ten!</h4>
+            :
+            ''
+          }
+          {
+            topTenArr.length &&
+              topTenArr.map((song, i) => (
+                <DumbSong
+                  title={song.title}
+                  artist={song.artist}
+                  artwork_url={song.artwork_url}
+                  key={i}
+                  heat={song.vote_priority}
+                />
+              ))
+          }
+          {
+            sQArr.length ?
+            <div>
+              <Divider />
+              <h4 className="mysongs-divider mysongs-divider-mid">My Suggestions</h4>
+            </div>
+            :
+            ''
+          }
+          {
+            sQArr.length &&
+              sQArr.map((song, i) => (
+                <DumbSong
+                  title={song.title}
+                  artist={song.artist}
+                  artwork_url={song.artwork_url}
+                  key={i}
+                />
+              ))
+          }
+          {
+            pQArr.length ?
+              <div>
+                <Divider />
+                <h4 className="mysongs-divider mysongs-divider-mid">For Later...</h4>
+              </div>
+              :
+              ''
+          }
+          {
+            pQArr.length &&
+              pQArr.map((song, i) => (
+                <DumbSong
+                  title={song.title}
+                  artist={song.artist}
+                  artwork_url={song.artwork_url}
+                  key={i}
+                />
+              ))
+          }
         </List>
         :
         <Row>
@@ -71,9 +133,14 @@ class MySongs extends Component {
   }
 
   render() {
-    let { personalQueue } = this.props;
+    let { personalQueue, shadowQueue, topTen, uid } = this.props;
     return (
-      <DumbMySongs personalQueue={personalQueue}/>
+      <DumbMySongs
+        personalQueue={personalQueue}
+        shadowQueue={shadowQueue}
+        topTen={topTen}
+        uid={uid}
+      />
     );
   }
 }
@@ -81,7 +148,7 @@ class MySongs extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ personalQueue }) => ({ personalQueue });
+const mapStateToProps = ({ personalQueue, shadowQueue, topTen, user }) => ({ personalQueue, shadowQueue, topTen, uid: user.uid });
 
 
 export default connect(mapStateToProps)(MySongs);

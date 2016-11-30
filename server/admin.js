@@ -10,6 +10,7 @@ const auth_uri = process.env.FIREBASE_ADMIN_AUTH_URI;
 const token_uri = process.env.FIREBASE_ADMIN_TOKEN_URI;
 const auth_provider_x509_cert_url = process.env.FIREBASE_ADMIN_AUTH_PROVIDER_X509_CERT_URL;
 const client_x509_cert_url = process.env.FIREBASE_ADMIN_CLIENT_X509_CERT_URL;
+const databaseURL = process.env.FIREBASE_DATABASE_URL;
 // testing for heroku
 const serviceAccount = {
 	type,
@@ -26,7 +27,7 @@ const serviceAccount = {
 
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
-	databaseURL: 'https://wejay-ac08c.firebaseio.com'
+	databaseURL
 });
 const db = admin.database();
 
@@ -44,7 +45,7 @@ partiesRef.on('child_added', (snapshot) => {
 
 		const needSong = snapshot.val() ? snapshot.val().needSong : false;
 		if(!needSong){
-			return
+			return;
 		} else {
 
 			const currentSongRef = db.ref('current_song').child(partyId)
@@ -59,7 +60,10 @@ partiesRef.on('child_added', (snapshot) => {
 				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
 				let nextSongId;
 
-				if (!topTen) return;
+				if (!topTen) {
+					newPartyRef.update({needSong: false});
+					return;
+				}
 
 				for (let song in topTen){
 

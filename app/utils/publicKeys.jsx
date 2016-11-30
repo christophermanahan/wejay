@@ -5,7 +5,7 @@ const livePublicKeys = {
   FIREBASE_STORAGE_BUCKET: "wejay-live.appspot.com",
   FIREBASE_MESSAGING_SENDER_ID: "486696039321",
   SC_CLIENT_ID: "033e31e2d036e02f39242e1aa1dd2fa9"
-}
+};
 
 const devKeys = {
   FIREBASE_API_KEY: "AIzaSyCiLc4HnRXwvVzeAoBQTOjiID2i8Drd-IM",
@@ -14,8 +14,8 @@ const devKeys = {
   FIREBASE_STORAGE_BUCKET: "wejay-ac08c.appspot.com",
   FIREBASE_MESSAGING_SENDER_ID: "200743012854",
   SC_CLIENT_ID: "033e31e2d036e02f39242e1aa1dd2fa9"
-}
+};
 
-const publicKeys = devKeys
+const publicKeys = livePublicKeys;
 
-export default publicKeys
+export default publicKeys;

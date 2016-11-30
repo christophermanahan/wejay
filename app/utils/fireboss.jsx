@@ -6,6 +6,8 @@
      - perform routine firebase queries
      - post updates to the firebase database  */
 
+var hri = require('human-readable-ids').hri, i;
+
 const Fireboss = function(firebase) {
   this.database = firebase.database();
   this.auth = firebase.auth();
@@ -110,12 +112,24 @@ Fireboss.prototype.getCurrentPartySnapshot = function(partyId, callback) {
 /* ------------------- SETTERS RETURNING PROMISES ------------------- */
 
 Fireboss.prototype.addingPartyDJ = function(partyId, user) {
+  const capitalize = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  let hriString = hri.random().split('-');
+  let djName = [];
+  for(let i = 0; i < 2; i++) {
+    djName.push(capitalize(hriString[i]));
+  }
+  djName = djName.join(' ');
+  console.log(djName);
+
   return this.database.ref('party_djs').child(partyId).child(user.uid)
          .set({
             dj_points: 0,
             uid: user.uid,
             photo: user.photoURL || "https://thumbnailer.mixcloud.com/unsafe/318x318/extaudio/0/9/b/f/ce50-0b29-40a3-a31b-95b1b9b38c5c",
-            dj_name: `DJ ${user.displayName || 'Rando'}`,
+            dj_name: `DJ ${user.displayName || djName}`,
             personal_queue: {}
           })
 };

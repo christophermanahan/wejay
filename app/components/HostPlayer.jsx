@@ -87,7 +87,7 @@ const DumbCustomPlayer = props => {
         </Col>
         <Col xs={5} style={songInfoColStyle}>
 
-          <p style={durationStyle}> {curTime} / {displayDuration}</p>
+          <p style={durationStyle}> {mapDurationSecsToMins(curTime)} / {displayDuration}</p>
           <h2 style={titleStyle}>{track.title}</h2>
           <h3 style={artistStyle}>{track.user.username}</h3>
 
@@ -183,7 +183,12 @@ class CustomPlayer extends React.Component {
   mapDurationSecsToMins(num) {
     let mins = Math.floor(num / 60);
     let secs = num % 60;
-    return `${mins}:${secs}`
+
+    if(secs <= 9){
+      return `${mins}:0${secs}`
+    } else {
+      return `${mins}:${secs}`
+    }
   }
 
   onFire() {

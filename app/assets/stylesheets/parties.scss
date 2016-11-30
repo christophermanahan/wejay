@@ -3,7 +3,7 @@
 	font-family: Montserrat;
 	color: #ffffff;
 	margin: 0;
-	margin-bottom: 10px;
+	margin-bottom: 0;
 	padding: 10px;
 	text-align: center;
 }
@@ -12,6 +12,7 @@
 	margin-bottom: 10px;
 	position: relative;
 	left: 25%;
+	margin-top: 1em;
 }
 
 .party-container {
@@ -27,4 +28,8 @@
   color: white;
   margin-top: 10px;
   margin-bottom: 20px;
+}
+
+.party-header-create {
+	padding-top: 1em;
 }

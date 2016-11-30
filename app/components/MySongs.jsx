@@ -14,7 +14,7 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
 const DumbSong = props => {
-  const { title, artist, artwork_url } = props;
+  const { title, artist, artwork_url, heat } = props;
   return (
     <div>
       <ListItem
@@ -49,7 +49,7 @@ const DumbMySongs = props => {
         <List>
           {
             topTenArr.length ?
-            <h4>In the Top Ten!</h4>
+            <h4 className="mysongs-divider">In the Top Ten!</h4>
             :
             ''
           }
@@ -61,12 +61,16 @@ const DumbMySongs = props => {
                   artist={song.artist}
                   artwork_url={song.artwork_url}
                   key={i}
+                  heat={song.vote_priority}
                 />
               ))
           }
           {
             sQArr.length ?
-            <h4>My Suggestions</h4>
+            <div>
+              <Divider />
+              <h4 className="mysongs-divider mysongs-divider-mid">My Suggestions</h4>
+            </div>
             :
             ''
           }
@@ -84,8 +88,8 @@ const DumbMySongs = props => {
           {
             pQArr.length ?
               <div>
-              <Divider />
-                <h4>For Later...</h4>
+                <Divider />
+                <h4 className="mysongs-divider mysongs-divider-mid">For Later...</h4>
               </div>
               :
               ''

@@ -64,7 +64,7 @@ const DumbParties = props => {
         </Row>
         <Row>
           <Col xs={12}>
-            <h2 style={{background: "#ff9172"}} className="party-header">Join Party</h2>
+            <h2 className="party-header">Join Party</h2>
           </Col>
         </Row>
         <Row>
@@ -93,7 +93,7 @@ const DumbParties = props => {
               label="Join"
               onTouchTap={joinParty}
               />
-            <h2 style={{background: "#ff9172"}} className="party-header">Create Party</h2>
+            <h2 className="party-header party-header-create">Create Party</h2>
             <form onSubmit={onSubmit}>
               <TextField
                 id="name"

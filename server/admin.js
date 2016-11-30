@@ -109,7 +109,6 @@ partiesRef.on('child_added', (snapshot) => {
 				return uidOfNewSQSong												//We need to fix this....
 			})
 			.then((uidOfNewSQSong) => {
-				console.log('should not be undefined', uidOfNewSQSong)
 				if (!uidOfNewSQSong) { return; }
 				const pQRef = db.ref('party_djs').child(partyId).child(uidOfNewSQSong).child('personal_queue')
 				pQRef.once('value')

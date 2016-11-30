@@ -82,10 +82,11 @@ Fireboss.prototype.removePartyListeners = function(partyId, user) {
   this.database.ref('current_song').child(partyId).off();
   this.database.ref('top_ten').child(partyId).off();
   this.database.ref('party_djs').child(partyId).off();
-  this.database.ref('messages').off();
+  // this.database.ref('messages').off();
   this.database.ref('parties').child(partyId).child('partyEnded').off();
   this.database.ref('party_djs').child(partyId).child(user.uid)
     .child('personal_queue').off();
+  this.database.ref('shadow_queue').child(partyId).off();
   console.log('listeners removed!');
 };
 

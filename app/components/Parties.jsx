@@ -14,7 +14,6 @@ import { leaveParty } from '../ducks/global';
 import { setTopTen } from '../ducks/topTen';
 import { setDjs } from '../ducks/djs';
 import { setPersonalQueue } from '../ducks/personalQueue';
-// import { setMessages } from '../ducks/chat';
 import { setShadowQueue } from '../ducks/shadowQueue';
 
 
@@ -81,7 +80,6 @@ const DumbParties = props => {
           </Col>
 
         </Row>
-
 
 
             <RaisedButton
@@ -155,7 +153,7 @@ class Parties extends Component {
   joinParty(evt) {
     evt.preventDefault();
     const { user, fireboss, setcurrentparty, setcurrentsong,
-            settopten, setdjs, setpersonalqueue, setmessages, leaveparty } = this.props;
+            settopten, setdjs, setpersonalqueue, leaveparty, setshadowqueue } = this.props;
     const { partyId } = this.state;
 
     if (!partyId) { return; }
@@ -172,7 +170,6 @@ class Parties extends Component {
           fireboss.endPartyListener(partyId, user, leaveparty, browserHistory);
           fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue);
           fireboss.createShadowQueueListener(partyId, user, setshadowqueue);
-          // fireboss.createMessagesListener(setmessages)
           browserHistory.push('/app');
       })
       .catch(err => console.error(err)) // TODO: need real error handling
@@ -204,7 +201,7 @@ class Parties extends Component {
     evt.preventDefault();
 
     const { user, fireboss, parties, setcurrentparty, setcurrentsong, settopten, setdjs,
-            setpersonalqueue, setmessages, leaveparty } = this.props;
+            setpersonalqueue, leaveparty, setshadowqueue } = this.props;
 
     // if a user starts the party, that party's uid becomes the partyId
     const partyId = user.uid;
@@ -248,12 +245,12 @@ class Parties extends Component {
           .then(() => {
 
             fireboss.getCurrentPartySnapshot(partyId, setcurrentparty);
-            fireboss.createPartyListener(partyId,'current_song', setcurrentsong);
-            fireboss.createPartyListener(partyId,'top_ten', settopten);
-            fireboss.createPartyListener(partyId,'party_djs', setdjs);
+            fireboss.createPartyListener(partyId, 'current_song', setcurrentsong);
+            fireboss.createPartyListener(partyId, 'top_ten', settopten);
+            fireboss.createPartyListener(partyId, 'party_djs', setdjs);
             fireboss.endPartyListener(partyId, user, leaveparty, browserHistory);
             fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue);
-            fireboss.createMessagesListener(setmessages);
+            fireboss.createShadowQueueListener(partyId, user, setshadowqueue);
             browserHistory.push('/app');
           })
           .catch(console.error) // TODO: real error handling
@@ -295,7 +292,6 @@ const mapDispatchToProps = dispatch => ({
   settopten: topTen => dispatch(setTopTen(topTen)),
   setdjs: djs => dispatch(setDjs(djs)),
   setpersonalqueue: queue => dispatch(setPersonalQueue(queue)),
-  setmessages: messages => dispatch(setMessages(messages)),
   leaveparty: () => dispatch(leaveParty()),
   setshadowqueue: songs => dispatch(setShadowQueue(songs))
 });

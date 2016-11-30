@@ -6,7 +6,6 @@ import Fireboss from './utils/fireboss';
 
 import { setFirebase } from './ducks/firebase';
 import { setUser, clearUser } from './ducks/user';
-// import { setMessages } from './ducks/chat';
 import { leaveParty } from './ducks/global';
 import { setTopTen } from './ducks/topTen';
 import { setCurrentSong } from './ducks/currentSong';
@@ -66,7 +65,6 @@ export const onMainEnter = () => {
           fireboss.endPartyListener(partyId, user, dispatch(leaveParty), browserHistory);
           fireboss.createPersonalQueueListener(partyId, user, dispatch(setPersonalQueue));
           fireboss.createShadowQueueListener(partyId, user, dispatch(setShadowQueue));
-          // fireboss.createMessagesListener(dispatch(setMessages));
           browserHistory.push('/app');
         }
       })

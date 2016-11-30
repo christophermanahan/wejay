@@ -50,7 +50,8 @@ const DumbGuestPlayer = props => {
   }
 
   const iconStyle = {fontSize: '30px'};
-
+  let artwork_url = currentSong && currentSong.artwork_url;
+  let vote_priority = currentSong && currentSong.vote_priority;
   return (
     <div>
       <LinearProgress
@@ -59,19 +60,19 @@ const DumbGuestPlayer = props => {
       />
       <Row>
         <Col style={playerIconStyle} xsOffset={0} xs={2}>
-          {(currentSong && !currentSong.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={currentSong.artwork_url} /> }
+          {artwork_url ? <img id="playerImgStyle" src={artwork_url} />  : <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i>}
         </Col>
 
         <Col xs={5} style={songInfoColStyle}>
-          <h2 style={titleStyle}>{currentSong.title}</h2>
-          <h3 style={artistStyle}>by: {currentSong.artist }</h3>
-          <h4 style={artistStyle}>Chosen by: { currentSong.dj_name } </h4>
+          <h2 style={titleStyle}>{currentSong && currentSong.title}</h2>
+          <h3 style={artistStyle}>by: {currentSong && currentSong.artist }</h3>
+          <h4 style={artistStyle}>Chosen by: {currentSong && currentSong.dj_name} </h4>
         </Col>
 
         <Col xs={5} style={playerIconStyle}>
           <Row>
             <Col xs={2}>
-              <h2 style={voteStyle}>{ currentSong && currentSong.vote_priority > 0 ? `+${currentSong.vote_priority}` : currentSong.vote_priority }</h2>
+              <h2 style={voteStyle}>{vote_priority > 0 ? `+${vote_priority}` : vote_priority }</h2>
             </Col>
 
             <Col xsOffset={2} xs={2}>
@@ -84,7 +85,7 @@ const DumbGuestPlayer = props => {
           </Row>
         </Col>
       </Row>
-    </div>  
+    </div>
   )
 };
 

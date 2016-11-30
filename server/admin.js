@@ -45,7 +45,7 @@ partiesRef.on('child_added', (snapshot) => {
 
 		const needSong = snapshot.val() ? snapshot.val().needSong : false;
 		if(!needSong){
-			return
+			return;
 		} else {
 
 			const currentSongRef = db.ref('current_song').child(partyId)
@@ -60,7 +60,10 @@ partiesRef.on('child_added', (snapshot) => {
 				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
 				let nextSongId;
 
-				if (!topTen) return;
+				if (!topTen) {
+					newPartyRef.update({needSong: false});
+					return;
+				}
 
 				for (let song in topTen){
 

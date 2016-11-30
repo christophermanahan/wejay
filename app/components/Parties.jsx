@@ -64,7 +64,7 @@ const DumbParties = props => {
         </Row>
         <Row>
           <Col xs={12}>
-            <h2 className="party-header">Join Party</h2>
+            <h2 style={{background: "#ff9172"}} className="party-header">Join Party</h2>
           </Col>
         </Row>
         <Row>
@@ -76,6 +76,8 @@ const DumbParties = props => {
               dataSource={autofillArr}
               dataSourceConfig={autofillConfig}
               onNewRequest={onPartySelect}
+              anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+              targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
             />
           </Col>
 
@@ -91,7 +93,7 @@ const DumbParties = props => {
               label="Join"
               onTouchTap={joinParty}
               />
-            <h2 className="party-header">Create Party</h2>
+            <h2 style={{background: "#ff9172"}} className="party-header">Create Party</h2>
             <form onSubmit={onSubmit}>
               <TextField
                 id="name"
@@ -298,4 +300,3 @@ const mapDispatchToProps = dispatch => ({
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Parties);
-

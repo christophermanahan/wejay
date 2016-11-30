@@ -75,8 +75,16 @@ Fireboss.prototype.createPersonalQueueListener = function(partyId, user, onChang
 Fireboss.prototype.createShadowQueueListener = function(partyId, user, onChangeFunc) {
   this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
 
-    // here we need to filter the values first!
-    onChangeFunc(snapshot.val());
+    // filter songs so only user's songs sent to redux store, not full shadow queue
+    const fullShadowQueue = snapshot.val();
+    let userSongsInSQ = {};
+
+    for (let song in fullShadowQueue) {
+      if (fullShadowQueue[song].uid === user.uid) {
+        userSongsInSQ[song] = fullShadowQueue[song];
+      }
+    }
+    onChangeFunc(userSongsInSQ);
   });
 };
 

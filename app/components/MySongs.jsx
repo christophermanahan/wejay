@@ -11,7 +11,6 @@ import {cyan500} from 'material-ui/styles/colors';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 
-
 /* -----------------    DUMB COMPONENTS     ------------------ */
 const DumbSong = props => {
   const { title, artist, artwork_url } = props;

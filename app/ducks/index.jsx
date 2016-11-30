@@ -9,7 +9,8 @@ import parties from './parties';
 import currentParty from './currentParty';
 import personalQueue from './personalQueue';
 import djs from './djs';
-import fireboss from './fireboss'
+import fireboss from './fireboss';
+import shadowQueue from './shadowQueue';
 
 const rootReducer = combineReducers({
   firebase,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   parties,
   personalQueue,
   djs,
-  currentParty
+  currentParty,
+  shadowQueue
 });
 
 export default rootReducer;

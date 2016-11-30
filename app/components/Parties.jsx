@@ -14,7 +14,9 @@ import { leaveParty } from '../ducks/global';
 import { setTopTen } from '../ducks/topTen';
 import { setDjs } from '../ducks/djs';
 import { setPersonalQueue } from '../ducks/personalQueue';
-import { setMessages } from '../ducks/chat';
+// import { setMessages } from '../ducks/chat';
+import { setShadowQueue } from '../ducks/shadowQueue';
+
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
@@ -158,18 +160,19 @@ class Parties extends Component {
 
     if (!partyId) { return; }
 
-    const associatingPartyAndUser = fireboss.associatingPartyAndUser(partyId, user)
+    const associatingPartyAndUser = fireboss.associatingPartyAndUser(partyId, user);
     const addingPartyDJ = fireboss.addingPartyDJ(partyId, user);
 
     Promise.all([associatingPartyAndUser, addingPartyDJ])
       .then(() => {
-          fireboss.getCurrentPartySnapshot(partyId, setcurrentparty)
-          fireboss.createPartyListener(partyId,'current_song', setcurrentsong)
-          fireboss.createPartyListener(partyId,'top_ten', settopten)
-          fireboss.createPartyListener(partyId,'party_djs', setdjs)
-          fireboss.endPartyListener(partyId, user, leaveparty, browserHistory)
-          fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue)
-          fireboss.createMessagesListener(setmessages)
+          fireboss.getCurrentPartySnapshot(partyId, setcurrentparty);
+          fireboss.createPartyListener(partyId, 'current_song', setcurrentsong);
+          fireboss.createPartyListener(partyId, 'top_ten', settopten);
+          fireboss.createPartyListener(partyId, 'party_djs', setdjs);
+          fireboss.endPartyListener(partyId, user, leaveparty, browserHistory);
+          fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue);
+          fireboss.createShadowQueueListener(partyId, user, setshadowqueue);
+          // fireboss.createMessagesListener(setmessages)
           browserHistory.push('/app');
       })
       .catch(err => console.error(err)) // TODO: need real error handling
@@ -293,7 +296,8 @@ const mapDispatchToProps = dispatch => ({
   setdjs: djs => dispatch(setDjs(djs)),
   setpersonalqueue: queue => dispatch(setPersonalQueue(queue)),
   setmessages: messages => dispatch(setMessages(messages)),
-  leaveparty: () => dispatch(leaveParty())
+  leaveparty: () => dispatch(leaveParty()),
+  setshadowqueue: songs => dispatch(setShadowQueue(songs))
 });
 
 

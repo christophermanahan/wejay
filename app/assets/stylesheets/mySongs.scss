@@ -9,3 +9,18 @@
 	align-items: center;
 	justify-content: center;
 }
+
+.mysongs-divider {
+	margin: 0;
+	font-family: Montserrat;
+	text-align: center
+}
+
+.mysongs-divider-mid {
+	padding-top: 10px;
+}
+
+.mysongs-container {
+  max-height: calc(100vh - 240px);
+  overflow: scroll;
+}

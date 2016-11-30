@@ -24,12 +24,32 @@
 		margin-left: 0.4em;
 		align-items: center;
 
+
 	}
 
-	.navbar-col {
-		display: flex;
-		align-items: center;
+}
+
+_::-webkit-:not(:root:root), .safari_only {
+	#wejay-nav-logo{
+		margin-top: 0.4em;
 	}
+
+}
+
+
+_::-webkit-:-webkit-full-screen:host:not(:root:root), .safari_only {
+
+	#wejay-nav-logo{
+		margin-top: 0.4em;
+	}
+
+}
+
+
+
+.navbar-col {
+	display: flex;
+	align-items: center;
 }
 
 #app-nav-row {

@@ -2,11 +2,9 @@
 	font-size: 2em;
 	font-family: Montserrat;
 	color: #ffffff;
-	background: rgba(54, 56, 54, 1);
 	margin: 0;
-	margin-bottom: 10px;
+	margin-bottom: 0;
 	padding: 10px;
-	box-shadow: 0px 0.1em 0.2em #888888;
 	text-align: center;
 }
 
@@ -14,6 +12,7 @@
 	margin-bottom: 10px;
 	position: relative;
 	left: 25%;
+	margin-top: 1em;
 }
 
 .party-container {
@@ -29,4 +28,8 @@
   color: white;
   margin-top: 10px;
   margin-bottom: 20px;
+}
+
+.party-header-create {
+	padding-top: 1em;
 }

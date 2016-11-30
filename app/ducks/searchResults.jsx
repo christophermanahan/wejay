@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { LEAVE_PARTY } from './global';
 
 /* -----------------    ACTIONS     ------------------ */
 
@@ -17,6 +18,9 @@ const reducer = (state = [], action) => {
   switch (action.type){
     case LOAD_SEARCH_RESULTS:
         return action.searchResults
+
+    case LEAVE_PARTY:
+        return []
 
     default:
         return state;

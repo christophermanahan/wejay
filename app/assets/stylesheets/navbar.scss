@@ -1,7 +1,10 @@
 #navbar-row {
 	background-color: #ec4616;
-	height: 7vh;
 	min-height: 80px;
+	max-height: 80px;
+	margin-left: -2.5em;
+	align-content: center;
+
 
 	h2 {
 		font-family: Montserrat;
@@ -14,16 +17,21 @@
 		color: #363836;
 	}
 
-	.navbar-icon-container {
-		margin: 0 auto;
 
-		icon {
-			padding-left: .15em;
-		}
+
+	#wejay-nav-logo {
+		color: #FFF4EA;
+		margin-left: 0.4em;
+		align-items: center;
+
 	}
 
 	.navbar-col {
 		display: flex;
 		align-items: center;
 	}
+}
+
+#app-nav-row {
+	height: 80px;
 }

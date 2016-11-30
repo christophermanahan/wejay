@@ -107,7 +107,7 @@ const DumbMySongs = props => {
         :
         <Row>
           <Col xs={6} xsOffset={3}>
-            <h4 id="mysongs-fail">You have no songs queued!</h4>
+            <h4 className="songlist-fail">You have no songs queued!</h4>
           </Col>
           <Col xs={12} className="mysongs-col">
             <FontIcon style={{ fontSize: '120px' }}

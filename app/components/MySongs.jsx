@@ -43,18 +43,18 @@ const DumbMySongs = props => {
 
 
   return (
-    <Row>
+    <Row className="mysongs-container">
       <Col xs={12}>
-      { pQArr && pQArr.length && sQArr && sQArr.length && topTenArr && topTenArr.length ?
+      { ((pQArr && pQArr.length) || (sQArr && sQArr.length) || (topTenArr && topTenArr.length)) ?
         <List>
           {
             topTenArr.length ?
             <h4 className="mysongs-divider">In the Top Ten!</h4>
             :
             ''
+
           }
           {
-            topTenArr.length &&
               topTenArr.map((song, i) => (
                 <DumbSong
                   title={song.title}
@@ -69,13 +69,12 @@ const DumbMySongs = props => {
             sQArr.length ?
             <div>
               <Divider />
-              <h4 className="mysongs-divider mysongs-divider-mid">My Suggestions</h4>
+              <h4 className="mysongs-divider mysongs-divider-mid">On Deck Soon</h4>
             </div>
             :
             ''
           }
           {
-            sQArr.length &&
               sQArr.map((song, i) => (
                 <DumbSong
                   title={song.title}
@@ -95,7 +94,6 @@ const DumbMySongs = props => {
               ''
           }
           {
-            pQArr.length &&
               pQArr.map((song, i) => (
                 <DumbSong
                   title={song.title}

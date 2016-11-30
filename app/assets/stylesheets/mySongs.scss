@@ -19,3 +19,8 @@
 .mysongs-divider-mid {
 	padding-top: 10px;
 }
+
+.mysongs-container {
+  max-height: calc(100vh - 240px);
+  overflow: scroll;
+}

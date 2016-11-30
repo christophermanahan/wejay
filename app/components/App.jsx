@@ -26,7 +26,7 @@ const App = props => {
 	return (
 		<Row className="app-no-margin">
 			<Col xs={12}>
-				<Row >
+				<Row id="app-nav-row">
 					<Col xs={12}>
 			      <Navbar />
 		      </Col>

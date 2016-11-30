@@ -20,7 +20,7 @@ const DumbSongList = props => {
         song && <Song title={song.title}
                       rank={index + 1}
                       artist={song.artist}
-                      DJ={song.DJ}
+                      dj_name={song.dj_name}
                       onFire={onFire}
                       onWater={onWater}
                       id={song.id}

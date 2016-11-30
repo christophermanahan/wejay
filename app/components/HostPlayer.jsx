@@ -16,176 +16,205 @@ import { connect } from 'react-redux';
 
 const clientId = publicKeys.SC_CLIENT_ID;
 
-
 /* -----------------    DUMB COMPONENT     ------------------ */
 
+const DumbCustomPlayer = props => {
+  // console.log('props in custom player', this.props)
+  let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, next, triggerFirebase } = props;
+
+  let dur = duration && Math.floor(duration)
+  console.log(duration)
+  let curTime = Math.floor(currentTime)
+  let displayDuration = mapDurationSecsToMins(dur)
+
+
+
+  if (!track) {
+      return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
+  }
+
+  let progBarStyle = {
+    backgroundColor: "#EC4616",
+    height: ".3em"
+  }
+  let songInfoColStyle = {
+    fontFamily: "Roboto",
+    fontSize: "0.5em"
+  }
+  let durationStyle = {
+    fontFamily: "Roboto",
+    marginTop: "0.8em",
+    marginBottom: "0.1em"
+  }
+  let titleStyle = {
+    fontFamily: "Carme",
+    marginTop: "0em",
+    marginBottom: "0.1em"
+  }
+  let artistStyle = {
+    fontFamily: "Carme",
+    marginTop: "0.3em",
+    marginBottom: "0.1em"
+  }
+  let playerIconStyle = {
+    marginTop: "0.4em"
+  }
+  const styles = {
+    largeIcon: {
+      width: 35,
+      height: 35,
+    },
+    buttonStyle: {
+      width: 50,
+      height: 50,
+      padding: 5,
+    },
+  };
+  const iconStyle = {fontSize: '30px'};
+
+  return (
+    <div>
+
+      <LinearProgress
+        mode="determinate"
+        value={(curTime / dur) * 100 || 0 }
+        style={progBarStyle}
+      />
+
+      <Row>
+        <Col style={playerIconStyle} xs={2}>
+          {(track && !track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={track.artwork_url} /> }
+        </Col>
+        <Col xs={5} style={songInfoColStyle}>
+
+          <p style={durationStyle}> {curTime} / {displayDuration}</p>
+          <h2 style={titleStyle}>{track.title}</h2>
+          <h3 style={artistStyle}>{track.user.username}</h3>
+
+        </Col>
+
+        <Col xs={4} style={playerIconStyle}>
+
+          <Row between="xs">
+            <Col xs={1}>
+              <IconButton
+                iconStyle={styles.largeIcon}
+                style={styles.buttonStyle}
+                onClick={play}>
+                {!playing ? <PlayCircleOutline /> : <PauseCircleOutline />}
+              </IconButton>
+            </Col>
+
+            <Col xs={1}>
+              <IconButton
+                iconStyle={styles.largeIcon}
+                style={styles.buttonStyle}
+                onClick={next}>
+                <NextSongButton />
+              </IconButton>
+            </Col>
+
+            <Col xs={1}>
+              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater}/>
+            </Col>
+
+            <Col xs={1}>
+              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={onFire} />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </div>
+  )
+}
+
+/* -----------------    STATEFUL REACT COMPONENT     ------------------ */
+
 class CustomPlayer extends React.Component {
-    constructor(props) {
-        super(props);
-        this.play = this.play.bind(this);
-        this.triggerFirebase = this.triggerFirebase.bind(this);
-        this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
+  constructor(props) {
+      super(props);
+      this.play = this.play.bind(this);
+      this.triggerFirebase = this.triggerFirebase.bind(this);
+      this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
+      this.onFire = this.onFire.bind(this);
+      this.onWater = this.onWater.bind(this);
+      // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
+      const { soundCloudAudio } = this.props;
+      soundCloudAudio.audio.addEventListener('ended', () => {
+          console.log('SONG ENDED!!!');
+          this.triggerFirebase();
+      });
+  }
 
-        // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
-        const { soundCloudAudio } = this.props;
-        soundCloudAudio.audio.addEventListener('ended', () => {
-            console.log('SONG ENDED!!!');
-            this.triggerFirebase();
-        });
-    }
-
-    componentWillReceiveProps(nextProps) {
-        // trigger play only after current song has been updated and the audio object
-        // has been received from SoundCloud
-        if (this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
-            console.log('-------- there is a new song -----------')
-            this.props.soundCloudAudio.resolve(nextProps.song_uri, () => {
-                this.play()
-            })
-        }
-        // EDGE CASE: this fails to autoplay if the same song is played 2x in a row
-        // SOLUTION: every song on top ten needs to have unique id
-    }
-
-
-    //Todo-->FIX: Custom Player renders before track loads
+  componentWillReceiveProps(nextProps) {
+      // trigger play only after current song has been updated and the audio object
+      // has been received from SoundCloud
+      if (this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
+          console.log('-------- there is a new song -----------')
+          this.props.soundCloudAudio.resolve(nextProps.song_uri, () => {
+              this.play()
+          })
+      }
+      // EDGE CASE: this fails to autoplay if the same song is played 2x in a row
+      // SOLUTION: every song on top ten needs to have unique id
+  }
 
 
-
-    play() {
-        let { soundCloudAudio, playing } = this.props;
-        if (playing) {
-            soundCloudAudio.pause();
-        } else {
-            soundCloudAudio.play();
-        }
-    }
-
-
-    triggerFirebase() {
-        const { fireboss, partyId } = this.props;
-        // fireboss.database().ref('parties').child(partyId).update({needSong: true})
-        fireboss.triggerNeedSong(partyId)
-    }
-
-    mapDurationSecsToMins(num) {
-      let mins = Math.floor(num / 60);
-      let secs = num % 60;
-      return `${mins}:${secs}`
-    }
-
-
-    render() {
-        // console.log('props in custom player', this.props)
-        let { track, playing, soundCloudAudio, currentTime, duration } = this.props;
-
-        duration = Math.floor(duration)
-        currentTime = Math.floor(currentTime)
-        let displayDuration = this.mapDurationSecsToMins(duration)
+  //Todo-->FIX: Custom Player renders before track loads
 
 
 
-        if (!track) {
-            return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
-        }
-
-        let progBarStyle = {
-          backgroundColor: "#EC4616",
-          height: ".3em"
-        }
-        let songInfoColStyle = {
-          fontFamily: "Roboto",
-          fontSize: "0.5em"
-        }
-        let durationStyle = {
-          fontFamily: "Roboto",
-          marginTop: "0.8em",
-          marginBottom: "0.1em"
-        }
-        let titleStyle = {
-          fontFamily: "Carme",
-          marginTop: "0em",
-          marginBottom: "0.1em"
-        }
-        let artistStyle = {
-          fontFamily: "Carme",
-          marginTop: "0.3em",
-          marginBottom: "0.1em"
-        }
-        let playerIconStyle = {
-          marginTop: "0.4em"
-        }
-        const styles = {
-          largeIcon: {
-            width: 35,
-            height: 35,
-          },
-          buttonStyle: {
-            width: 50,
-            height: 50,
-            padding: 5,
-          },
-        };
-        const iconStyle = {fontSize: '30px'};
+  play() {
+      let { soundCloudAudio, playing } = this.props;
+      if (playing) {
+          soundCloudAudio.pause();
+      } else {
+          soundCloudAudio.play();
+      }
+  }
 
 
-        return (
-            <div>
+  triggerFirebase() {
+      const { fireboss, partyId } = this.props;
+      // fireboss.database().ref('parties').child(partyId).update({needSong: true})
+      fireboss.triggerNeedSong(partyId)
+  }
 
-                <LinearProgress
-                  mode="determinate"
-                  value={(currentTime / duration) * 100 || 0 }
-                  style={progBarStyle}
-                  />
+  mapDurationSecsToMins(num) {
+    let mins = Math.floor(num / 60);
+    let secs = num % 60;
+    return `${mins}:${secs}`
+  }
 
-                <Row>
-                <Col style={playerIconStyle} xs={2}>
-                  {(track && !track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={track.artwork_url} /> }
-                </Col>
-                <Col xs={5} style={songInfoColStyle}>
+  onFire() {
+    const { fireboss, currentSong, currentParty } = this.props;
+    fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+  }
 
-                  <p style={durationStyle}> {currentTime} / {displayDuration}</p>
-                  <h2 style={titleStyle}>{track.title}</h2>
-                  <h3 style={artistStyle}>{track.user.username}</h3>
+  onWater() {
+    const { fireboss, currentSong, currentParty } = this.props;
+    console.log(fireboss)
+    fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+  }
 
-                </Col>
-
-                <Col xs={4} style={playerIconStyle}>
-
-                  <Row between="xs">
-                    <Col xs={1}>
-                      <IconButton
-                        iconStyle={styles.largeIcon}
-                        style={styles.buttonStyle}
-                        onClick={this.play}>
-                        {!playing ? <PlayCircleOutline /> : <PauseCircleOutline />}
-                      </IconButton>
-                    </Col>
-                    <Col xs={1}>
-                      <IconButton
-                        iconStyle={styles.largeIcon}
-                        style={styles.buttonStyle}
-                        onClick={this.triggerFirebase}>
-                        <NextSongButton />
-                      </IconButton>
-                    </Col>
-                    <Col xs={1}>
-                      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => console.log("No fuego :(")}/>
-                    </Col>
-                    <Col xs={1}>
-                      <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={() => console.log("FUEGO!!!!")} />
-                    </Col>
-
-
-                  </Row>
-
-                </Col>
-
-              </Row>
-
-            </div>
-        );
-    }
+  render() {
+    const { track, playing, soundCloudAudio, currentTime, duration } = this.props;
+    return (
+      <DumbCustomPlayer
+        track={track}
+        playing={playing}
+        soundCloudAudio={soundCloudAudio}
+        currentTime={currentTime}
+        duration={duration}
+        onFire={this.onFire}
+        onWater={this.onWater}
+        mapDurationSecsToMins={this.mapDurationSecsToMins}
+        play={this.play}
+        next={this.next}
+        triggerFirebase={this.triggerFirebase}
+      />
+    );
+  }
 }
 /* -----------------    CUSTOM WRAPPER COMPONENT     ------------------ */
 
@@ -207,6 +236,9 @@ class CustomPlayerWrapper extends React.Component {
                   fireboss={this.props.fireboss}
                   song_uri={song_uri}
                   partyId={this.props.currentParty.id}
+                  fireboss={this.props.fireboss}
+                  currentSong={this.props.currentSong}
+                  currentParty={this.props.currentParty}
                 />
             </SoundPlayerContainer>
         );
@@ -215,7 +247,7 @@ class CustomPlayerWrapper extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, fireboss, currentParty }) => ({ currentSong, fireboss, currentParty })
+const mapStateToProps = ({ currentSong, firebase, currentParty, fireboss }) => ({ currentSong, firebase, currentParty, fireboss })
 
 const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 

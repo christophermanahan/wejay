@@ -6,11 +6,14 @@ import { clearUser } from '../ducks/user';
 
 import {IconButton, MenuItem, IconMenu} from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import ArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+
+
 
 
 
@@ -20,7 +23,8 @@ import FlatButton from 'material-ui/FlatButton';
 const DumbNavbar = props => {
   const { dialogOpenLeave, dialogOpenLogout, user, handleOpenLeaveDialog, handleOpenLogoutDialog, handleCancel, handleLeaveParty, handleLogout, partyName, handleLeaveCancel, handleLogoutCancel } = props;
 
-  const menuItemStyle = {fontSize: '1em'};
+  const menuDropUpStyle = {fontSize: '1em', marginLeft: '7em'};
+  const menuItemStyle = {fontSize: '1em', backgroundColor: 'white'};
   const dialogTitleStyle = {fontSize: '1.5em', lineHeight: '1.2em', color: '#363836'};
   const actionStyle = {width: '7em', height: '2.5em'};
   const actionLabelStyleCancel = {fontSize: '1em', color: '#7aa095'};
@@ -62,17 +66,17 @@ const DumbNavbar = props => {
       />,
     ];
 
+  const albumIconStyle = {fontSize: '8em'};
+
   return (
     <div>
       <Row id="navbar-row">
         <Col xs={2} className="navbar-col">
-          <div className="navbar-icon-container">
-            <icon id="album-icon" className="zmdi zmdi-album zmdi-hc-4x" />
-          </div>
+          <icon style={albumIconStyle} className="zmdi zmdi-album zmdi-hc-4x" />
         </Col>
-        <Col xs={8} className="navbar-col">
+        <Col xs={8}>
           <div>
-            <h2>weJay</h2>
+            <h2 id="wejay-nav-logo">weJay</h2>
           </div>
         </Col>
         <Col xs={1} className="navbar-col">
@@ -82,11 +86,12 @@ const DumbNavbar = props => {
               anchorOrigin={{horizontal: 'right', vertical: 'top'}}
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
               iconStyle={{ color: '#363836', height: '50px', width: '50px' }}
-              menuStyle={{ backgroundColor: '#ec4616', width: '8em' }}
+              menuStyle={{ backgroundColor: 'white', width: '8em' }}
             >
-              <MenuItem style={menuItemStyle} value="1">My Settings</MenuItem>
-              <MenuItem style={menuItemStyle} value="2" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
-              <MenuItem style={menuItemStyle} value="3" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
+              <MenuItem style={menuDropUpStyle} value="1"><ArrowDropUp/></MenuItem>
+              <MenuItem style={menuItemStyle} value="2">My Settings</MenuItem>
+              <MenuItem style={menuItemStyle} value="3" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
+              <MenuItem style={menuItemStyle} value="4" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
             </IconMenu>
           </div>
         </Col>

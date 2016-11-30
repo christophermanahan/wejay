@@ -1,12 +1,11 @@
 import store from './store';
 import firebase from 'firebase';
 import { browserHistory } from 'react-router';
-import publicKeys from './utils/publicKeys'
-import Fireboss from './utils/fireboss'
+import publicKeys from './utils/publicKeys';
+import Fireboss from './utils/fireboss';
 
 import { setFirebase } from './ducks/firebase';
 import { setUser, clearUser } from './ducks/user';
-import { setMessages } from './ducks/chat';
 import { leaveParty } from './ducks/global';
 import { setTopTen } from './ducks/topTen';
 import { setCurrentSong } from './ducks/currentSong';
@@ -14,6 +13,7 @@ import { setParties } from './ducks/parties';
 import { setDjs } from './ducks/djs';
 import { setPersonalQueue } from './ducks/personalQueue';
 import { setCurrentParty } from './ducks/currentParty';
+import { setShadowQueue } from './ducks/shadowQueue';
 
 
 const config = {
@@ -27,20 +27,19 @@ const config = {
 firebase.initializeApp(config);
 
 
-
 /* -------------------- ON-ENTER HOOKS ----------------------- */
 
 export const onMainEnter = () => {
   // 1. Set Firebase on Store
   store.dispatch(setFirebase(firebase));
-  const { fireboss } = store.getState()
+  const { fireboss } = store.getState();
 
   const dispatch = func => {
-    return val => store.dispatch(func(val))
+    return val => store.dispatch(func(val));
   }
 
   // 2. Always listen to Party List
-  fireboss.createPartiesListener(dispatch(setParties))
+  fireboss.createPartiesListener(dispatch(setParties));
 
   // 3. Check if user is authenticated
   fireboss.auth.onAuthStateChanged(user => {
@@ -59,13 +58,13 @@ export const onMainEnter = () => {
         } else {
 
           // set typical party listeners
-          fireboss.getCurrentPartySnapshot(partyId, dispatch(setCurrentParty))
-          fireboss.createPartyListener(partyId,'current_song', dispatch(setCurrentSong))
-          fireboss.createPartyListener(partyId,'top_ten', dispatch(setTopTen))
-          fireboss.createPartyListener(partyId,'party_djs', dispatch(setDjs))
-          fireboss.endPartyListener(partyId, user, dispatch(leaveParty), browserHistory)
-          fireboss.createPersonalQueueListener(partyId, user, dispatch(setPersonalQueue))
-          fireboss.createMessagesListener(dispatch(setMessages))
+          fireboss.getCurrentPartySnapshot(partyId, dispatch(setCurrentParty));
+          fireboss.createPartyListener(partyId, 'current_song', dispatch(setCurrentSong));
+          fireboss.createPartyListener(partyId, 'top_ten', dispatch(setTopTen));
+          fireboss.createPartyListener(partyId, 'party_djs', dispatch(setDjs));
+          fireboss.endPartyListener(partyId, user, dispatch(leaveParty), browserHistory);
+          fireboss.createPersonalQueueListener(partyId, user, dispatch(setPersonalQueue));
+          fireboss.createShadowQueueListener(partyId, user, dispatch(setShadowQueue));
           browserHistory.push('/app');
         }
       })
@@ -74,14 +73,3 @@ export const onMainEnter = () => {
   });
 };
 
-/*
-TODO for UX:
-
-1. When you go back to Login (or parties) and are logged in/in a party, need to change display/given user options
-2. Make onRage
-3. Make leaveParty button
-4. Make Logout button, should also make you leave the party
-
-*/
-
-//onExitParty ==> remove listeners

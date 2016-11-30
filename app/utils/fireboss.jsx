@@ -166,7 +166,7 @@ Fireboss.prototype.removeUserParty = function(partyId, user) {
 };
 
 Fireboss.prototype.removePartyDj = function(partyId, user) {
-  return this.database.ref(partyId).child(user.uid).remove()
+  return this.database.ref('party_djs').child(partyId).child(user.uid).remove()
 };
 
 /* ------------------- SETTERS (NO PROMISES) ------------------- */

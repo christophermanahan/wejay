@@ -124,11 +124,26 @@ Fireboss.prototype.addingPartyDJ = function(partyId, user) {
   djName = djName.join(' ');
   console.log(djName);
 
+  let djPhotos = [
+    "https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-headphone-512.png",
+    "https://cdn3.iconfinder.com/data/icons/block/32/headphones-512.png",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Headphone_icon.svg/1024px-Headphone_icon.svg.png",
+    "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
+    "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
+    "https://maxcdn.icons8.com/Share/icon/Music/dj1600.png",
+    "https://image.freepik.com/free-icon/disc-jockey-with-shades-and-headphones-at-dj-booth_318-43815.jpg",
+    "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
+    "http://northernlinestudio.co.uk/wp-content/themes/NorthernLineWPTheme/assets/img/icon_dj.png",
+    "http://icons.iconarchive.com/icons/icons8/android/512/Music-Dj-icon.png"
+  ]
+
+  let djPhoto = djPhotos[Math.floor(Math.random() * 10)];
+
   return this.database.ref('party_djs').child(partyId).child(user.uid)
          .set({
             dj_points: 0,
             uid: user.uid,
-            photo: user.photoURL || "https://thumbnailer.mixcloud.com/unsafe/318x318/extaudio/0/9/b/f/ce50-0b29-40a3-a31b-95b1b9b38c5c",
+            photo: user.photoURL || djPhoto,
             dj_name: `DJ ${user.displayName || djName}`,
             personal_queue: {}
           })

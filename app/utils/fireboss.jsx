@@ -70,6 +70,10 @@ Fireboss.prototype.createPersonalQueueListener = function(partyId, user, onChang
   });
 }
 
+Fireboss.prototype.createShadowQueueListener = function(partyId, user, onChangeFunc) {
+  // this.database.ref('')
+}
+
 Fireboss.prototype.removePartyListeners = function(partyId, user) {
   this.database.ref('current_song').child(partyId).off()
   this.database.ref('top_ten').child(partyId).off()

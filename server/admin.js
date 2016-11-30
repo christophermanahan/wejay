@@ -23,23 +23,18 @@ const serviceAccount = {
 	auth_provider_x509_cert_url,
 	client_x509_cert_url
 };
-console.log("#1");
 
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
 	databaseURL: 'https://wejay-ac08c.firebaseio.com'
 });
-console.log("#2");
 const db = admin.database();
-console.log("#3");
 
 /* -----------------    DB LISTENERS     ------------------ */
 
 const partiesRef = db.ref('parties');
-console.log("#4");
 
 partiesRef.on('child_added', (snapshot) => {
-	console.log("#5");
 
 	const partyId = snapshot.val() && snapshot.val().id
 	if(!partyId) { return; }

@@ -70,7 +70,7 @@ const DumbNavbar = props => {
 
   return (
     <div>
-      <Row id="navbar-row">
+      <Row className="safari_only" id="navbar-row">
         <Col xs={2} className="navbar-col">
           <icon style={albumIconStyle} className="zmdi zmdi-album zmdi-hc-4x" />
         </Col>
@@ -82,7 +82,10 @@ const DumbNavbar = props => {
         <Col xs={1} className="navbar-col">
           <div className="navbar-icon-container">
             <IconMenu
-              iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+              iconButtonElement={
+                <IconButton style={{height: "100%"}}>
+                  <MoreVertIcon />
+                </IconButton>}
               anchorOrigin={{horizontal: 'right', vertical: 'top'}}
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
               iconStyle={{ color: '#363836', height: '50px', width: '50px' }}

@@ -20,7 +20,7 @@ const clientId = publicKeys.SC_CLIENT_ID;
 
 const DumbCustomPlayer = props => {
   // console.log('props in custom player', this.props)
-  let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, next, triggerFirebase } = props;
+  let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase } = props;
 
   let dur = duration && Math.floor(duration)
   console.log(duration)
@@ -109,7 +109,7 @@ const DumbCustomPlayer = props => {
               <IconButton
                 iconStyle={styles.largeIcon}
                 style={styles.buttonStyle}
-                onClick={next}>
+                onClick={triggerFirebase}>
                 <NextSongButton />
               </IconButton>
             </Col>
@@ -135,7 +135,7 @@ class CustomPlayer extends React.Component {
       super(props);
       this.play = this.play.bind(this);
       this.triggerFirebase = this.triggerFirebase.bind(this);
-      this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
+      this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this);
       this.onFire = this.onFire.bind(this);
       this.onWater = this.onWater.bind(this);
       // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
@@ -210,7 +210,6 @@ class CustomPlayer extends React.Component {
         onWater={this.onWater}
         mapDurationSecsToMins={this.mapDurationSecsToMins}
         play={this.play}
-        next={this.next}
         triggerFirebase={this.triggerFirebase}
       />
     );
@@ -236,7 +235,6 @@ class CustomPlayerWrapper extends React.Component {
                   fireboss={this.props.fireboss}
                   song_uri={song_uri}
                   partyId={this.props.currentParty.id}
-                  fireboss={this.props.fireboss}
                   currentSong={this.props.currentSong}
                   currentParty={this.props.currentParty}
                 />

@@ -17,24 +17,78 @@ class Firechief {
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
+			this.createNewPartyListener(partyId);
+		});
+	}
 
-			const newPartyRef = this.db.ref('parties').child(partyId);
+	createNewPartyListener(partyId) {
+		const newPartyRef = this.db.ref('parties').child(partyId);
 
-			newPartyRef.on('value', val => {
-				const needSong = this.checkIfNeedSong(val);
-				if (needSong) {
-					this.reOrderQueues(val);
-				}
-			});
+		newPartyRef.on('value', snapshot => {
+			const needSong = this.checkIfNeedSong(snapshot);
+			if (needSong) {
+				this.setCurrentSong(snapshot);
+			}
 		});
 	}
 
 	checkIfNeedSong(snapshot) {
-		//
+		return snapshot.val() ? snapshot.val().needSong : false;
 	}
 
-	reOrderQueues(snapshot) {
+	setCurrentSong(partyId) {
+		const currentSongRef = db.ref('current_song').child(partyId)
+		this.getHighestPriority(partyId, "top_ten")
+		.then(song => {
+			if(!song) {
+				return this.setNeedSongToFalse(partyId)
+				//////////////////
+				/////////////////
+			}
+		})
+
+	}
+
+
+	setNeedSongToFalse(partyId) {
+		return this.db.ref('parties').child(partyId).update({ needSong: false })
+	}
+
+
+	getHighestPriority(partyId, queue) {
+		const queueRef = db.ref(queue).child(partyId)
+		return queueRef.once('value')
+		.then(snapshot => {
+			const songsInQueue = snapshot && snapshot.val();
+
+			if(queue === "top_ten" && !songsInQueue){
+				return
+			}
+
+			let nextSong;
+			let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
+			let nextSongId;
+
+			for (let song in songsInQueue){
+
+				let netPriority = songsInQueue[song].time_priority + songsInQueue[song].vote_priority
+
+				if(netPriority > nextSongPriority){
+					nextSong = songsInQueue[song]
+					nextSongPriority = netPriority;
+					nextSongId = song
+				}
+			}
+			return {[nextSongId]: nextSong}
+		})
+		.catch(console.error);
+
+
+	}
+
+	removeSong(snapshot) {
 		//
+
 	}
 
 
@@ -43,4 +97,3 @@ class Firechief {
 }
 
 module.exports = Firechief;
-

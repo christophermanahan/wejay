@@ -7,3 +7,8 @@ export const sampleSong = {
 	uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
 	vote_priority: 0
 }
+
+export const sampleShadowQueue = {
+	song1: sampleSong,
+	song2: sampleSong 
+}

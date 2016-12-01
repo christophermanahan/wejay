@@ -160,7 +160,6 @@ export const sampleTopTen = {
   song2: sampleSong
 }
 
-<<<<<<< HEAD
 export const sampleSearchResult = {
 	id: 107780701,
 	permalink_url: "https://soundcloud.com/dazzel-almond/black-walk",
@@ -175,7 +174,7 @@ export const sampleSearchResults = [
 	sampleSearchResult,
 	sampleSearchResult
 ]
-=======
+
 export const samplePersonalQueue = {
   "SY3eHcxTHiTZ8DS09KgyvNhFqqo2" : {
     "artist" : "FettyWap1738",
@@ -205,5 +204,4 @@ export const sampleParty = {
     location: "5 Hanover Sq",
     name: "Dillon's ppppparty",
     needSong: false
-  }
->>>>>>> 801cc05395dcb91a08bd338c86fe45753f754a9b
+}

@@ -6,14 +6,11 @@ export const sampleSong = {
 	title: "Dark Ally",
 	uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
 	vote_priority: 0
-<<<<<<< HEAD
 }
 
 export const sampleShadowQueue = {
 	song1: sampleSong,
 	song2: sampleSong 
-}
-=======
 };
 
 export const sampleUser = {
@@ -162,4 +159,3 @@ export const sampleTopTen = {
   song1: sampleSong,
   song2: sampleSong
 }
->>>>>>> 9b024acf7c819769c7315f92ad9982300abb6ad4

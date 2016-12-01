@@ -1,7 +1,13 @@
 /* -----------------    ACTIONS     ------------------ */
+const SET_FIREBOSS = 'SET_FIREBOSS'
 
-import { SET_FIREBASE } from './firebase'
-import Fireboss from '../utils/fireboss'
+
+/* ------------   ACTION CREATORS     ------------------ */
+
+export const setFireboss = fireboss => ({
+  type: SET_FIREBOSS,
+  fireboss
+})
 
 
 /* ------------       REDUCER     ------------------ */
@@ -9,9 +15,8 @@ import Fireboss from '../utils/fireboss'
 const reducer = (previousState = {}, action) => {
 
   switch (action.type) {
-    case SET_FIREBASE:
-      let fireboss = new Fireboss(action.firebase)
-      return fireboss
+    case SET_FIREBOSS:
+      return action.fireboss
 
     default:
       return previousState;

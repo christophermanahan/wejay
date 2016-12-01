@@ -8,27 +8,42 @@
 
 var hri = require('human-readable-ids').hri, i;
 
-const Fireboss = function(firebase) {
+const Fireboss = function(firebase, dispatchers, browserHistory) {
   this.database = firebase.database();
   this.auth = firebase.auth();
+  this.dispatchers = dispatchers;
+  this.browserHistory = browserHistory;
 };
 
 
 /* -------------------------- LISTENERS -------------------------- */
 
-Fireboss.prototype.createPartiesListener = function(onChangeFunc) {
+Fireboss.prototype.createPartiesListener = function() {
   this.database.ref('parties').on('value', snapshot => {
-    onChangeFunc(snapshot.val());
+    this.dispatchers.setParties(snapshot.val());
   });
 };
 
-Fireboss.prototype.createPartyListener = function(partyId, type, onChangeFunc) {
-  this.database.ref(type).child(partyId).on('value', snapshot => {
-    onChangeFunc(snapshot.val());
-  });
+Fireboss.prototype.createPartyListener = function(partyId, type) {
+  switch(type) {
+    case 'current_song':
+      this.database.ref('current_song').child(partyId).on('value', snapshot => {
+        this.dispatchers.setCurrentSong(snapshot.val());
+      });
+
+    case 'top_ten':
+      this.database.ref('top_ten').child(partyId).on('value', snapshot => {
+        this.dispatchers.setTopTen(snapshot.val());
+      });
+
+    case 'party_djs':
+      this.database.ref('party_djs').child(partyId).on('value', snapshot => {
+        this.dispatchers.setDjs(snapshot.val());
+      });
+  }
 };
 
-Fireboss.prototype.endPartyListener = function(partyId, user, leaveParty, browserHistory) {
+Fireboss.prototype.endPartyListener = function(partyId, user) {
   this.database.ref('parties').child(partyId).child('active').on('value', snapshot => {
     if (snapshot.val()) {
       console.log('party still raging');
@@ -46,10 +61,10 @@ Fireboss.prototype.endPartyListener = function(partyId, user, leaveParty, browse
             throw new Error(err);
           } else {
             this.removePartyListeners(partyId, user);
-            leaveParty();
+            this.dispatchers.leaveParty();
             if (partyId !== user.uid) {
               alert('the host has ended this party');
-              browserHistory.push('/parties');
+              this.browserHistory.push('/parties');
             } else {
               console.log('you ended the party');
             }
@@ -66,13 +81,13 @@ Fireboss.prototype.createMessagesListener = function(onChangeFunc) {
   });
 };
 
-Fireboss.prototype.createPersonalQueueListener = function(partyId, user, onChangeFunc) {
+Fireboss.prototype.createPersonalQueueListener = function(partyId, user) {
   this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').on('value', snapshot => {
-    onChangeFunc(snapshot.val());
+    this.dispatchers.setPersonalQueue(snapshot.val());
   });
 };
 
-Fireboss.prototype.createShadowQueueListener = function(partyId, user, onChangeFunc) {
+Fireboss.prototype.createShadowQueueListener = function(partyId, user) {
   this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
 
     // filter songs so only user's songs sent to redux store, not full shadow queue
@@ -84,7 +99,7 @@ Fireboss.prototype.createShadowQueueListener = function(partyId, user, onChangeF
         userSongsInSQ[song] = fullShadowQueue[song];
       }
     }
-    onChangeFunc(userSongsInSQ);
+    this.dispatchers.setShadowQueue(userSongsInSQ);
   });
 };
 
@@ -111,9 +126,9 @@ Fireboss.prototype.checkingUserParty = function(user) {
   return this.database.ref('user_parties').child(user.uid).once('value');
 };
 
-Fireboss.prototype.getCurrentPartySnapshot = function(partyId, callback) {
+Fireboss.prototype.getCurrentPartySnapshot = function(partyId) {
   this.database.ref('parties').child(partyId).once('value', snapshot => {
-    callback(snapshot.val());
+    this.dispatchers.setCurrentParty(snapshot.val());
   });
 };
 

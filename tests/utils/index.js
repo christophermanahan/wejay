@@ -149,3 +149,10 @@ export const sampleDJs = {
   }
 }
 
+//Fireboss reducer requires a fake firebase instance to be created
+import Fireboss from '../../app/utils/fireboss'
+
+export const fakeFirebase = {
+	auth: function() { return true },
+	database: function() { return true }
+}

@@ -250,7 +250,7 @@ class CustomPlayerWrapper extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, firebase, currentParty, fireboss }) => ({ currentSong, firebase, currentParty, fireboss })
+const mapStateToProps = ({ currentSong, currentParty, fireboss }) => ({ currentSong, currentParty, fireboss })
 
 const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 

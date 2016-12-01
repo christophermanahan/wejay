@@ -4,7 +4,7 @@ import { browserHistory } from 'react-router';
 import publicKeys from './utils/publicKeys';
 import Fireboss from './utils/fireboss';
 
-import { setFirebase } from './ducks/firebase';
+import { setFireboss } from './ducks/fireboss';
 import { setUser, clearUser } from './ducks/user';
 import { leaveParty } from './ducks/global';
 import { setTopTen } from './ducks/topTen';
@@ -24,22 +24,36 @@ const config = {
     messagingSenderId: publicKeys.FIREBASE_MESSAGING_SENDER_ID
   };
 
+
+const dispatch = func => {
+  return val => store.dispatch(func(val));
+}
+
+const dispatchers = {
+  setUser: dispatch(setUser),
+  clearUser: dispatch(clearUser),
+  leaveParty: dispatch(leaveParty),
+  setTopTen: dispatch(setTopTen),
+  setCurrentSong: dispatch(setCurrentSong),
+  setParties: dispatch(setParties),
+  setDjs: dispatch(setDjs),
+  setPersonalQueue: dispatch(setPersonalQueue),
+  setCurrentParty: dispatch(setCurrentParty),
+  setShadowQueue: dispatch(setShadowQueue)
+}
+
 firebase.initializeApp(config);
 
 
 /* -------------------- ON-ENTER HOOKS ----------------------- */
 
 export const onMainEnter = () => {
-  // 1. Set Firebase on Store
-  store.dispatch(setFirebase(firebase));
-  const { fireboss } = store.getState();
-
-  const dispatch = func => {
-    return val => store.dispatch(func(val));
-  }
+  // 1. Set Fireboss on Store
+  const fireboss = new Fireboss(firebase, dispatchers, browserHistory)
+  store.dispatch(setFireboss(fireboss))
 
   // 2. Always listen to Party List
-  fireboss.createPartiesListener(dispatch(setParties));
+  fireboss.createPartiesListener();
 
   // 3. Check if user is authenticated
   fireboss.auth.onAuthStateChanged(user => {
@@ -56,15 +70,7 @@ export const onMainEnter = () => {
         if (!partyId) {
           browserHistory.push('/parties'); // user must select party
         } else {
-
-          // set typical party listeners
-          fireboss.getCurrentPartySnapshot(partyId, dispatch(setCurrentParty));
-          fireboss.createPartyListener(partyId, 'current_song', dispatch(setCurrentSong));
-          fireboss.createPartyListener(partyId, 'top_ten', dispatch(setTopTen));
-          fireboss.createPartyListener(partyId, 'party_djs', dispatch(setDjs));
-          fireboss.endPartyListener(partyId, user, dispatch(leaveParty), browserHistory);
-          fireboss.createPersonalQueueListener(partyId, user, dispatch(setPersonalQueue));
-          fireboss.createShadowQueueListener(partyId, user, dispatch(setShadowQueue));
+          fireboss.setUpAllPartyListeners(partyId, user);
           browserHistory.push('/app');
         }
       })

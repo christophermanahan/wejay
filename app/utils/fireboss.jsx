@@ -11,9 +11,15 @@ var hri = require('human-readable-ids').hri, i;
 const Fireboss = function(firebase, dispatchers, browserHistory) {
   this.database = firebase.database();
   this.auth = firebase.auth();
+  this.GoogleAuth = new firebase.auth.GoogleAuthProvider();
+  this.FacebookAuth = new firebase.auth.FacebookAuthProvider();
   this.dispatchers = dispatchers;
   this.browserHistory = browserHistory;
+  this.createUserEP = function(email, password) {
+    return this.auth.createUserWithEmailAndPassword(email, password)
+  };
 };
+
 
 
 /* -------------------------- LISTENERS -------------------------- */
@@ -303,5 +309,46 @@ Fireboss.prototype.decrementCurrSongDjPoints = function(userId, partyId) {
 Fireboss.prototype.triggerNeedSong = function(partyId) {
   this.database.ref('parties').child(partyId).update({needSong: true})
 };
+
+
+/* ------------------- COMBOS ------------------- */
+
+Fireboss.prototype.setUpAllPartyListeners = function(partyId, user) {
+  this.getCurrentPartySnapshot(partyId);
+  this.createPartyListener(partyId, 'current_song');
+  this.createPartyListener(partyId, 'top_ten');
+  this.createPartyListener(partyId, 'party_djs');
+  this.endPartyListener(partyId, user);
+  this.createPersonalQueueListener(partyId, user);
+  this.createShadowQueueListener(partyId, user);
+}
+
+Fireboss.prototype.joinParty = function(partyId, user) {
+  const associatingPartyAndUser = this.associatingPartyAndUser(partyId, user);
+  const addingPartyDJ = this.addingPartyDJ(partyId, user);
+
+  Promise.all([associatingPartyAndUser, addingPartyDJ])
+    .then(() => {
+      this.setUpAllPartyListeners(partyId, user)
+      this.browserHistory.push('/app');
+    })
+    .catch(err => console.error(err)) // TODO: need real error handling
+
+}
+
+Fireboss.prototype.createPartyWithListeners = function(partyId, user, partyObj) {
+  this.creatingParty(partyId, partyObj)
+    .then(() => {
+      const addingHostDJ = this.addingPartyDJ(partyId, user);
+      const associatingPartyAndHost = this.associatingPartyAndUser(partyId, user);
+
+      Promise.all([addingHostDJ, associatingPartyAndHost])
+        .then(() => {
+          this.setUpAllPartyListeners(partyId, user)
+          this.browserHistory.push('/app');
+        })
+        .catch(console.error) // TODO: real error handling
+    });
+}
 
 export default Fireboss

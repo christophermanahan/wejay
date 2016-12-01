@@ -258,7 +258,7 @@ class Navbar extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ user, firebase, fireboss, currentParty }) => ({ user, firebase, fireboss, currentParty });
+const mapStateToProps = ({ user, fireboss, currentParty }) => ({ user, fireboss, currentParty });
 const mapDispatchToProps = (dispatch) => ({
   leaveParty: () => dispatch(leaveParty()),
   clearUser: () => dispatch(clearUser())

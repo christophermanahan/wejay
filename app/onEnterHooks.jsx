@@ -54,9 +54,6 @@ export const onMainEnter = () => {
   const fireboss = new Fireboss(firebase, dispatchers, browserHistory)
   store.dispatch(setFireboss(fireboss))
 
-
-
-
   // 2. Always listen to Party List
   fireboss.createPartiesListener();
 
@@ -75,15 +72,7 @@ export const onMainEnter = () => {
         if (!partyId) {
           browserHistory.push('/parties'); // user must select party
         } else {
-
-          // set typical party listeners
-          fireboss.getCurrentPartySnapshot(partyId);
-          fireboss.createPartyListener(partyId, 'current_song');
-          fireboss.createPartyListener(partyId, 'top_ten');
-          fireboss.createPartyListener(partyId, 'party_djs');
-          fireboss.endPartyListener(partyId, user);
-          fireboss.createPersonalQueueListener(partyId, user);
-          fireboss.createShadowQueueListener(partyId, user);
+          fireboss.setUpAllPartyListeners(partyId, user);
           browserHistory.push('/app');
         }
       })

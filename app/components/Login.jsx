@@ -15,7 +15,7 @@ import Signup from './Signup';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbLogin = props => {
-  const { anonymousSignIn, signUp, logIn, clearError, showDialog, msg, showSignup, firebase, renderError } = props;
+  const { anonymousSignIn, signUp, logIn, clearError, showDialog, msg, showSignup, fireboss, renderError } = props;
   const dialogActions = [
     <FlatButton
       label="OK"
@@ -78,7 +78,7 @@ const DumbLogin = props => {
 
         <Row>
           <Col sm={8} xsOffset={2}>
-            { showSignup && <Signup firebase={firebase} renderError={renderError}/> }
+            { showSignup && <Signup fireboss={fireboss} renderError={renderError}/> }
           </Col>
         </Row>
         <Row className="login-btn-container">
@@ -175,30 +175,28 @@ class Login extends Component {
   }
 
   anonymousSignIn() {
-    const { firebase } = this.props;
+    const { fireboss } = this.props;
 
-    firebase.auth().signInAnonymously()
+    fireboss.auth.signInAnonymously()
       .catch(this.renderError)
   }
 
   signUp() {
-    const { firebase } = this.props;
     this.setState({ showSignup: !this.state.showSignup });
   }
 
   logIn(method) {
-    const { firebase } = this.props;
+    const { fireboss } = this.props;
 
-    const myAuth = firebase.auth();
     let provider;
 
     if (method === 'google') {
-      provider = new firebase.auth.GoogleAuthProvider();
+      provider = fireboss.GoogleAuth
     } else if (method === 'facebook') {
-      provider = new firebase.auth.FacebookAuthProvider();
+      provider = fireboss.FacebookAuth;
     }
 
-    myAuth.signInWithPopup(provider)
+    fireboss.auth.signInWithPopup(provider)
     .catch(this.renderError);
   }
 
@@ -220,7 +218,7 @@ class Login extends Component {
         showDialog={ this.state.showDialog }
         msg={ this.state.error.message }
         showSignup={ this.state.showSignup }
-        firebase={ this.props.firebase }
+        fireboss={ this.props.fireboss }
         renderError={ this.renderError }
       />
     );
@@ -230,7 +228,7 @@ class Login extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ firebase, user }) => ({ firebase, user });
+const mapStateToProps = ({ fireboss, user }) => ({ fireboss, user });
 
 
 export default connect(mapStateToProps, null)(Login);

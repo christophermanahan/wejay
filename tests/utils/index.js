@@ -154,3 +154,26 @@ export const sampleTopTen = {
   song1: sampleSong,
   song2: sampleSong
 }
+
+export const samplePersonalQueue = {
+  "SY3eHcxTHiTZ8DS09KgyvNhFqqo2" : {
+    "artist" : "FettyWap1738",
+    "artwork_url" : "https://i1.sndcdn.com/artworks-B72n1OeTuXRb-0-large.jpg",
+    "dj_name" : "DJ Purple Rabbit",
+    "song_uri" : "https://soundcloud.com/harlem_fetty/fetty-wap-trap-queen-rough",
+    "time_priority" : 0,
+    "title" : "Trap Queen",
+    "uid" : "eOsN09Cyo1PkoZVXLka1FRmh00E2",
+    "vote_priority" : 6
+  },
+  "XHQntPtSw2dKzCxkhTsTfaaSVoH2" : {
+    "artist" : "Shane And Friends",
+    "artwork_url" : "https://i1.sndcdn.com/artworks-000162860668-hccoaa-large.jpg",
+    "dj_name" : "DJ Polite Fireant",
+    "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
+    "time_priority" : 0,
+    "title" : "Shane And Friends - Ep. 1 (with Rebecca Black)",
+    "uid" : "XHQntPtSw2dKzCxkhTsTfaaSVoH2",
+    "vote_priority" : 2
+  }
+}

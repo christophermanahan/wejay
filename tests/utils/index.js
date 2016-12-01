@@ -159,3 +159,18 @@ export const sampleTopTen = {
   song1: sampleSong,
   song2: sampleSong
 }
+
+export const sampleSearchResult = {
+	id: 107780701,
+	permalink_url: "https://soundcloud.com/dazzel-almond/black-walk",
+	uri: "https://api.soundcloud.com/tracks/107780701",
+	permalink: "black-walk",
+	description: "I liked the way this one turned out actually."
+}
+
+export const sampleSearchResults = [
+	sampleSearchResult,
+	sampleSearchResult,
+	sampleSearchResult,
+	sampleSearchResult
+]

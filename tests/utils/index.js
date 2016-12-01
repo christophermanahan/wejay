@@ -6,6 +6,11 @@ export const sampleSong = {
 	title: "Dark Ally",
 	uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
 	vote_priority: 0
+}
+
+export const sampleShadowQueue = {
+	song1: sampleSong,
+	song2: sampleSong
 };
 
 export const sampleUser = {
@@ -155,4 +160,55 @@ import Fireboss from '../../app/utils/fireboss'
 export const fakeFirebase = {
 	auth: function() { return true },
 	database: function() { return true }
+
+
+export const sampleTopTen = {
+  song1: sampleSong,
+  song2: sampleSong
+}
+
+export const sampleSearchResult = {
+	id: 107780701,
+	permalink_url: "https://soundcloud.com/dazzel-almond/black-walk",
+	uri: "https://api.soundcloud.com/tracks/107780701",
+	permalink: "black-walk",
+	description: "I liked the way this one turned out actually."
+}
+
+export const sampleSearchResults = [
+	sampleSearchResult,
+	sampleSearchResult,
+	sampleSearchResult,
+	sampleSearchResult
+]
+
+export const samplePersonalQueue = {
+  "SY3eHcxTHiTZ8DS09KgyvNhFqqo2" : {
+    "artist" : "FettyWap1738",
+    "artwork_url" : "https://i1.sndcdn.com/artworks-B72n1OeTuXRb-0-large.jpg",
+    "dj_name" : "DJ Purple Rabbit",
+    "song_uri" : "https://soundcloud.com/harlem_fetty/fetty-wap-trap-queen-rough",
+    "time_priority" : 0,
+    "title" : "Trap Queen",
+    "uid" : "eOsN09Cyo1PkoZVXLka1FRmh00E2",
+    "vote_priority" : 6
+  },
+  "XHQntPtSw2dKzCxkhTsTfaaSVoH2" : {
+    "artist" : "Shane And Friends",
+    "artwork_url" : "https://i1.sndcdn.com/artworks-000162860668-hccoaa-large.jpg",
+    "dj_name" : "DJ Polite Fireant",
+    "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
+    "time_priority" : 0,
+    "title" : "Shane And Friends - Ep. 1 (with Rebecca Black)",
+    "uid" : "XHQntPtSw2dKzCxkhTsTfaaSVoH2",
+    "vote_priority" : 2
+  }
+}
+
+export const sampleParty = {
+    active: true,
+    id: "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2",
+    location: "5 Hanover Sq",
+    name: "Dillon's ppppparty",
+    needSong: false
 }

@@ -159,3 +159,11 @@ export const sampleTopTen = {
   song1: sampleSong,
   song2: sampleSong
 }
+
+export const sampleParty = {
+    active: true,
+    id: "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2",
+    location: "5 Hanover Sq",
+    name: "Dillon's ppppparty",
+    needSong: false
+  }

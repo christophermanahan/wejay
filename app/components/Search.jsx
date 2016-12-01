@@ -92,38 +92,7 @@ class Search extends Component {
     const { dj_name } = this.props.djs[uid];
     const song = { song_uri, title, artist, artwork_url, uid, dj_name, time_priority: 0, vote_priority: 0};
 
-    const gettingCurrentSong = fireboss.gettingPartyItemSnapshot(partyId, 'current_song');
-    const gettingTopTen = fireboss.gettingPartyItemSnapshot(partyId, 'top_ten')
-    const gettingShadowQueue = fireboss.gettingPartyItemSnapshot(partyId, 'shadow_queue');
-
-    Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
-    .then(results => {
-      const currentSongVal = results[0] && results[0].val();
-      const topTenVal = results[1] && results[1].val();
-      const shadowQueueVal = results[2] && results[2].val();
-
-      let userSongInShadowQueue = false;
-
-      if (shadowQueueVal) {
-        for (let track in shadowQueueVal) {
-          if (uid === shadowQueueVal[track].uid) userSongInShadowQueue = true;
-        }
-      }
-
-      if (!currentSongVal) {
-        fireboss.setCurrentSong(partyId, song);
-        this.openSnackbar('Nice!!! Song now playing!');
-      } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
-        fireboss.addToPartyQueue(partyId, 'top_ten', song);
-        this.openSnackbar('Added to Top Ten!');
-      } else if (!shadowQueueVal || !userSongInShadowQueue) {
-        fireboss.addToPartyQueue(partyId, 'shadow_queue', song);
-        this.openSnackbar('Sent as a recommendation!');
-      } else {
-        fireboss.addToPersonalQueue(partyId, user, song);
-        this.openSnackbar('Added to My Songs!');
-      }
-    });
+    fireboss.submitUserSong(partyId, user, song, this.openSnackbar)
   }
 
   render() {

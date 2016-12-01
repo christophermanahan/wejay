@@ -4,7 +4,6 @@ import { browserHistory } from 'react-router';
 import publicKeys from './utils/publicKeys';
 import Fireboss from './utils/fireboss';
 
-import { setFirebase } from './ducks/firebase';
 import { setFireboss } from './ducks/fireboss';
 import { setUser, clearUser } from './ducks/user';
 import { leaveParty } from './ducks/global';
@@ -49,8 +48,7 @@ firebase.initializeApp(config);
 /* -------------------- ON-ENTER HOOKS ----------------------- */
 
 export const onMainEnter = () => {
-  // 1. Set Firebase on Store
-  store.dispatch(setFirebase(firebase));
+  // 1. Set Fireboss on Store
   const fireboss = new Fireboss(firebase, dispatchers, browserHistory)
   store.dispatch(setFireboss(fireboss))
 

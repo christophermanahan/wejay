@@ -311,7 +311,7 @@ Fireboss.prototype.triggerNeedSong = function(partyId) {
 };
 
 
-/* ------------------- COMBOS ------------------- */
+/* ---------------------- COMBOS ---------------------- */
 
 Fireboss.prototype.setUpAllPartyListeners = function(partyId, user) {
   this.getCurrentPartySnapshot(partyId);
@@ -348,6 +348,110 @@ Fireboss.prototype.createPartyWithListeners = function(partyId, user, partyObj) 
           this.browserHistory.push('/app');
         })
         .catch(console.error) // TODO: real error handling
+    });
+}
+
+Fireboss.prototype.logOut = function(partyId, user) {
+  const { uid } = user;
+  if(partyId === uid) {
+    this.endParty(partyId)
+    this.auth.signOut()
+      .then(() => {
+        this.dispatchers.clearUser();
+        this.browserHistory.push('/login')
+      },
+            () =>{console.log('error')}
+      )
+  }
+  else {
+    this.removeUserParty(partyId, user)
+      .then(err => {
+        if(err){
+          throw new Error(err)
+        } else {
+          return this.removePartyDj(partyId, user)
+        }
+      })
+      .then(err => {
+        if(err){
+          throw new Error(err)
+        } else {
+          this.removePartyListeners(partyId, user)
+          this.dispatchers.leaveParty();
+          this.dispatchers.clearUser();
+          this.auth.signOut()
+            .then(() => {this.browserHistory.push('/login')},
+                  () =>{console.log('error')}
+            )
+        }
+      })
+      .catch(console.error)
+  }
+}
+
+Fireboss.prototype.userLeaveParty = function(partyId, user) {
+  const { uid } = user;
+
+  if(partyId === uid) {
+    // console.log("you are the host")
+    this.endParty(partyId)
+    this.browserHistory.push('/parties');
+  }
+  else {
+    this.removeUserParty(partyId, user)
+      .then(err => {
+          if(err){
+            throw new Error(err)
+          } else {
+            return this.removePartyDj(partyId, user)
+          }
+        })
+        .then(err => {
+          if(err){
+            throw new Error(err)
+          } else {
+            this.removePartyListeners(partyId, user)
+            this.dispatchers.leaveParty()
+            this.browserHistory.push('/parties');
+          }
+        })
+      .catch(console.error)
+  }
+}
+
+Fireboss.prototype.submitUserSong = function(partyId, user, song, openSnackbar) {
+  const { uid } = user;
+  const gettingCurrentSong = this.gettingPartyItemSnapshot(partyId, 'current_song');
+  const gettingTopTen = this.gettingPartyItemSnapshot(partyId, 'top_ten')
+  const gettingShadowQueue = this.gettingPartyItemSnapshot(partyId, 'shadow_queue');
+
+  Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
+    .then(results => {
+      const currentSongVal = results[0] && results[0].val();
+      const topTenVal = results[1] && results[1].val();
+      const shadowQueueVal = results[2] && results[2].val();
+
+      let userSongInShadowQueue = false;
+
+      if (shadowQueueVal) {
+        for (let track in shadowQueueVal) {
+          if (uid === shadowQueueVal[track].uid) userSongInShadowQueue = true;
+        }
+      }
+
+      if (!currentSongVal) {
+        this.setCurrentSong(partyId, song);
+        openSnackbar('Nice!!! Song now playing!');
+      } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
+        this.addToPartyQueue(partyId, 'top_ten', song);
+        openSnackbar('Added to Top Ten!');
+      } else if (!shadowQueueVal || !userSongInShadowQueue) {
+        this.addToPartyQueue(partyId, 'shadow_queue', song);
+        openSnackbar('Sent as a recommendation!');
+      } else {
+        this.addToPersonalQueue(partyId, user, song);
+        openSnackbar('Added to My Songs!');
+      }
     });
 }
 

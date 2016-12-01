@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import { browserHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { leaveParty } from '../ducks/global';
-import { clearUser } from '../ducks/user';
 
 import {IconButton, MenuItem, IconMenu} from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
@@ -150,78 +148,17 @@ class Navbar extends Component {
   }
 
   handleLogout() {
-    const { currentParty, fireboss, leaveParty, clearUser, user } = this.props
-    const { uid } = user
+    const { user, currentParty, fireboss } = this.props
     const partyId = currentParty.id
 
-    if(partyId === uid) {
-      // console.log("you are the host")
-      fireboss.endParty(partyId)
-      fireboss.auth.signOut()
-        .then(() => {
-          clearUser();
-          browserHistory.push('/login')
-        },
-              () =>{console.log('error')}
-        )
-    }
-    else {
-      fireboss.removeUserParty(partyId, user)
-        .then(err => {
-          if(err){
-            throw new Error(err)
-          } else {
-            return fireboss.removePartyDj(partyId, user)
-          }
-        })
-        .then(err => {
-          if(err){
-            throw new Error(err)
-          } else {
-            fireboss.removePartyListeners(partyId, user)
-            leaveParty();
-            clearUser();
-            fireboss.auth.signOut()
-              .then(() => {browserHistory.push('/login')},
-                    () =>{console.log('error')}
-              )
-          }
-        })
-        .catch(console.error)
-    }
+    fireboss.logOut(partyId, user)
   }
 
   handleLeaveParty() {
-    const { currentParty, fireboss, leaveParty, user } = this.props
-    const { uid } = user
+    const { user, currentParty, fireboss } = this.props
     const partyId = currentParty.id
 
-    if(partyId === uid) {
-      // console.log("you are the host")
-      fireboss.endParty(partyId)
-      browserHistory.push('/parties');
-    }
-    else {
-      fireboss.removeUserParty(partyId, user)
-        .then(err => {
-            if(err){
-              throw new Error(err)
-            } else {
-              return fireboss.removePartyDj(partyId, user)
-            }
-          })
-          .then(err => {
-            if(err){
-              throw new Error(err)
-            } else {
-              fireboss.removePartyListeners(partyId, user)
-              leaveParty()
-              browserHistory.push('/parties');
-            }
-          })
-        .catch(console.error)
-    }
-
+    fireboss.userLeaveParty(partyId, user)
   }
 
 
@@ -259,11 +196,7 @@ class Navbar extends Component {
 /* -----------------    CONTAINER     ------------------ */
 
 const mapStateToProps = ({ user, fireboss, currentParty }) => ({ user, fireboss, currentParty });
-const mapDispatchToProps = (dispatch) => ({
-  leaveParty: () => dispatch(leaveParty()),
-  clearUser: () => dispatch(clearUser())
-})
 
-const NavbarContainer = connect(mapStateToProps, mapDispatchToProps)(Navbar);
+const NavbarContainer = connect(mapStateToProps)(Navbar);
 
 export default NavbarContainer;

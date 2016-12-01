@@ -41,7 +41,7 @@ const Song = props => {
 				      <IconButton style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => onWater(id)}/>
 						</Col>
 						<Col xs={6}>
-				      <IconButton style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={() => onFire(id)} />
+				      <IconButton style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => onFire(id)} />
 						</Col>
 					</Row>
 				</Col>
@@ -56,4 +56,3 @@ const Song = props => {
 }
 
 export default Song;
-

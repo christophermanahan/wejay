@@ -149,3 +149,8 @@ export const sampleDJs = {
   }
 }
 
+
+export const sampleTopTen = {
+  song1: sampleSong,
+  song2: sampleSong
+}

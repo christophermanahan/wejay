@@ -17,7 +17,7 @@ describe('topTenReducer', () => {
 
   describe('SET_TOP_TEN', () => {
 
-    it('sets currentSong to action.currentSong', () => {
+    it('sets top ten to action.topTen', () => {
       testStore.dispatch({ type: 'SET_TOP_TEN', topTen: sampleTopTen });
       const newState = testStore.getState();
       expect(newState.topTen).to.be.deep.equal(sampleTopTen);

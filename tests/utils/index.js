@@ -6,6 +6,11 @@ export const sampleSong = {
 	title: "Dark Ally",
 	uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
 	vote_priority: 0
+}
+
+export const sampleShadowQueue = {
+	song1: sampleSong,
+	song2: sampleSong 
 };
 
 export const sampleUser = {
@@ -177,3 +182,11 @@ export const samplePersonalQueue = {
     "vote_priority" : 2
   }
 }
+
+export const sampleParty = {
+    active: true,
+    id: "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2",
+    location: "5 Hanover Sq",
+    name: "Dillon's ppppparty",
+    needSong: false
+  }

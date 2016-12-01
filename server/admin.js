@@ -31,6 +31,12 @@ admin.initializeApp({
 });
 const db = admin.database();
 
+
+// define FireChief
+// FireChief takes db and returns an Obj with methods
+// one of those methods is the main listener for partiesRef.onchildadded
+// 
+
 /* -----------------    DB LISTENERS     ------------------ */
 
 const partiesRef = db.ref('parties');

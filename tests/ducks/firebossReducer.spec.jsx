@@ -7,6 +7,7 @@ import { fakeFirebase } from '../utils';
 
 import Fireboss from '../../app/utils/fireboss'
 
+const fireboss = new Fireboss(fakeFirebase, {}, {})
 
 describe('firebossReducer', () => {
 
@@ -16,18 +17,15 @@ describe('firebossReducer', () => {
   });
 
   it('has expected initial state', () => {
-    expect(testStore.getState().firebase).to.be.deep.equal({});
+    expect(testStore.getState().fireboss).to.be.deep.equal({});
   });
 
-  describe('SET_FIREBASE', () => {
+  describe('SET_FIREBOSS', () => {
 
-    it('sets fireboss on store using action.firebase', () => {
-      testStore.dispatch({ type: 'SET_FIREBASE', firebase: fakeFirebase });
+    it('sets fireboss on store using action.fireboss', () => {
+      testStore.dispatch({ type: 'SET_FIREBOSS', fireboss: fireboss });
       const newState = testStore.getState();
-      expect(newState.firebase).to.be.deep.equal(fakeFirebase);
-      const testFireboss = new Fireboss(fakeFirebase)
-      expect(newState.fireboss).to.be.deep.equal(testFireboss);
-
+      expect(newState.fireboss).to.be.deep.equal(fireboss);
     });
 
   });

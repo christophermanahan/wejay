@@ -191,9 +191,9 @@ class Login extends Component {
     let provider;
 
     if (method === 'google') {
-      provider = fireboss.GoogleAuth
+      provider = fireboss.GoogleAuth();
     } else if (method === 'facebook') {
-      provider = fireboss.FacebookAuth;
+      provider = fireboss.FacebookAuth();
     }
 
     fireboss.auth.signInWithPopup(provider)

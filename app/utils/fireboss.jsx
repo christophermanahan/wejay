@@ -11,10 +11,14 @@ var hri = require('human-readable-ids').hri, i;
 const Fireboss = function(firebase, dispatchers, browserHistory) {
   this.database = firebase.database();
   this.auth = firebase.auth();
-  this.GoogleAuth = new firebase.auth.GoogleAuthProvider();
-  this.FacebookAuth = new firebase.auth.FacebookAuthProvider();
   this.dispatchers = dispatchers;
   this.browserHistory = browserHistory;
+  this.GoogleAuth = function() {
+    return new firebase.auth.GoogleAuthProvider();
+  };
+  this.FacebookAuth = function() {
+    return new firebase.auth.FacebookAuthProvider();
+  };
   this.createUserEP = function(email, password) {
     return this.auth.createUserWithEmailAndPassword(email, password)
   };

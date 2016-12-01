@@ -160,6 +160,7 @@ export const sampleTopTen = {
   song2: sampleSong
 }
 
+<<<<<<< HEAD
 export const sampleSearchResult = {
 	id: 107780701,
 	permalink_url: "https://soundcloud.com/dazzel-almond/black-walk",
@@ -174,3 +175,35 @@ export const sampleSearchResults = [
 	sampleSearchResult,
 	sampleSearchResult
 ]
+=======
+export const samplePersonalQueue = {
+  "SY3eHcxTHiTZ8DS09KgyvNhFqqo2" : {
+    "artist" : "FettyWap1738",
+    "artwork_url" : "https://i1.sndcdn.com/artworks-B72n1OeTuXRb-0-large.jpg",
+    "dj_name" : "DJ Purple Rabbit",
+    "song_uri" : "https://soundcloud.com/harlem_fetty/fetty-wap-trap-queen-rough",
+    "time_priority" : 0,
+    "title" : "Trap Queen",
+    "uid" : "eOsN09Cyo1PkoZVXLka1FRmh00E2",
+    "vote_priority" : 6
+  },
+  "XHQntPtSw2dKzCxkhTsTfaaSVoH2" : {
+    "artist" : "Shane And Friends",
+    "artwork_url" : "https://i1.sndcdn.com/artworks-000162860668-hccoaa-large.jpg",
+    "dj_name" : "DJ Polite Fireant",
+    "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
+    "time_priority" : 0,
+    "title" : "Shane And Friends - Ep. 1 (with Rebecca Black)",
+    "uid" : "XHQntPtSw2dKzCxkhTsTfaaSVoH2",
+    "vote_priority" : 2
+  }
+}
+
+export const sampleParty = {
+    active: true,
+    id: "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2",
+    location: "5 Hanover Sq",
+    name: "Dillon's ppppparty",
+    needSong: false
+  }
+>>>>>>> 801cc05395dcb91a08bd338c86fe45753f754a9b

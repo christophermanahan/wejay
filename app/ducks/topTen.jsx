@@ -13,7 +13,7 @@ export const setTopTen = topTen => ({
 
 /* ------------       REDUCER     ------------------ */
 
-const reducer = (state = [], action) => {
+const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_TOP_TEN:
         return action.topTen;

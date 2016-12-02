@@ -120,7 +120,7 @@ class Signup extends Component {
 	submitForm(evt) {
 		evt.preventDefault();
 		let valid = true;
-		const { firebase, renderError } = this.props;
+		const { fireboss, renderError } = this.props;
 		const { email, password, djName } = this.state;
 
 		const emailRE = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -143,7 +143,7 @@ class Signup extends Component {
 		// here, we create a new user.
 		// TODO: not currently doing anything with the DJ name
 		if (valid) {
-			firebase.auth().createUserWithEmailAndPassword(email, password)
+			fireboss.createUserEP(email, password)
 				.catch(renderError);
 		}
 	}

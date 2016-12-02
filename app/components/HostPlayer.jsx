@@ -119,7 +119,7 @@ const DumbCustomPlayer = props => {
             </Col>
 
             <Col xs={1}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-fire zmdi-hc-3x" onTouchTap={onFire} />
+              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
             </Col>
           </Row>
         </Col>
@@ -250,7 +250,7 @@ class CustomPlayerWrapper extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, firebase, currentParty, fireboss }) => ({ currentSong, firebase, currentParty, fireboss })
+const mapStateToProps = ({ currentSong, currentParty, fireboss }) => ({ currentSong, currentParty, fireboss })
 
 const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 

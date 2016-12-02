@@ -13,7 +13,7 @@ const RaisedButtonStyle = {width: '20%', marginLeft: '20px'}
 
 /* -----------------    STATEFUL REACT COMPONENT     ------------------ */
 
-class DjsComponent extends Component {
+export class DjsComponent extends Component {
   constructor(props) {
     super(props);
     const { djs, user } = this.props;
@@ -115,3 +115,4 @@ class DjsComponent extends Component {
 const mapStateToProps = ({ firebase, user, djs, currentParty }) => ({ firebase, user, djs, currentParty });
 
 export default connect(mapStateToProps)(DjsComponent);
+

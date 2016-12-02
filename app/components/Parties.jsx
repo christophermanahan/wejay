@@ -5,18 +5,6 @@ import { RaisedButton, TextField, AutoComplete, Dialog} from 'material-ui';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
-import {browserHistory} from 'react-router';
-
-import { setCurrentParty } from '../ducks/currentParty';
-import { setCurrentSong } from '../ducks/currentSong';
-import { leaveParty } from '../ducks/global';
-
-import { setTopTen } from '../ducks/topTen';
-import { setDjs } from '../ducks/djs';
-import { setPersonalQueue } from '../ducks/personalQueue';
-import { setShadowQueue } from '../ducks/shadowQueue';
-
-
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbParties = props => {
@@ -154,27 +142,11 @@ class Parties extends Component {
 
   joinParty(evt) {
     evt.preventDefault();
-    const { user, fireboss, setcurrentparty, setcurrentsong,
-            settopten, setdjs, setpersonalqueue, leaveparty, setshadowqueue } = this.props;
+    const { user, fireboss } = this.props;
     const { partyId } = this.state;
 
     if (!partyId) { return; }
-
-    const associatingPartyAndUser = fireboss.associatingPartyAndUser(partyId, user);
-    const addingPartyDJ = fireboss.addingPartyDJ(partyId, user);
-
-    Promise.all([associatingPartyAndUser, addingPartyDJ])
-      .then(() => {
-          fireboss.getCurrentPartySnapshot(partyId, setcurrentparty);
-          fireboss.createPartyListener(partyId, 'current_song', setcurrentsong);
-          fireboss.createPartyListener(partyId, 'top_ten', settopten);
-          fireboss.createPartyListener(partyId, 'party_djs', setdjs);
-          fireboss.endPartyListener(partyId, user, leaveparty, browserHistory);
-          fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue);
-          fireboss.createShadowQueueListener(partyId, user, setshadowqueue);
-          browserHistory.push('/app');
-      })
-      .catch(err => console.error(err)) // TODO: need real error handling
+    fireboss.joinParty(partyId, user)
   }
 
   onPartyNameType(evt) {
@@ -202,8 +174,7 @@ class Parties extends Component {
   onSubmit(evt) {
     evt.preventDefault();
 
-    const { user, fireboss, parties, setcurrentparty, setcurrentsong, settopten, setdjs,
-            setpersonalqueue, leaveparty, setshadowqueue } = this.props;
+    const { user, fireboss, parties } = this.props;
 
     // if a user starts the party, that party's uid becomes the partyId
     const partyId = user.uid;
@@ -235,28 +206,9 @@ class Parties extends Component {
       return this.setState({dialogOpen: true});
     }
 
-    const partyObj = {id: user.uid, name, location, needSong: false, active: true };
+    const partyObj = {name, location};
 
-
-    fireboss.creatingParty(partyId, partyObj)
-      .then(() => {
-        const addingHostDJ = fireboss.addingPartyDJ(partyId, user);
-        const associatingPartyAndHost = fireboss.associatingPartyAndUser(partyId, user);
-
-        Promise.all([addingHostDJ, associatingPartyAndHost])
-          .then(() => {
-
-            fireboss.getCurrentPartySnapshot(partyId, setcurrentparty);
-            fireboss.createPartyListener(partyId, 'current_song', setcurrentsong);
-            fireboss.createPartyListener(partyId, 'top_ten', settopten);
-            fireboss.createPartyListener(partyId, 'party_djs', setdjs);
-            fireboss.endPartyListener(partyId, user, leaveparty, browserHistory);
-            fireboss.createPersonalQueueListener(partyId, user, setpersonalqueue);
-            fireboss.createShadowQueueListener(partyId, user, setshadowqueue);
-            browserHistory.push('/app');
-          })
-          .catch(console.error) // TODO: real error handling
-      });
+    fireboss.createPartyWithListeners(partyId, user, partyObj);
   }
 
   onPartySelect(autofillObj) {
@@ -288,15 +240,6 @@ class Parties extends Component {
 /* -----------------    CONTAINER     ------------------ */
 
 const mapStateToProps = ({ parties, fireboss, user }) => ({ parties, fireboss, user });
-const mapDispatchToProps = dispatch => ({
-  setcurrentparty: party => dispatch(setCurrentParty(party)),
-  setcurrentsong: song => dispatch(setCurrentSong(song)),
-  settopten: topTen => dispatch(setTopTen(topTen)),
-  setdjs: djs => dispatch(setDjs(djs)),
-  setpersonalqueue: queue => dispatch(setPersonalQueue(queue)),
-  leaveparty: () => dispatch(leaveParty()),
-  setshadowqueue: songs => dispatch(setShadowQueue(songs))
-});
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Parties);
+export default connect(mapStateToProps)(Parties);

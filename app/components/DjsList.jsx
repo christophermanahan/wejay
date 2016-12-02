@@ -3,7 +3,7 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
 
-const SingleDj = props => {
+export const SingleDj = props => {
   const { user, dj } = props;
 
   return (

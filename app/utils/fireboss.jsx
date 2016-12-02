@@ -123,7 +123,8 @@ Fireboss.prototype.removePartyListeners = function(partyId, user) {
     .child('personal_queue').off();
   const l6 = this.database.ref('shadow_queue').child(partyId).off();
   const l7 = this.database.ref('parties').child(partyId).child('active').off()
-  return Promise.all([l1,l2,l3,l4,l5,l6])
+  // l1 - l7 represent Promises that turn off specific listeners
+  return Promise.all([l1, l2, l3, l4, l5, l6, l7])
 };
 
 

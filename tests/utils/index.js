@@ -215,5 +215,3 @@ export const sampleSearchResults = [
 ]
 
 
-
-

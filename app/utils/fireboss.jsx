@@ -187,7 +187,7 @@ class Fireboss {
   };
 
   endPartyListener (partyId, user) {
-    return this.database.ref('parties').child(partyId).child('active').on('value', snapshot => {
+    return this.getParty(partyId).child('active').on('value', snapshot => {
       if (snapshot.val()) return;
       return this.removeUserParty(partyId, user)
         .then(err => {
@@ -242,11 +242,11 @@ class Fireboss {
     const l2 = this.database.ref('top_ten').child(partyId).off();
     const l3 = this.database.ref('party_djs').child(partyId).off();
     // this.database.ref('messages').off();
-    const l4 = this.database.ref('parties').child(partyId).child('partyEnded').off();
+    const l4 = this.getParty(partyId).child('partyEnded').off();
     const l5 = this.database.ref('party_djs').child(partyId).child(user.uid)
       .child('personal_queue').off();
     const l6 = this.database.ref('shadow_queue').child(partyId).off();
-    const l7 = this.database.ref('parties').child(partyId).child('active').off()
+    const l7 = this.getParty(partyId).child('active').off()
     // l1 - l7 represent Promises that turn off specific listeners
     return Promise.all([l1, l2, l3, l4, l5, l6, l7])
   };
@@ -263,7 +263,7 @@ class Fireboss {
   };
 
   getCurrentPartySnapshot (partyId) {
-    return this.database.ref('parties').child(partyId).once('value', snapshot => {
+    return this.getParty(partyId).once('value', snapshot => {
       this.dispatchers.setCurrentParty(snapshot.val());
     });
   };
@@ -317,7 +317,7 @@ class Fireboss {
   };
 
   creatingParty (partyId, party) {
-    return this.database.ref('parties').child(partyId).set(party)
+    return this.getParty(partyId).set(party)
   };
 
   removeUserParty (partyId, user) {
@@ -329,7 +329,7 @@ class Fireboss {
   };
 
   endParty (partyId) {
-    return this.database.ref('parties').child(partyId).remove()
+    return this.getParty(partyId).remove()
       .then(err => {
         if(err) throw new Error(err)
         const p1 = this.database.ref('current_song').child(partyId).remove();
@@ -442,7 +442,7 @@ class Fireboss {
   };
 
   triggerNeedSong (partyId) {
-    return this.database.ref('parties').child(partyId).update({needSong: true})
+    return this.getParty(partyId).update({needSong: true})
   };
 
   //Helper Functions
@@ -450,6 +450,10 @@ class Fireboss {
     return new Promise(resolve => {
       return resolve(value);
     });
+  }
+
+  getParty (partyId) {
+    return this.database.ref('parties').child(partyId);
   }
 }
 

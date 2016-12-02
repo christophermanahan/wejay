@@ -33,7 +33,14 @@ admin.initializeApp({
 });
 const db = admin.database();
 
+// create new Firechief instance
 const firechief = new Firechief(db);
+
+
+// listen for when parties are added
 firechief.createPartyAddedListener();
+
+// listen for when parties are removed
+firechief.createPartyRemovedListener();
 
 module.exports = admin;

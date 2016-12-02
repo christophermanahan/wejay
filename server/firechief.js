@@ -12,10 +12,11 @@ class Firechief {
 		this.db = db;
 	}
 
-	/*---------------------- CORE LISTENER -------------------------*/
+	/*---------------------- CORE LISTENERS -------------------------*/
 
 	createPartyAddedListener() {
 		const partiesRef = this.db.ref('parties');
+
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
@@ -23,18 +24,30 @@ class Firechief {
 		});
 	}
 
+	createPartyRemovedListener() {
+		const partiesRef = this.db.ref('parties');
+
+		partiesRef.on('child_removed', snapshot => {
+			const partyId = snapshot.val() && snapshot.val().id;
+			if (!partyId) return;
+			this.removePartyListener(partyId);
+		});
+	}
+
 	/*---------------------- SUB-LISTENERS -------------------------*/
 
 	createNewPartyListener(partyId) {
 		const newPartyRef = this.db.ref('parties').child(partyId);
-
 		newPartyRef.on('value', snapshot => {
 			const needSong = this.checkIfNeedSong(snapshot);
 			if (needSong) {
 				this.masterReorder(partyId);
-
 			}
 		});
+	}
+
+	removePartyListener(partyId) {
+		this.db.ref('parties').child(partyId).off();
 	}
 
 	/*---------------------- CORE RE-ORDERING -------------------------*/
@@ -68,8 +81,8 @@ class Firechief {
 			const { uid } = songObj;
 			return Promise.all([
 				this.promisifySQuid(uid),
-				this.db.ref('top_ten').child(partyId).update(song), 	// put onto top ten
-				this.removeSong(partyId, 'shadow_queue', songId) 			//delete song from SQ
+				this.db.ref('top_ten').child(partyId).update(song), 	// push onto top ten
+				this.removeSong(partyId, 'shadow_queue', songId) 			// delete song from SQ
 			])
 			.catch(console.error);
 		});
@@ -77,18 +90,15 @@ class Firechief {
 
 
 	pullFromPersonalQueue(partyId, uid) {
-		//grab song from PQ
-		return this.getHighestPriority(partyId, 'personal_queue', uid)
+		return this.getHighestPriority(partyId, 'personal_queue', uid) //grab song from PQ
 		.then(song => {
 			if (!song) return;
-
 			const songObj = this.deconstructSongObject(song);
 			const { uid } = songObj;
-			//push onto SQ
 			const songId = this.deconstructSongObject(song, 'hash');
 			return Promise.all([
-				this.db.ref('shadow_queue').child(partyId).update(song), // put onto shadow queue
-				this.removeSong(partyId, 'personal_queue', songId, uid)			 // delete song from PQ
+				this.db.ref('shadow_queue').child(partyId).update(song), 	// put onto shadow queue
+				this.removeSong(partyId, 'personal_queue', songId, uid)		// delete song from PQ
 			]);
 		})
 		.catch(console.error);
@@ -99,19 +109,19 @@ class Firechief {
 
 
 	setNeedSongToFalse(partyId) {
-		return this.db.ref('parties').child(partyId).update({ needSong: false })
+		return this.db.ref('parties').child(partyId).update({ needSong: false });
 	}
 
 	setCurrentSong(partyId) {
-		const currentSongRef = this.db.ref('current_song').child(partyId)
+		const currentSongRef = this.db.ref('current_song').child(partyId);
 
 		return this.getHighestPriority(partyId, 'top_ten')
 		.then(song => {		//song ==> {nextSongId: nextSong}
 			if (!song) {
-				return this.setNeedSongToFalse(partyId)
+				return this.setNeedSongToFalse(partyId);
 			}
-			const newSong = this.deconstructSongObject(song)
-			const newSongId = this.deconstructSongObject(song, 'hash')
+			const newSong = this.deconstructSongObject(song);
+			const newSongId = this.deconstructSongObject(song, 'hash');
 
 			return Promise.all([
 				//set current song to song
@@ -158,7 +168,7 @@ class Firechief {
 			if (!songsInQueue) return;
 
 			let nextSong;
-			let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
+			let nextSongPriority = -1000;		// note: if priority scores are equal, nextSong defaults to song with older timestamp
 			let nextSongId;
 
 			for (let song in songsInQueue) {
@@ -189,9 +199,9 @@ class Firechief {
 		return snapshot.val() ? snapshot.val().needSong : false;
 	}
 
-	deconstructSongObject(song, option) {						//in Firebase unique hash vals point to songs
-		const hash = Object.keys(song)[0];						//sometimes we want the key hash val,
-		return option === 'hash' ? hash : song[hash];	//sometimes the song object that it points to
+	deconstructSongObject(song, option) {						// Our Firebase often has unique hash vals that point to song objects
+		const hash = Object.keys(song)[0];						// sometimes we want the hash val key,
+		return option === 'hash' ? hash : song[hash];	// sometimes the song object that it points to
 	}
 
 }

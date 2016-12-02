@@ -143,7 +143,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
   });
 
-    describe('TESTING SUBMIT USER SONG METHOD', () => {
+  describe('TESTING SUBMIT USER SONG METHOD', () => {
     let partiesResult, userPartiesResult, partyDjsResult;
     let hostId = "abc123";
     let partyId = hostId;
@@ -274,11 +274,85 @@ describe('---------- FIREBOSS TESTS ----------', () => {
   // -- if host, destroys entire party and everything to do with it
   // -- pushes to '/signup'
 
+  describe('TESTING LOG OUT METHOD', () => {
+    let hostId = "abc123";
+    let partyId = hostId;
+    let partiesResult, userPartiesResult, partyDjsResult;
+
+    describe("TESTING GUEST USER LOGOUT", () => {
+      before('create the party with a host and add a guest user to it', done => {
+        const setUpParty = [
+          partiesRef.set({[hostId]: sampleParty}),
+          userPartiesRef.set({[hostId]: hostId}),
+          partyDjsRef.set({[hostId]: {[hostId]: sampleDj}})
+        ]
+
+        Promise.all(setUpParty)
+          .then(() => {
+            return fireboss.joinParty(partyId, sampleUser)
+          })
+          .then(() => {
+            return fireboss.logOut(partyId, sampleUser)
+          })
+          .then(() => {
+            return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')])
+          })
+          .then(resultsArr => {
+            partiesResult = resultsArr[0].val();
+            userPartiesResult = resultsArr[1].val();
+            console.log(userPartiesResult)
+            partyDjsResult = resultsArr[2].val();
+            done()
+          })
+          .catch(done)
+      });
+
+      after('destroy everything', done => {
+        browserHistory.pop()
+        browserHistory.pop()
+        fireboss.removePartyListeners(partyId, sampleUser)
+          .then(() => {
+            return Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
+          })
+          .then(() => {
+            done();
+          })
+          .catch(done)
+      });
+
+      it('pushes the user to /login', () => {
+        expect(browserHistory[0]).to.equal('/app');
+        expect(browserHistory[1]).to.equal('/login');
+        expect(browserHistory[2]).to.equal(undefined);
+      });
+
+      it('removes the user from user_parties', () => {
+        expect(Object.keys(userPartiesResult)).to.have.length.of(1);
+      });
+
+      it('removes the user from party_djs', () => {
+        expect(Object.keys(partyDjsResult)).to.have.length.of(1)
+        expect(Object.keys(partyDjsResult[partyId])).to.have.length.of(1)
+        expect(partyDjsResult[partyId][sampleUser.uid]).to.equal(undefined)
+      });
+    });
+  });
+});
+
+
   // LEAVE PARTY
   // -- removes user from user_parties
   // -- removes user from party_djs
   // -- if host, destroys entire party and everything to do with it
   // -- pushes to '/parties'
+
+  // guest logout 
+  // before once create party with a host and 1 guest
+  // save state 1
+  // have guest user logout 
+  // save state 2
+  // state 1 has two users
+  // state 2 has host user only
 
   //INCREMENT LIKES
     // -- increases dj points
@@ -286,6 +360,3 @@ describe('---------- FIREBOSS TESTS ----------', () => {
   //DECREMENT LIKES
     // -- decreases dj points
     // -- decreases song's vote priority 
-
-});
-

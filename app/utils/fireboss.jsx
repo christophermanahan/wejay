@@ -8,7 +8,7 @@
 
 var hri = require('human-readable-ids').hri, i;
 
-class Fireboss { 
+class Fireboss {
 
   constructor (firebase, dispatchers, browserHistory) {
     this.database = firebase.database();
@@ -29,15 +29,13 @@ class Fireboss {
   /* ---------------------- FIREBASE METHODS ---------------------- */
 
   setUpAllPartyListeners (partyId, user) {
-    const p1 = this.getCurrentPartySnapshot(partyId);
-    const p2 = this.createPartyListener(partyId, 'current_song');
-    const p3 = this.createPartyListener(partyId, 'top_ten');
-    const p4 = this.createPartyListener(partyId, 'party_djs');
-    const p5 = this.endPartyListener(partyId, user);
-    const p6 = this.createPersonalQueueListener(partyId, user);
-    const p7 = this.createShadowQueueListener(partyId, user);
-
-    return Promise.all([p1, p2, p3, p4, p5, p6, p7]);
+    this.getCurrentPartySnapshot(partyId);
+    this.createPartyListener(partyId, 'current_song');
+    this.createPartyListener(partyId, 'top_ten');
+    this.createPartyListener(partyId, 'party_djs');
+    this.endPartyListener(partyId, user);
+    this.createPersonalQueueListener(partyId, user);
+    this.createShadowQueueListener(partyId, user);
   }
 
   joinParty (partyId, user) {
@@ -83,14 +81,12 @@ class Fireboss {
         })
         .then(err => {
           if(err) throw new Error(err);
-          return this.removePartyListeners(partyId, user);
-        })
-        .then(() => {
+          this.removePartyListeners(partyId, user);
           this.dispatchers.leaveParty();
           this.dispatchers.clearUser();
           return this.auth.signOut()
         })
-        .then(() => this.browserHistory.push('/login')) 
+        .then(() => this.browserHistory.push('/login'))
         .catch(console.error)
     }
   }
@@ -110,11 +106,9 @@ class Fireboss {
         })
         .then(err => {
           if(err) throw new Error(err);
-          return this.removePartyListeners(partyId, user)
-        })
-        .then(() => {
+          this.removePartyListeners(partyId, user)
           this.dispatchers.leaveParty()
-          this.browserHistory.push('/parties'); 
+          this.browserHistory.push('/parties');
         })
         .catch(console.error)
     }
@@ -162,7 +156,7 @@ class Fireboss {
 /* -------------------------- LISTENERS -------------------------- */
 
   createPartiesListener () {
-    return this.database.ref('parties').on('value', snapshot => {
+    this.database.ref('parties').on('value', snapshot => {
       this.dispatchers.setParties(snapshot.val());
     });
   };
@@ -187,7 +181,7 @@ class Fireboss {
   };
 
   endPartyListener (partyId, user) {
-    return this.getParty(partyId).child('active').on('value', snapshot => {
+    this.getParty(partyId).child('active').on('value', snapshot => {
       if (snapshot.val()) return;
       return this.removeUserParty(partyId, user)
         .then(err => {
@@ -196,12 +190,9 @@ class Fireboss {
         })
         .then(err => {
           if (err) throw new Error(err);
-          return this.removePartyListeners(partyId, user)
-        })
-        .then(() => {  
+          this.removePartyListeners(partyId, user)
           this.dispatchers.leaveParty();
-          //dont send alert to host
-          if (partyId === user.uid) return; 
+          if (partyId === user.uid) return;  //dont send alert to host
           alert('the host has ended this party');
           this.browserHistory.push('/parties');
         })
@@ -210,19 +201,19 @@ class Fireboss {
   };
 
   createMessagesListener (onChangeFunc) {
-    return this.database.ref('messages').on('value', snapshot => {
+    this.database.ref('messages').on('value', snapshot => {
       onChangeFunc(snapshot.val());
     });
   };
 
   createPersonalQueueListener (partyId, user) {
-    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').on('value', snapshot => {
+    this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').on('value', snapshot => {
       this.dispatchers.setPersonalQueue(snapshot.val());
     });
   };
 
   createShadowQueueListener (partyId, user) {
-    return this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
+    this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
 
       // filter songs so only user's songs sent to redux store, not full shadow queue
       const fullShadowQueue = snapshot.val();
@@ -238,17 +229,13 @@ class Fireboss {
   };
 
   removePartyListeners (partyId, user) {
-    const l1 = this.database.ref('current_song').child(partyId).off();
-    const l2 = this.database.ref('top_ten').child(partyId).off();
-    const l3 = this.database.ref('party_djs').child(partyId).off();
-    // this.database.ref('messages').off();
-    const l4 = this.getParty(partyId).child('partyEnded').off();
-    const l5 = this.database.ref('party_djs').child(partyId).child(user.uid)
-      .child('personal_queue').off();
-    const l6 = this.database.ref('shadow_queue').child(partyId).off();
-    const l7 = this.getParty(partyId).child('active').off()
-    // l1 - l7 represent Promises that turn off specific listeners
-    return Promise.all([l1, l2, l3, l4, l5, l6, l7])
+    this.database.ref('current_song').child(partyId).off();
+    this.database.ref('top_ten').child(partyId).off();
+    this.database.ref('party_djs').child(partyId).off();
+    this.getParty(partyId).child('partyEnded').off();
+    this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').off();
+    this.database.ref('shadow_queue').child(partyId).off();
+    this.getParty(partyId).child('active').off()
   };
 
 

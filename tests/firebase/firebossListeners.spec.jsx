@@ -2,10 +2,12 @@ const firebase = require('./firebaseTestIndex.spec');
 
 import Fireboss from '../../app/utils/fireboss';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 import { dispatchers } from '../utils/firebossTest';
 import {
           sampleParty,
+          sampleParties,
           sampleDj,
           sampleUser,
           sampleSong,
@@ -13,19 +15,6 @@ import {
           sampleTopTenFull
 
 } from '../utils';
-
-const spyDispatchers = {
-  setUser: val => {},
-  clearUser: val => {},
-  leaveParty: val => {},
-  setTopTen: val => {},
-  setCurrentSong: val => {},
-  setParties: val => {},
-  setDjs: val => {},
-  setPersonalQueue: val => {},
-  setCurrentParty: val => {},
-  setShadowQueue: val => {}
-};
 
 const browserHistory = [];
 
@@ -44,27 +33,61 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
   let shadowQueueRef = firebase.database().ref('shadow_queue')
 
   describe('TESTING GLOBAL PARTIES LISTENER', () => {
-    before('set up parties listener', done => {
+    let partiesSpy;
+
+    before('set up parties listener and update party data', done => {
       let hostId = "abc123";
+      partiesSpy = sinon.spy(fireboss.dispatchers, 'setParties')
+
       fireboss.createPartiesListener()
-        .then(() => {
-          return partiesRef.set({[hostId]: sampleParty})
-        })
-        .then(() => {
-          setTimeout(() => done(), 500)
-        })
+      partiesRef.set(sampleParties)
+        .then(() => setTimeout(() => done(), 500))
         .catch(done)
     });
 
-    after('turn off parties listener', done => {
+    after('turn off parties listener', () => {
       fireboss.database.ref('parties').off()
-        .then(() => done())
-        .catch(done)
     });
 
-    it('parties dispatcher', () => {
-      // expect spy dispatcher in listener to have been called within 1 second
-      // expect spy dispatcher in listener to have been called with new parties obj
+    it('setParties dispatcher has been called once within 500ms', () => {
+      expect(partiesSpy.callCount).to.equal(1)
+    });
+
+    it('setParties dispatcher has been called with correct data', () => {
+      expect(partiesSpy.calledWithExactly(sampleParties)).to.equal(true)
+    });
+
+  });
+
+
+  describe('TESTING SET UP ALL PARTY LISTENERS', () => {
+    let currentSongSpy;
+    let topTenSpy;
+    let shadowQueueSpy;
+    let Spy;
+    let partiesSpy;
+
+    before('set up parties listener and update party data', done => {
+      let hostId = "abc123";
+      done()
+      // partiesSpy = sinon.spy(fireboss.dispatchers, 'setParties')
+
+      // fireboss.createPartiesListener()
+      // partiesRef.set(sampleParties)
+      //   .then(() => setTimeout(() => done(), 500))
+      //   .catch(done)
+    });
+
+    after('turn off parties listener', () => {
+      // fireboss.database.ref('parties').off()
+    });
+
+    it('setParties dispatcher has been called once within 500ms', () => {
+      // expect(partiesSpy.callCount).to.equal(1)
+    });
+
+    it('setParties dispatcher has been called with correct data', () => {
+      // expect(partiesSpy.calledWithExactly(sampleParties)).to.equal(true)
     });
 
   });

@@ -49,9 +49,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     after('destroy everything', done => {
       browserHistory.pop()
       fireboss.removePartyListeners(partyId, sampleUser)
-        .then(() => {
-          return Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
-        })
+      Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
         .then(() => {
           done();
         })
@@ -106,9 +104,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     after('destroy everything', done => {
       browserHistory.pop()
       fireboss.removePartyListeners(partyId, sampleUser)
-        .then(() => {
-          return Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
-        })
+       Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
         .then(() => {
           done()
         })
@@ -161,12 +157,10 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
     after('destroy everything', done => {
       fireboss.removePartyListeners(partyId, sampleUser)
-        .then(() => {
-          const clear1 = partiesRef.set({})
-          const clear2 = userPartiesRef.set({})
-          const clear3 = partyDjsRef.set({})
-          return Promise.all([clear1, clear2 , clear3])
-        })
+      const clear1 = partiesRef.set({})
+      const clear2 = userPartiesRef.set({})
+      const clear3 = partyDjsRef.set({})
+      Promise.all([clear1, clear2 , clear3])
         .then(() => {
           done()
         })
@@ -175,12 +169,10 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
     afterEach('destroy party queues', done => {
       fireboss.removePartyListeners(partyId, sampleUser)
-        .then(() => {
-          const clear4 = currentSongRef.set({})
-          const clear5 = topTenRef.set({})
-          const clear6 = shadowQueueRef.set({})
-          return Promise.all([clear4, clear5, clear6])
-        })
+      const clear4 = currentSongRef.set({})
+      const clear5 = topTenRef.set({})
+      const clear6 = shadowQueueRef.set({})
+      Promise.all([clear4, clear5, clear6])
         .then(() => {
           done()
         })
@@ -285,7 +277,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     // -- increases song's vote priority
   //DECREMENT LIKES
     // -- decreases dj points
-    // -- decreases song's vote priority 
+    // -- decreases song's vote priority
 
 });
 

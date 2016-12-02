@@ -303,13 +303,11 @@ describe('---------- FIREBOSS TESTS ----------', () => {
         browserHistory.pop()
         browserHistory.pop()
         fireboss.removePartyListeners(partyId, sampleUser)
-          .then(() => {
-            return Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
-          })
-          .then(() => {
-            done();
-          })
-          .catch(done)
+        Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
+        .then(() => {
+          done();
+        })
+        .catch(done)
       });
 
       it('pushes the user to /login', () => {
@@ -353,6 +351,4 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     // -- decreases dj points
 
     // -- decreases song's vote priority
-
-});
 

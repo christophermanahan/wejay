@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import firebase from './firebase';
 import user from './user';
 import messages from './chat';
 import topTen from './topTen';
@@ -13,7 +12,6 @@ import fireboss from './fireboss';
 import shadowQueue from './shadowQueue';
 
 const rootReducer = combineReducers({
-  firebase,
   fireboss,
   user,
   messages,

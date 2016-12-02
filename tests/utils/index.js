@@ -8,6 +8,16 @@ export const sampleSong = {
 	vote_priority: 0
 }
 
+export const sampleSong2 = {
+  artist: "dazzel-almond 2",
+  dj_name: "DJ Dull Stingray 2",
+  song_uri: "https://soundcloud.com/dazzel-almond/dark-ally",
+  time_priority: 0,
+  title: "Darker Ally",
+  uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
+  vote_priority: 0
+}
+
 export const sampleShadowQueue = {
 	song1: sampleSong,
 	song2: sampleSong
@@ -169,12 +179,11 @@ export const sampleDJs = {
   }
 }
 
-//Fireboss reducer requires a fake firebase instance to be created
-import Fireboss from '../../app/utils/fireboss'
-
 export const fakeFirebase = {
-	auth: function() { return true },
-	database: function() { return true }
+  FacebookAuth: function () {},
+  GoogleAuth: function () {},
+  database: function () {},
+  auth: function () {}
 }
 
 export const sampleTopTen = {
@@ -227,3 +236,10 @@ export const sampleParty = {
     name: "Dillon's ppppparty",
     needSong: false
 }
+
+export const sampleDj = {
+    "dj_name" : "DJ Persistent",
+    "dj_points" : 10,
+    "photo" : "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
+    "uid" : "abc123"
+  }

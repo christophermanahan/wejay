@@ -356,9 +356,7 @@ class Fireboss {
       .then(snapshot => {
         const currentVotes = snapshot && snapshot.val().vote_priority
         let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = new Promise(resolve => {
-          return resolve(userId);
-        });
+        const promisifiedUserId = this.promisify(userId);
         const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
         const updatingTopTenVotes = partyTopTenSongRef.update({vote_priority: (currentVotes + 1)});
         return Promise.all([gettingPartyDj, promisifiedUserId, updatingTopTenVotes])
@@ -381,9 +379,7 @@ class Fireboss {
       .then(snapshot => {
         const currentVotes = snapshot && snapshot.val().vote_priority
         let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = new Promise(resolve => {
-          return resolve(userId);
-        });
+        const promisifiedUserId = this.promisify(userId);
         const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
         const updatingTopTenVotes = partyTopTenSongRef.update({vote_priority: (currentVotes - 1)});
         return Promise.all([gettingPartyDj, promisifiedUserId, updatingTopTenVotes])
@@ -406,9 +402,7 @@ class Fireboss {
       .then(snapshot => {
         const currentVotes = snapshot && snapshot.val().vote_priority
         let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = new Promise(resolve => {
-          return resolve(userId);
-        });
+        const promisifiedUserId = this.promisify(userId);
         const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
         const updatingCurrentSongVotes = currentSongRef.update({vote_priority: (currentVotes + 1)});
         return Promise.all([gettingPartyDj, promisifiedUserId, updatingCurrentSongVotes])
@@ -431,9 +425,7 @@ class Fireboss {
       .then(snapshot => {
         const currentVotes = snapshot && snapshot.val().vote_priority
         let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = new Promise(resolve => {
-          return resolve(userId);
-        });
+        const promisifiedUserId = this.promisify(userId);
         const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
         const updatingCurrentSongVotes = currentSongRef.update({vote_priority: (currentVotes - 1)});
         return Promise.all([gettingPartyDj, promisifiedUserId, updatingCurrentSongVotes])
@@ -452,6 +444,13 @@ class Fireboss {
   triggerNeedSong (partyId) {
     return this.database.ref('parties').child(partyId).update({needSong: true})
   };
+
+  //Helper Functions
+  promisify (value) {
+    return new Promise(resolve => {
+      return resolve(value);
+    });
+  }
 }
 
 export default Fireboss

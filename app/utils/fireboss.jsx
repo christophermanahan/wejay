@@ -8,460 +8,450 @@
 
 var hri = require('human-readable-ids').hri, i;
 
-const Fireboss = function(firebase, dispatchers, browserHistory) {
-  this.database = firebase.database();
-  this.auth = firebase.auth();
-  this.dispatchers = dispatchers;
-  this.browserHistory = browserHistory;
-  this.GoogleAuth = function() {
-    return new firebase.auth.GoogleAuthProvider();
+class Fireboss { 
+
+  constructor (firebase, dispatchers, browserHistory) {
+    this.database = firebase.database();
+    this.auth = firebase.auth();
+    this.dispatchers = dispatchers;
+    this.browserHistory = browserHistory;
+    this.GoogleAuth = () => {
+      return new firebase.auth.GoogleAuthProvider();
+    };
+    this.FacebookAuth = () => {
+      return new firebase.auth.FacebookAuthProvider();
+    };
+    this.createUserEP = (email, password) => {
+      return this.auth.createUserWithEmailAndPassword(email, password)
+    };
   };
-  this.FacebookAuth = function() {
-    return new firebase.auth.FacebookAuthProvider();
-  };
-  this.createUserEP = function(email, password) {
-    return this.auth.createUserWithEmailAndPassword(email, password)
-  };
-};
+
+  /* ---------------------- FIREBASE METHODS ---------------------- */
+
+  setUpAllPartyListeners (partyId, user) {
+    const p1 = this.getCurrentPartySnapshot(partyId);
+    const p2 = this.createPartyListener(partyId, 'current_song');
+    const p3 = this.createPartyListener(partyId, 'top_ten');
+    const p4 = this.createPartyListener(partyId, 'party_djs');
+    const p5 = this.endPartyListener(partyId, user);
+    const p6 = this.createPersonalQueueListener(partyId, user);
+    const p7 = this.createShadowQueueListener(partyId, user);
+
+    return Promise.all([p1, p2, p3, p4, p5, p6, p7]);
+  }
+
+  joinParty (partyId, user) {
+    const associatingPartyAndUser = this.associatingPartyAndUser(partyId, user);
+    const addingPartyDJ = this.addingPartyDJ(partyId, user);
+
+    return Promise.all([associatingPartyAndUser, addingPartyDJ])
+            .then(() => {
+              this.setUpAllPartyListeners(partyId, user);
+              this.browserHistory.push('/app');
+            })
+            .catch(err => console.error(err));
+  }
+
+  createPartyWithListeners (partyId, user, partyObj) {
+    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false});
+    return this.creatingParty(partyId, party)
+            .then(() => {
+              const addingHostDJ = this.addingPartyDJ(partyId, user);
+              const associatingPartyAndHost = this.associatingPartyAndUser(partyId, user);
+
+              Promise.all([addingHostDJ, associatingPartyAndHost])
+                .then(() => {
+                  this.setUpAllPartyListeners(partyId, user);
+                  this.browserHistory.push('/app');
+                })
+                .catch(console.error)
+            })
+  }
+
+  logOut (partyId, user) {
+    //testing if user is host
+    if (partyId === user.uid) {
+      const p1 = this.endParty(partyId);
+      const p2 = this.auth.signOut();
+      return Promise.all([p1, p2])
+        .catch(console.error)
+    } else { //if user is not host logout normally
+      return this.removeUserParty(partyId, user)
+        .then(err => {
+          if(err) throw new Error(err);
+          return this.removePartyDj(partyId, user);
+        })
+        .then(err => {
+          if(err) throw new Error(err);
+          return this.removePartyListeners(partyId, user);
+        })
+        .then(() => {
+          this.dispatchers.leaveParty();
+          this.dispatchers.clearUser();
+          return this.auth.signOut()
+        })
+        .then(() => this.browserHistory.push('/login')) 
+        .catch(console.error)
+    }
+  }
+
+  userLeaveParty (partyId, user) {
+    //testing if user is host
+    if(partyId === user.uid) {
+      return this.endParty(partyId)
+        .then(() => {
+          this.browserHistory.push('/parties');
+        })
+    } else {
+      return this.removeUserParty(partyId, user)
+        .then(err => {
+          if(err) throw new Error(err);
+          return this.removePartyDj(partyId, user);
+        })
+        .then(err => {
+          if(err) throw new Error(err);
+          return this.removePartyListeners(partyId, user)
+        })
+        .then(() => {
+          this.dispatchers.leaveParty()
+          this.browserHistory.push('/parties'); 
+        })
+        .catch(console.error)
+    }
+  }
+
+  submitUserSong (partyId, user, song, openSnackbar) {
+    const gettingCurrentSong = this.gettingPartyItemSnapshot(partyId, 'current_song');
+    const gettingTopTen = this.gettingPartyItemSnapshot(partyId, 'top_ten')
+    const gettingShadowQueue = this.gettingPartyItemSnapshot(partyId, 'shadow_queue');
+
+    Object.assign(song, {uid: user.uid})
+
+    return Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
+      .then((results) => {
+        const currentSongVal = results[0] && results[0].val();
+        const topTenVal = results[1] && results[1].val();
+        const shadowQueueVal = results[2] && results[2].val();
+
+        let userSongInShadowQueue = false;
+
+        if (shadowQueueVal) {
+          for (let track in shadowQueueVal) {
+            if (user.uid === shadowQueueVal[track].uid) userSongInShadowQueue = true;
+          }
+        }
+
+        if (!currentSongVal) {
+          return this.settingCurrentSong(partyId, song)
+            .then(() => openSnackbar('Nice!!! Song now playing!'));
+        } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
+          return this.addToPartyQueue(partyId, 'top_ten', song)
+            .then(() => openSnackbar('Added to Top Ten!'));
+        } else if (!shadowQueueVal || !userSongInShadowQueue) {
+          return this.addToPartyQueue(partyId, 'shadow_queue', song)
+            .then(() => openSnackbar('Sent as a recommendation!'));
+        } else {
+          return this.addToPersonalQueue(partyId, user, song)
+            .then(() => openSnackbar('Added to My Songs!'));
+        }
+      })
+  }
 
 
 
 /* -------------------------- LISTENERS -------------------------- */
 
-Fireboss.prototype.createPartiesListener = function() {
-  this.database.ref('parties').on('value', snapshot => {
-    this.dispatchers.setParties(snapshot.val());
-  });
-};
+  createPartiesListener () {
+    return this.database.ref('parties').on('value', snapshot => {
+      this.dispatchers.setParties(snapshot.val());
+    });
+  };
 
-Fireboss.prototype.createPartyListener = function(partyId, type) {
-  switch(type) {
-    case 'current_song':
-      this.database.ref('current_song').child(partyId).on('value', snapshot => {
-        this.dispatchers.setCurrentSong(snapshot.val());
-      });
+  createPartyListener (partyId, type) {
+    switch(type) {
+      case 'current_song':
+        return this.database.ref('current_song').child(partyId).on('value', snapshot => {
+          this.dispatchers.setCurrentSong(snapshot.val());
+        });
 
-    case 'top_ten':
-      this.database.ref('top_ten').child(partyId).on('value', snapshot => {
-        this.dispatchers.setTopTen(snapshot.val());
-      });
+      case 'top_ten':
+        return this.database.ref('top_ten').child(partyId).on('value', snapshot => {
+          this.dispatchers.setTopTen(snapshot.val());
+        });
 
-    case 'party_djs':
-      this.database.ref('party_djs').child(partyId).on('value', snapshot => {
-        this.dispatchers.setDjs(snapshot.val());
-      });
-  }
-};
+      case 'party_djs':
+        return this.database.ref('party_djs').child(partyId).on('value', snapshot => {
+          this.dispatchers.setDjs(snapshot.val());
+        });
+    }
+  };
 
-Fireboss.prototype.endPartyListener = function(partyId, user) {
-  this.database.ref('parties').child(partyId).child('active').on('value', snapshot => {
-    if (snapshot.val()) {
-      // console.log('party still raging');
-    } else {
-      this.removeUserParty(partyId, user)
+  endPartyListener (partyId, user) {
+    return this.database.ref('parties').child(partyId).child('active').on('value', snapshot => {
+      if (snapshot.val()) return;
+      return this.removeUserParty(partyId, user)
         .then(err => {
-          if (err){
-            throw new Error(err);
-          } else {
-            return this.removePartyDj(partyId, user);
-          }
+          if (err) throw new Error(err);
+          return this.removePartyDj(partyId, user);
         })
         .then(err => {
-          if (err){
-            throw new Error(err);
-          } else {
-            this.removePartyListeners(partyId, user);
-            this.dispatchers.leaveParty();
-            if (partyId !== user.uid) {
-              alert('the host has ended this party');
-              this.browserHistory.push('/parties');
-            } else {
-              // console.log('you ended the party');
-            }
-          }
+          if (err) throw new Error(err);
+          return this.removePartyListeners(partyId, user)
+        })
+        .then(() => {  
+          this.dispatchers.leaveParty();
+          //dont send alert to host
+          if (partyId === user.uid) return; 
+          alert('the host has ended this party');
+          this.browserHistory.push('/parties');
         })
         .catch(console.error);
+    });
+  };
+
+  createMessagesListener (onChangeFunc) {
+    return this.database.ref('messages').on('value', snapshot => {
+      onChangeFunc(snapshot.val());
+    });
+  };
+
+  createPersonalQueueListener (partyId, user) {
+    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').on('value', snapshot => {
+      this.dispatchers.setPersonalQueue(snapshot.val());
+    });
+  };
+
+  createShadowQueueListener (partyId, user) {
+    return this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
+
+      // filter songs so only user's songs sent to redux store, not full shadow queue
+      const fullShadowQueue = snapshot.val();
+      let userSongsInSQ = {};
+
+      for (let song in fullShadowQueue) {
+        if (fullShadowQueue[song].uid === user.uid) {
+          userSongsInSQ[song] = fullShadowQueue[song];
+        }
       }
-  });
-};
+      this.dispatchers.setShadowQueue(userSongsInSQ);
+    });
+  };
 
-Fireboss.prototype.createMessagesListener = function(onChangeFunc) {
-  this.database.ref('messages').on('value', snapshot => {
-    onChangeFunc(snapshot.val());
-  });
-};
+  removePartyListeners (partyId, user) {
+    const l1 = this.database.ref('current_song').child(partyId).off();
+    const l2 = this.database.ref('top_ten').child(partyId).off();
+    const l3 = this.database.ref('party_djs').child(partyId).off();
+    // this.database.ref('messages').off();
+    const l4 = this.database.ref('parties').child(partyId).child('partyEnded').off();
+    const l5 = this.database.ref('party_djs').child(partyId).child(user.uid)
+      .child('personal_queue').off();
+    const l6 = this.database.ref('shadow_queue').child(partyId).off();
+    const l7 = this.database.ref('parties').child(partyId).child('active').off()
+    // l1 - l7 represent Promises that turn off specific listeners
+    return Promise.all([l1, l2, l3, l4, l5, l6, l7])
+  };
 
-Fireboss.prototype.createPersonalQueueListener = function(partyId, user) {
-  this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').on('value', snapshot => {
-    this.dispatchers.setPersonalQueue(snapshot.val());
-  });
-};
 
-Fireboss.prototype.createShadowQueueListener = function(partyId, user) {
-  this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
+  /* ------------------- SNAPSHOTS ------------------- */
 
-    // filter songs so only user's songs sent to redux store, not full shadow queue
-    const fullShadowQueue = snapshot.val();
-    let userSongsInSQ = {};
+  gettingPartyItemSnapshot (partyId, item) {
+    return this.database.ref(item).child(partyId).once('value');
+  };
 
-    for (let song in fullShadowQueue) {
-      if (fullShadowQueue[song].uid === user.uid) {
-        userSongsInSQ[song] = fullShadowQueue[song];
-      }
+  checkingUserParty (user) {
+    return this.database.ref('user_parties').child(user.uid).once('value');
+  };
+
+  getCurrentPartySnapshot (partyId) {
+    return this.database.ref('parties').child(partyId).once('value', snapshot => {
+      this.dispatchers.setCurrentParty(snapshot.val());
+    });
+  };
+
+  /* ------------------- SETTERS RETURNING PROMISES ------------------- */
+
+  addingPartyDJ (partyId, user) {
+    const capitalize = (string) => {
+      return string.charAt(0).toUpperCase() + string.slice(1);
     }
-    this.dispatchers.setShadowQueue(userSongsInSQ);
-  });
-};
 
-Fireboss.prototype.removePartyListeners = function(partyId, user) {
-  const l1 = this.database.ref('current_song').child(partyId).off();
-  const l2 = this.database.ref('top_ten').child(partyId).off();
-  const l3 = this.database.ref('party_djs').child(partyId).off();
-  // this.database.ref('messages').off();
-  const l4 = this.database.ref('parties').child(partyId).child('partyEnded').off();
-  const l5 = this.database.ref('party_djs').child(partyId).child(user.uid)
-    .child('personal_queue').off();
-  const l6 = this.database.ref('shadow_queue').child(partyId).off();
-  const l7 = this.database.ref('parties').child(partyId).child('active').off()
-  // l1 - l7 represent Promises that turn off specific listeners
-  return Promise.all([l1, l2, l3, l4, l5, l6, l7])
-};
+    let hriString = hri.random().split('-');
+    let djName = [];
+    for(let i = 0; i < 2; i++) {
+      djName.push(capitalize(hriString[i]));
+    }
+    djName = djName.join(' ');
+    // console.log(djName);
 
+    let djPhotos = [
+      "https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-headphone-512.png",
+      "https://cdn3.iconfinder.com/data/icons/block/32/headphones-512.png",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Headphone_icon.svg/1024px-Headphone_icon.svg.png",
+      "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
+      "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
+      "https://maxcdn.icons8.com/Share/icon/Music/dj1600.png",
+      "https://image.freepik.com/free-icon/disc-jockey-with-shades-and-headphones-at-dj-booth_318-43815.jpg",
+      "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
+      "http://northernlinestudio.co.uk/wp-content/themes/NorthernLineWPTheme/assets/img/icon_dj.png",
+      "http://icons.iconarchive.com/icons/icons8/android/512/Music-Dj-icon.png"
+    ]
 
-/* ------------------- SNAPSHOTS (PROMISE & NO PROMISE) ------------------- */
+    let djPhoto = djPhotos[Math.floor(Math.random() * 10)];
 
-Fireboss.prototype.gettingPartyItemSnapshot = function(partyId, item) {
-  return this.database.ref(item).child(partyId).once('value');
-};
-
-Fireboss.prototype.checkingUserParty = function(user) {
-  return this.database.ref('user_parties').child(user.uid).once('value');
-};
-
-Fireboss.prototype.getCurrentPartySnapshot = function(partyId) {
-  this.database.ref('parties').child(partyId).once('value', snapshot => {
-    this.dispatchers.setCurrentParty(snapshot.val());
-  });
-};
-
-/* ------------------- SETTERS RETURNING PROMISES ------------------- */
-
-Fireboss.prototype.addingPartyDJ = function(partyId, user) {
-  const capitalize = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  let hriString = hri.random().split('-');
-  let djName = [];
-  for(let i = 0; i < 2; i++) {
-    djName.push(capitalize(hriString[i]));
-  }
-  djName = djName.join(' ');
-  // console.log(djName);
-
-  let djPhotos = [
-    "https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-headphone-512.png",
-    "https://cdn3.iconfinder.com/data/icons/block/32/headphones-512.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Headphone_icon.svg/1024px-Headphone_icon.svg.png",
-    "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
-    "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
-    "https://maxcdn.icons8.com/Share/icon/Music/dj1600.png",
-    "https://image.freepik.com/free-icon/disc-jockey-with-shades-and-headphones-at-dj-booth_318-43815.jpg",
-    "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
-    "http://northernlinestudio.co.uk/wp-content/themes/NorthernLineWPTheme/assets/img/icon_dj.png",
-    "http://icons.iconarchive.com/icons/icons8/android/512/Music-Dj-icon.png"
-  ]
-
-  let djPhoto = djPhotos[Math.floor(Math.random() * 10)];
-
-  return this.database.ref('party_djs').child(partyId).child(user.uid)
-         .set({
-            dj_points: 0,
-            uid: user.uid,
-            photo: user.photoURL || djPhoto,
-            dj_name: `DJ ${user.displayName || djName}`,
-            personal_queue: {}
-          })
-};
-
-Fireboss.prototype.associatingPartyAndUser = function(partyId, user) {
-  return this.database.ref('user_parties').child(user.uid).set(partyId)
-};
-
-Fireboss.prototype.settingCurrentSong = function(partyId, song) {
-  return this.database.ref('current_song').child(partyId).set(song)
-};
-
-Fireboss.prototype.creatingParty = function(partyId, party) {
-  return this.database.ref('parties').child(partyId).set(party)
-};
-
-Fireboss.prototype.removeUserParty = function(partyId, user) {
-  return this.database.ref('user_parties').child(user.uid).remove()
-};
-
-Fireboss.prototype.removePartyDj = function(partyId, user) {
-  return this.database.ref('party_djs').child(partyId).child(user.uid).remove()
-};
-
-/* ------------------- SETTERS (NO PROMISES) ------------------- */
-
-Fireboss.prototype.setCurrentSong = function(partyId, song) {
-  this.database.ref('current_song').child(partyId).set(song)
-};
-
-Fireboss.prototype.endParty = function(partyId) {
-  this.database.ref('parties').child(partyId).remove()
-    .then(err => {
-        if(err){
-          throw new Error(err)
-        } else {
-          this.database.ref('current_song').child(partyId).remove()
-          this.database.ref('top_ten').child(partyId).remove()
-          this.database.ref('party_djs').child(partyId).remove()
-          this.database.ref('shadow_queue').child(partyId).remove()
-        }
+    return this.database.ref('party_djs').child(partyId).child(user.uid)
+      .set({
+        dj_points: 0,
+        uid: user.uid,
+        photo: user.photoURL || djPhoto,
+        dj_name: `DJ ${user.displayName || djName}`,
+        personal_queue: {}
       })
-};
+  };
 
-Fireboss.prototype.addToPartyQueue = function(partyId, type, song) {
-  this.database.ref(type).child(partyId).push(song)
-};
+  associatingPartyAndUser (partyId, user) {
+    return this.database.ref('user_parties').child(user.uid).set(partyId)
+  };
 
-Fireboss.prototype.addToPersonalQueue = function(partyId, user, song) {
-  this.database.ref('party_djs').child(partyId).child(user.uid)
-  .child('personal_queue')
-  .push(song);
-};
+  settingCurrentSong (partyId, song) {
+    return this.database.ref('current_song').child(partyId).set(song)
+  };
 
-Fireboss.prototype.incrementVotePriority = function(partyId, songId) {
-  const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
-  // get snapshot of song, then add 1 to vote priority and djPoints
-  partyTopTenSongRef.once('value')
-    .then(snapshot => {
-      const currentVotes = snapshot && snapshot.val().vote_priority
-      const userId = snapshot && snapshot.val().uid
+  creatingParty (partyId, party) {
+    return this.database.ref('parties').child(partyId).set(party)
+  };
 
-      this.database.ref('party_djs').child(partyId).child(userId).once('value')
-        .then(snapshot => {
-          const currentDjPoints = snapshot && snapshot.val().dj_points
-          this.database.ref('party_djs').child(partyId).child(userId)
-            .update({dj_points: (currentDjPoints + 1)})
-        })
+  removeUserParty (partyId, user) {
+    return this.database.ref('user_parties').child(user.uid).remove()
+  };
 
-      return partyTopTenSongRef.update({vote_priority: (currentVotes + 1)})
-    })
-    .then(() => {console.log('vote added!')})
-};
+  removePartyDj (partyId, user) {
+    return this.database.ref('party_djs').child(partyId).child(user.uid).remove()
+  };
 
-Fireboss.prototype.decrementVotePriority = function(partyId, songId) {
-  const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
-  // get snapshot of song, then subtract 1 from vote priority
-  partyTopTenSongRef.once('value')
-    .then(snapshot => {
-      const currentVotes = snapshot && snapshot.val().vote_priority
-      const userId = snapshot && snapshot.val().uid
-
-      this.database.ref('party_djs').child(partyId).child(userId).once('value')
-        .then(snapshot => {
-          const currentDjPoints = snapshot && snapshot.val().dj_points
-          this.database.ref('party_djs').child(partyId).child(userId)
-            .update({dj_points: (currentDjPoints - 1)})
-        })
-
-      return partyTopTenSongRef.update({vote_priority: (currentVotes - 1)})
-    })
-    .then(() => {console.log('vote added!')})
-};
-
-Fireboss.prototype.incrementCurrSongDjPoints = function(userId, partyId) {
-  const currentSongRef = this.database.ref('current_song').child(partyId);
-
-  currentSongRef.once('value')
-  .then(snapshot => {
-    const currentVotes = snapshot && snapshot.val().vote_priority
-
-    this.database.ref('party_djs').child(partyId).child(userId).once('value')
-    .then(snapshot => {
-      const currentDjPoints = snapshot && snapshot.val().dj_points;
-      this.database.ref('party_djs').child(partyId).child(userId)
-      .update({dj_points: (currentDjPoints + 1)});
-    });
-
-    return currentSongRef.update({vote_priority: (currentVotes + 1)})
-  })
-  .then(() => {console.log('vote added!')});
-};
-
-Fireboss.prototype.decrementCurrSongDjPoints = function(userId, partyId) {
-  const currentSongRef = this.database.ref('current_song').child(partyId);
-
-  currentSongRef.once('value')
-  .then(snapshot => {
-    const currentVotes = snapshot && snapshot.val().vote_priority
-
-    this.database.ref('party_djs').child(partyId).child(userId).once('value')
-    .then(snapshot => {
-      const currentDjPoints = snapshot && snapshot.val().dj_points;
-      this.database.ref('party_djs').child(partyId).child(userId)
-      .update({dj_points: (currentDjPoints - 1)});
-    });
-
-    return currentSongRef.update({vote_priority: (currentVotes - 1)})
-  })
-  .then(() => {console.log('vote added!')});
-};
-
-Fireboss.prototype.triggerNeedSong = function(partyId) {
-  this.database.ref('parties').child(partyId).update({needSong: true})
-};
-
-
-/* ---------------------- COMBOS ---------------------- */
-
-Fireboss.prototype.setUpAllPartyListeners = function(partyId, user) {
-  this.getCurrentPartySnapshot(partyId);
-  this.createPartyListener(partyId, 'current_song');
-  this.createPartyListener(partyId, 'top_ten');
-  this.createPartyListener(partyId, 'party_djs');
-  this.endPartyListener(partyId, user);
-  this.createPersonalQueueListener(partyId, user);
-  this.createShadowQueueListener(partyId, user);
-}
-
-Fireboss.prototype.joinParty = function(partyId, user) {
-  const associatingPartyAndUser = this.associatingPartyAndUser(partyId, user);
-  const addingPartyDJ = this.addingPartyDJ(partyId, user);
-
-  return Promise.all([associatingPartyAndUser, addingPartyDJ])
-          .then(() => {
-            this.setUpAllPartyListeners(partyId, user)
-            this.browserHistory.push('/app');
-          })
-          .catch(err => console.error(err)) // TODO: need real error handling
-
-}
-
-Fireboss.prototype.createPartyWithListeners = function(partyId, user, partyObj) {
-  let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false});
-  return this.creatingParty(partyId, party)
-          .then(() => {
-            const addingHostDJ = this.addingPartyDJ(partyId, user);
-            const associatingPartyAndHost = this.associatingPartyAndUser(partyId, user);
-
-            Promise.all([addingHostDJ, associatingPartyAndHost])
-              .then(() => {
-                this.setUpAllPartyListeners(partyId, user)
-                this.browserHistory.push('/app');
-              })
-              .catch(console.error) // TODO: real error handling
-          });
-}
-
-Fireboss.prototype.logOut = function(partyId, user) {
-  const { uid } = user;
-  if(partyId === uid) {
-    this.endParty(partyId)
-    this.auth.signOut()
-      .then(() => {
-        this.dispatchers.clearUser();
-        this.browserHistory.push('/login')
-      },
-            () =>{console.log('error')}
-      )
-  }
-  else {
-    this.removeUserParty(partyId, user)
+  endParty (partyId) {
+    return this.database.ref('parties').child(partyId).remove()
       .then(err => {
-        if(err){
-          throw new Error(err)
-        } else {
-          return this.removePartyDj(partyId, user)
-        }
-      })
-      .then(err => {
-        if(err){
-          throw new Error(err)
-        } else {
-          this.removePartyListeners(partyId, user)
-          this.dispatchers.leaveParty();
-          this.dispatchers.clearUser();
-          this.auth.signOut()
-            .then(() => {this.browserHistory.push('/login')},
-                  () =>{console.log('error')}
-            )
-        }
+        if(err) throw new Error(err)
+        const p1 = this.database.ref('current_song').child(partyId).remove();
+        const p2 = this.database.ref('top_ten').child(partyId).remove();
+        const p3 = this.database.ref('party_djs').child(partyId).remove();
+        const p4 = this.database.ref('shadow_queue').child(partyId).remove();
+        return Promise.all([p1, p2, p3, p4])
       })
       .catch(console.error)
-  }
-}
+  };
 
-Fireboss.prototype.userLeaveParty = function(partyId, user) {
-  const { uid } = user;
+  addToPartyQueue (partyId, type, song) {
+    return this.database.ref(type).child(partyId).push(song)
+  };
 
-  if(partyId === uid) {
-    // console.log("you are the host")
-    this.endParty(partyId)
-    this.browserHistory.push('/parties');
-  }
-  else {
-    this.removeUserParty(partyId, user)
-      .then(err => {
-          if(err){
-            throw new Error(err)
-          } else {
-            return this.removePartyDj(partyId, user)
-          }
-        })
-        .then(err => {
-          if(err){
-            throw new Error(err)
-          } else {
-            this.removePartyListeners(partyId, user)
-            this.dispatchers.leaveParty()
-            this.browserHistory.push('/parties');
-          }
-        })
+  addToPersonalQueue (partyId, user, song) {
+    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
+  };
+
+  incrementVotePriority (partyId, songId) {
+    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
+    // get snapshot of song, then add 1 to vote priority and djPoints
+    return partyTopTenSongRef.once('value')
+      .then(snapshot => {
+        const currentVotes = snapshot && snapshot.val().vote_priority
+        let userId = snapshot && snapshot.val().uid;
+        const promisifiedUserId = new Promise(resolve => {
+          return resolve(userId);
+        });
+        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
+        const updatingTopTenVotes = partyTopTenSongRef.update({vote_priority: (currentVotes + 1)});
+        return Promise.all([gettingPartyDj, promisifiedUserId, updatingTopTenVotes])
+      })
+      .then((results) => {
+        const currentDjPoints = results[0] && results[0].val().dj_points;
+        let userId = results[1];
+        //increase current dj points by 1
+        return this.database.ref('party_djs').child(partyId).child(userId)
+          .update({dj_points: (currentDjPoints + 1)})
+      })
+      .then(() => {console.log('vote added!')})
       .catch(console.error)
-  }
-}
+  };
 
-Fireboss.prototype.submitUserSong = function(partyId, user, song, openSnackbar) {
-  const { uid } = user;
-  const gettingCurrentSong = this.gettingPartyItemSnapshot(partyId, 'current_song');
-  const gettingTopTen = this.gettingPartyItemSnapshot(partyId, 'top_ten')
-  const gettingShadowQueue = this.gettingPartyItemSnapshot(partyId, 'shadow_queue');
+  decrementVotePriority (partyId, songId) {
+    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
+    // get snapshot of song, then add 1 to vote priority and djPoints
+    return partyTopTenSongRef.once('value')
+      .then(snapshot => {
+        const currentVotes = snapshot && snapshot.val().vote_priority
+        let userId = snapshot && snapshot.val().uid;
+        const promisifiedUserId = new Promise(resolve => {
+          return resolve(userId);
+        });
+        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
+        const updatingTopTenVotes = partyTopTenSongRef.update({vote_priority: (currentVotes - 1)});
+        return Promise.all([gettingPartyDj, promisifiedUserId, updatingTopTenVotes])
+      })
+      .then((results) => {
+        const currentDjPoints = results[0] && results[0].val().dj_points;
+        let userId = results[1];
+        //increase current dj points by 1
+        return this.database.ref('party_djs').child(partyId).child(userId)
+          .update({dj_points: (currentDjPoints - 1)})
+      })
+      .then(() => {console.log('vote added!')})
+      .catch(console.error)
+  };
 
-  Object.assign(song, {uid: user.uid})
+  incrementCurrSongDjPoints (userId, partyId) {
+    const currentSongRef = this.database.ref('current_song').child(partyId);
+    // get snapshot of song, then add 1 to vote priority and djPoints
+    return currentSongRef.once('value')
+      .then(snapshot => {
+        const currentVotes = snapshot && snapshot.val().vote_priority
+        let userId = snapshot && snapshot.val().uid;
+        const promisifiedUserId = new Promise(resolve => {
+          return resolve(userId);
+        });
+        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
+        const updatingCurrentSongVotes = currentSongRef.update({vote_priority: (currentVotes + 1)});
+        return Promise.all([gettingPartyDj, promisifiedUserId, updatingCurrentSongVotes])
+      })
+      .then((results) => {
+        const currentDjPoints = results[0] && results[0].val().dj_points;
+        let userId = results[1];
+        //increase current dj points by 1
+        return this.database.ref('party_djs').child(partyId).child(userId)
+          .update({dj_points: (currentDjPoints + 1)})
+      })
+      .then(() => {console.log('vote added!')})
+      .catch(console.error)
+  };
 
-  return Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
-    .then(results => {
-      const currentSongVal = results[0] && results[0].val();
-      const topTenVal = results[1] && results[1].val();
-      const shadowQueueVal = results[2] && results[2].val();
+  decrementCurrSongDjPoints (userId, partyId) {
+    const currentSongRef = this.database.ref('current_song').child(partyId);
+    // get snapshot of song, then add 1 to vote priority and djPoints
+    return currentSongRef.once('value')
+      .then(snapshot => {
+        const currentVotes = snapshot && snapshot.val().vote_priority
+        let userId = snapshot && snapshot.val().uid;
+        const promisifiedUserId = new Promise(resolve => {
+          return resolve(userId);
+        });
+        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
+        const updatingCurrentSongVotes = currentSongRef.update({vote_priority: (currentVotes - 1)});
+        return Promise.all([gettingPartyDj, promisifiedUserId, updatingCurrentSongVotes])
+      })
+      .then((results) => {
+        const currentDjPoints = results[0] && results[0].val().dj_points;
+        let userId = results[1];
+        //increase current dj points by 1
+        return this.database.ref('party_djs').child(partyId).child(userId)
+          .update({dj_points: (currentDjPoints - 1)})
+      })
+      .then(() => {console.log('vote added!')})
+      .catch(console.error)
+  };
 
-      let userSongInShadowQueue = false;
-
-      if (shadowQueueVal) {
-        for (let track in shadowQueueVal) {
-          if (uid === shadowQueueVal[track].uid) userSongInShadowQueue = true;
-        }
-      }
-
-      if (!currentSongVal) {
-        this.setCurrentSong(partyId, song);
-        openSnackbar('Nice!!! Song now playing!');
-      } else if (!topTenVal || Object.keys(topTenVal).length < 10) {
-        this.addToPartyQueue(partyId, 'top_ten', song);
-        openSnackbar('Added to Top Ten!');
-      } else if (!shadowQueueVal || !userSongInShadowQueue) {
-        this.addToPartyQueue(partyId, 'shadow_queue', song);
-        openSnackbar('Sent as a recommendation!');
-      } else {
-        this.addToPersonalQueue(partyId, user, song);
-        openSnackbar('Added to My Songs!');
-      }
-    });
+  triggerNeedSong (partyId) {
+    return this.database.ref('parties').child(partyId).update({needSong: true})
+  };
 }
 
 export default Fireboss

@@ -90,7 +90,7 @@ class Search extends Component {
     const partyId = currentParty.id;
     const { uid } = user;
     const { dj_name } = this.props.djs[uid];
-    const song = { song_uri, title, artist, artwork_url, uid, dj_name, time_priority: 0, vote_priority: 0};
+    const song = { song_uri, title, artist, artwork_url, dj_name, time_priority: 0, vote_priority: 0};
 
     fireboss.submitUserSong(partyId, user, song, this.openSnackbar)
   }

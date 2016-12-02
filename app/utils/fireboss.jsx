@@ -56,7 +56,7 @@ Fireboss.prototype.createPartyListener = function(partyId, type) {
 Fireboss.prototype.endPartyListener = function(partyId, user) {
   this.database.ref('parties').child(partyId).child('active').on('value', snapshot => {
     if (snapshot.val()) {
-      console.log('party still raging');
+      // console.log('party still raging');
     } else {
       this.removeUserParty(partyId, user)
         .then(err => {
@@ -76,7 +76,7 @@ Fireboss.prototype.endPartyListener = function(partyId, user) {
               alert('the host has ended this party');
               this.browserHistory.push('/parties');
             } else {
-              console.log('you ended the party');
+              // console.log('you ended the party');
             }
           }
         })
@@ -114,15 +114,17 @@ Fireboss.prototype.createShadowQueueListener = function(partyId, user) {
 };
 
 Fireboss.prototype.removePartyListeners = function(partyId, user) {
-  this.database.ref('current_song').child(partyId).off();
-  this.database.ref('top_ten').child(partyId).off();
-  this.database.ref('party_djs').child(partyId).off();
+  const l1 = this.database.ref('current_song').child(partyId).off();
+  const l2 = this.database.ref('top_ten').child(partyId).off();
+  const l3 = this.database.ref('party_djs').child(partyId).off();
   // this.database.ref('messages').off();
-  this.database.ref('parties').child(partyId).child('partyEnded').off();
-  this.database.ref('party_djs').child(partyId).child(user.uid)
+  const l4 = this.database.ref('parties').child(partyId).child('partyEnded').off();
+  const l5 = this.database.ref('party_djs').child(partyId).child(user.uid)
     .child('personal_queue').off();
-  this.database.ref('shadow_queue').child(partyId).off();
-  console.log('listeners removed!');
+  const l6 = this.database.ref('shadow_queue').child(partyId).off();
+  const l7 = this.database.ref('parties').child(partyId).child('active').off()
+  // l1 - l7 represent Promises that turn off specific listeners
+  return Promise.all([l1, l2, l3, l4, l5, l6, l7])
 };
 
 
@@ -155,7 +157,7 @@ Fireboss.prototype.addingPartyDJ = function(partyId, user) {
     djName.push(capitalize(hriString[i]));
   }
   djName = djName.join(' ');
-  console.log(djName);
+  // console.log(djName);
 
   let djPhotos = [
     "https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-headphone-512.png",
@@ -331,28 +333,29 @@ Fireboss.prototype.joinParty = function(partyId, user) {
   const associatingPartyAndUser = this.associatingPartyAndUser(partyId, user);
   const addingPartyDJ = this.addingPartyDJ(partyId, user);
 
-  Promise.all([associatingPartyAndUser, addingPartyDJ])
-    .then(() => {
-      this.setUpAllPartyListeners(partyId, user)
-      this.browserHistory.push('/app');
-    })
-    .catch(err => console.error(err)) // TODO: need real error handling
+  return Promise.all([associatingPartyAndUser, addingPartyDJ])
+          .then(() => {
+            this.setUpAllPartyListeners(partyId, user)
+            this.browserHistory.push('/app');
+          })
+          .catch(err => console.error(err)) // TODO: need real error handling
 
 }
 
 Fireboss.prototype.createPartyWithListeners = function(partyId, user, partyObj) {
-  this.creatingParty(partyId, partyObj)
-    .then(() => {
-      const addingHostDJ = this.addingPartyDJ(partyId, user);
-      const associatingPartyAndHost = this.associatingPartyAndUser(partyId, user);
+  let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false});
+  return this.creatingParty(partyId, party)
+          .then(() => {
+            const addingHostDJ = this.addingPartyDJ(partyId, user);
+            const associatingPartyAndHost = this.associatingPartyAndUser(partyId, user);
 
-      Promise.all([addingHostDJ, associatingPartyAndHost])
-        .then(() => {
-          this.setUpAllPartyListeners(partyId, user)
-          this.browserHistory.push('/app');
-        })
-        .catch(console.error) // TODO: real error handling
-    });
+            Promise.all([addingHostDJ, associatingPartyAndHost])
+              .then(() => {
+                this.setUpAllPartyListeners(partyId, user)
+                this.browserHistory.push('/app');
+              })
+              .catch(console.error) // TODO: real error handling
+          });
 }
 
 Fireboss.prototype.logOut = function(partyId, user) {
@@ -429,7 +432,9 @@ Fireboss.prototype.submitUserSong = function(partyId, user, song, openSnackbar) 
   const gettingTopTen = this.gettingPartyItemSnapshot(partyId, 'top_ten')
   const gettingShadowQueue = this.gettingPartyItemSnapshot(partyId, 'shadow_queue');
 
-  Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
+  Object.assign(song, {uid: user.uid})
+
+  return Promise.all([gettingCurrentSong, gettingTopTen, gettingShadowQueue])
     .then(results => {
       const currentSongVal = results[0] && results[0].val();
       const topTenVal = results[1] && results[1].val();

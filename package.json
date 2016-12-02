@@ -9,7 +9,8 @@
     "test-watch": "check-node-version --node '>= 6.7.0' && bin/setup && mocha --compilers js:babel-register --watch app/**/*.test.js app/**/*.test.jsx db/**/*.test.js server/**/*.test.js",
     "build": "check-node-version --node '>= 6.7.0' && bin/setup && webpack",
     "build-watch": "check-node-version --node '>= 6.7.0' && bin/setup && webpack -w",
-    "start": "check-node-version --node '>= 6.7.0' && bin/setup && webpack && node-sass  app/assets/main/ -o public/stylesheets && nodemon server/start.js"
+    "start": "check-node-version --node '>= 6.7.0' && bin/setup && webpack && node-sass  app/assets/main/ -o public/stylesheets && nodemon server/start.js",
+    "test-server": "node tests/firebase/firebaseTestServer.js"
   },
   "repository": {
     "type": "git",

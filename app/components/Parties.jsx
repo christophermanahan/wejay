@@ -206,7 +206,7 @@ class Parties extends Component {
       return this.setState({dialogOpen: true});
     }
 
-    const partyObj = {id: user.uid, name, location, needSong: false, active: true };
+    const partyObj = {name, location};
 
     fireboss.createPartyWithListeners(partyId, user, partyObj);
   }

@@ -4,35 +4,26 @@ import Fireboss from '../../app/utils/fireboss';
 import { expect } from 'chai';
 
 import { dispatchers } from '../utils/firebossTest';
-import { sampleParty, sampleDj, sampleUser, sampleSong, sampleSong2 } from '../utils';
+import { sampleParty, sampleDj, sampleUser, sampleSong, sampleSong2, sampleTopTenFull } from '../utils';
 
 const browserHistory = [];
 
 const fireboss = new Fireboss(firebase, dispatchers, browserHistory);
 
-let fakeTopTen = {
-  song1: sampleSong,
-  song2: sampleSong,
-  song3: sampleSong,
-  song4: sampleSong,
-  song5: sampleSong,
-  song6: sampleSong,
-  song7: sampleSong,
-  song8: sampleSong,
-  song9: sampleSong,
-  song10: sampleSong
-};
-
 
 describe('---------- FIREBOSS TESTS ----------', () => {
+
+  let partiesRef = firebase.database().ref('parties')
+  let userPartiesRef = firebase.database().ref('user_parties')
+  let partyDjsRef = firebase.database().ref('party_djs')
+  let currentSongRef = firebase.database().ref('current_song')
+  let topTenRef = firebase.database().ref('top_ten')
+  let shadowQueueRef = firebase.database().ref('shadow_queue')
 
   describe('TESTING JOIN PARTY METHOD', () => {
     let hostId = "abc123";
     let partyId = hostId;
     let partiesResult, userPartiesResult, partyDjsResult;
-    let partiesRef = firebase.database().ref('parties')
-    let userPartiesRef = firebase.database().ref('user_parties')
-    let partyDjsRef = firebase.database().ref('party_djs')
 
     before('create the party with a host and add a guest user to it', done => {
       const setUpParty = [partiesRef.set({[hostId]: sampleParty}),
@@ -95,9 +86,6 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
   describe('TESTING CREATE PARTY METHOD', () => {
     let partiesResult, userPartiesResult, partyDjsResult;
-    let partiesRef = firebase.database().ref('parties')
-    let userPartiesRef = firebase.database().ref('user_parties')
-    let partyDjsRef = firebase.database().ref('party_djs')
     let partyId = sampleUser.uid
 
 
@@ -159,13 +147,6 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     let partiesResult, userPartiesResult, partyDjsResult;
     let hostId = "abc123";
     let partyId = hostId;
-
-    let partiesRef = firebase.database().ref('parties')
-    let userPartiesRef = firebase.database().ref('user_parties')
-    let partyDjsRef = firebase.database().ref('party_djs')
-    let currentSongRef = firebase.database().ref('current_song')
-    let topTenRef = firebase.database().ref('top_ten')
-    let shadowQueueRef = firebase.database().ref('shadow_queue')
 
     before('create a new party with only the host', done => {
       const setUpParty = [partiesRef.set({[hostId]: sampleParty}),
@@ -242,7 +223,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     });
 
     it('if current song & top ten full, adds user suggestion to shadow queue', done => {
-      Promise.all([currentSongRef.set({[partyId]: sampleSong}), topTenRef.set({[partyId]: fakeTopTen})])
+      Promise.all([currentSongRef.set({[partyId]: sampleSong}), topTenRef.set({[partyId]: sampleTopTenFull})])
         .then(() =>{
           return fireboss.submitUserSong(partyId, sampleUser, sampleSong2, () => {})
         })
@@ -265,7 +246,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
       let sqSong = Object.assign({}, sampleSong, {uid: sampleUser.uid})
 
       Promise.all([currentSongRef.set({[partyId]: sampleSong}),
-                  topTenRef.set({[partyId]: fakeTopTen}),
+                  topTenRef.set({[partyId]: sampleTopTenFull}),
                   shadowQueueRef.set({[partyId]: {song1: sqSong}}),
                   partyDjsRef.set({[partyId]: {[sampleUser.uid]: {}}})])
         .then(() =>{
@@ -298,6 +279,13 @@ describe('---------- FIREBOSS TESTS ----------', () => {
   // -- removes user from party_djs
   // -- if host, destroys entire party and everything to do with it
   // -- pushes to '/parties'
+
+  //INCREMENT LIKES
+    // -- increases dj points
+    // -- increases song's vote priority
+  //DECREMENT LIKES
+    // -- decreases dj points
+    // -- decreases song's vote priority 
 
 });
 

@@ -23,8 +23,7 @@ class Firechief {
 	}
 
 	createNewPartyListener(partyId) {
-		console.log("into createNewPartyListener");
-
+		// console.log("into createNewPartyListener");
 		const newPartyRef = this.db.ref('parties').child(partyId);
 
 		newPartyRef.on('value', snapshot => {
@@ -43,23 +42,65 @@ class Firechief {
 
 	masterReorder(partyId) {
 		this.setCurrentSong(partyId)
-		.then(([one, two, three]) => {
-			console.log("1", one);
-			console.log("2",two);
-			console.log("3",three);
+		.then(() => {
+			return this.pullFromShadowQueue(partyId)
+		})
+		.then(resultsArr => {
+			if(!resultsArr) return;
+			const uid = resultsArr[0]
+			return this.pullFromPersonalQueue(partyId, uid);
 		})
 		.catch(console.error)
 	}
 
 
+	pullFromShadowQueue(partyId){
+		return this.getHighestPriority(partyId, "shadow_queue")		//get hi pri from SQ
+		.then(song => {
+			if(!song) return;
+			const songId = this.deconstructSongObject(song, "hash")
+			const songObj = this.deconstructSongObject(song);
+			const { uid } = songObj;
+			Promise.all([
+				this.promisifySQuid(uid),
+				this.db.ref("top_ten").child(partyId).update(song), 	// put onto top ten
+				this.removeSong(partyId, "shadow_queue", songId) 			//delete song from SQ
+			])
+			.catch(console.error)
+		})
+	}
+
+	promisifySQuid(uid){
+		return new Promise((resolve, reject) => {
+			resolve(uid);
+		})
+	}
+
+	pullFromPersonalQueue(partyId, uid) {
+		//grab song from PQ
+
+		this.getHighestPriority(partyId, "personal_queue", uid)
+		.then(song => {
+			if(!song) return
+			//push onto SQ
+			const songId = this.deconstructSongObject(song, "hash")
+			// Promise.all([])
 
 
 
+
+		})
+
+
+
+
+		//delete from PQ
+
+	}
 
 	checkIfNeedSong(snapshot) {
 		return snapshot.val() ? snapshot.val().needSong : false;
 	}
-
 
 	deconstructSongObject(song, option) {						//in Firebase unique hash vals point to songs
 		const hash = Object.keys(song)[0]							//sometimes we want the key hash val,
@@ -92,7 +133,6 @@ class Firechief {
 			])
 		})
 		.catch(console.error);
-
 	}
 
 
@@ -109,13 +149,17 @@ class Firechief {
 	}
 
 
-	getHighestPriority(partyId, queue) {
-		const queueRef = this.db.ref(queue).child(partyId)
+	getHighestPriority(partyId, queue, uid) {
+		const queueRef = (uid) ?
+			this.db.ref('party_djs').child(partyId).child(uid).child(queue)
+			:
+			this.db.ref(queue).child(partyId)
+
 		return queueRef.once('value')
 		.then(snapshot => {
 			const songsInQueue = snapshot && snapshot.val();
 
-			if(queue === "top_ten" && !songsInQueue){
+			if(!songsInQueue){
 				return
 			}
 
@@ -137,7 +181,6 @@ class Firechief {
 		})
 		.catch(console.error);
 	}
-
 
 
 

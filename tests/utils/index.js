@@ -211,3 +211,10 @@ export const sampleParty = {
     name: "Dillon's ppppparty",
     needSong: false
 }
+
+export const sampleDj = {
+    "dj_name" : "DJ Persistent",
+    "dj_points" : 10,
+    "photo" : "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
+    "uid" : "abc123"
+  }

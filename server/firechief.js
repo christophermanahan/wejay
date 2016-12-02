@@ -12,8 +12,9 @@ class Firechief {
 		this.db = db;
 	}
 
+	/*---------------------- CORE LISTENER -------------------------*/
+
 	createPartyAddedListener() {
-		console.log('into createPartyAddedListener');
 		const partiesRef = this.db.ref('parties');
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
@@ -22,23 +23,22 @@ class Firechief {
 		});
 	}
 
+	/*---------------------- SUB-LISTENERS -------------------------*/
+
 	createNewPartyListener(partyId) {
-		console.log('into createNewPartyListener');
 		const newPartyRef = this.db.ref('parties').child(partyId);
 
 		newPartyRef.on('value', snapshot => {
 			const needSong = this.checkIfNeedSong(snapshot);
 			if (needSong) {
-				// this.setCurrentSong(snapshot);
-
-				//need to spread off of the returned promise all array
-				console.log('into need song');
-
 				this.masterReorder(partyId);
 
 			}
 		});
 	}
+
+	/*---------------------- CORE RE-ORDERING -------------------------*/
+
 
 	masterReorder(partyId) {
 		this.setCurrentSong(partyId)
@@ -56,6 +56,8 @@ class Firechief {
 		.catch(console.error);
 	}
 
+	/*---------------------- SUB-RE-ORDERING -------------------------*/
+
 
 	pullFromShadowQueue(partyId){
 		return this.getHighestPriority(partyId, 'shadow_queue')		//get hi pri from SQ
@@ -64,7 +66,7 @@ class Firechief {
 			const songId = this.deconstructSongObject(song, 'hash');
 			const songObj = this.deconstructSongObject(song);
 			const { uid } = songObj;
-			Promise.all([
+			return Promise.all([
 				this.promisifySQuid(uid),
 				this.db.ref('top_ten').child(partyId).update(song), 	// put onto top ten
 				this.removeSong(partyId, 'shadow_queue', songId) 			//delete song from SQ
@@ -73,35 +75,28 @@ class Firechief {
 		});
 	}
 
-	promisifySQuid(uid){
-		return new Promise((resolve, reject) => {
-			resolve(uid);
-		});
-	}
 
 	pullFromPersonalQueue(partyId, uid) {
 		//grab song from PQ
 		return this.getHighestPriority(partyId, 'personal_queue', uid)
 		.then(song => {
 			if (!song) return;
+
+			const songObj = this.deconstructSongObject(song);
+			const { uid } = songObj;
 			//push onto SQ
 			const songId = this.deconstructSongObject(song, 'hash');
 			return Promise.all([
 				this.db.ref('shadow_queue').child(partyId).update(song), // put onto shadow queue
-				this.removeSong(partyId, 'personal_queue', songId)			 // delete song from PQ
+				this.removeSong(partyId, 'personal_queue', songId, uid)			 // delete song from PQ
 			]);
 		})
 		.catch(console.error);
 	}
 
-	checkIfNeedSong(snapshot) {
-		return snapshot.val() ? snapshot.val().needSong : false;
-	}
 
-	deconstructSongObject(song, option) {						//in Firebase unique hash vals point to songs
-		const hash = Object.keys(song)[0]							//sometimes we want the key hash val,
-		return option === 'hash' ? hash : song[hash]	//sometimes the song object that it points to
-	}
+	/*----------------------  HELPER SETTERS  -------------------------*/
+
 
 	setNeedSongToFalse(partyId) {
 		return this.db.ref('parties').child(partyId).update({ needSong: false })
@@ -109,7 +104,6 @@ class Firechief {
 
 	setCurrentSong(partyId) {
 		const currentSongRef = this.db.ref('current_song').child(partyId)
-		console.log('into setCurrentSong');
 
 		return this.getHighestPriority(partyId, 'top_ten')
 		.then(song => {		//song ==> {nextSongId: nextSong}
@@ -149,6 +143,7 @@ class Firechief {
 		.catch(console.error);
 	}
 
+	/*----------------------  HELPER GETTERS  -------------------------*/
 
 	getHighestPriority(partyId, queue, uid) {
 		const queueRef = (uid) ?
@@ -160,9 +155,7 @@ class Firechief {
 		.then(snapshot => {
 			const songsInQueue = snapshot && snapshot.val();
 
-			if (!songsInQueue){
-				return
-			}
+			if (!songsInQueue) return;
 
 			let nextSong;
 			let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
@@ -181,6 +174,24 @@ class Firechief {
 			return {[nextSongId]: nextSong};
 		})
 		.catch(console.error);
+	}
+
+	/*----------------------  HELPER UTILS  -------------------------*/
+
+
+	promisifySQuid(uid){
+		return new Promise((resolve, reject) => {
+			resolve(uid);
+		});
+	}
+
+	checkIfNeedSong(snapshot) {
+		return snapshot.val() ? snapshot.val().needSong : false;
+	}
+
+	deconstructSongObject(song, option) {						//in Firebase unique hash vals point to songs
+		const hash = Object.keys(song)[0];						//sometimes we want the key hash val,
+		return option === 'hash' ? hash : song[hash];	//sometimes the song object that it points to
 	}
 
 }

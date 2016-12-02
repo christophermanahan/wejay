@@ -1,4 +1,6 @@
 const admin = require('firebase-admin');
+const Firechief = require('./firechief');
+
 
 const type = process.env.FIREBASE_ADMIN_TYPE;
 const project_id = process.env.FIREBASE_ADMIN_PROJECT_ID;
@@ -31,116 +33,120 @@ admin.initializeApp({
 });
 const db = admin.database();
 
+const firechief = new Firechief(db)
+firechief.createPartyAddedListener()
+
+
 
 // define FireChief
 // FireChief takes db and returns an Obj with methods
 // one of those methods is the main listener for partiesRef.onchildadded
-// 
+//
 
 /* -----------------    DB LISTENERS     ------------------ */
-
-const partiesRef = db.ref('parties');
-
-partiesRef.on('child_added', (snapshot) => {
-
-	const partyId = snapshot.val() && snapshot.val().id
-	if(!partyId) { return; }
-
-	const newPartyRef = db.ref('parties').child(partyId)
-	newPartyRef.on('value', (snapshot) => {
-
-		const needSong = snapshot.val() ? snapshot.val().needSong : false;
-		if(!needSong){
-			return;
-		} else {
-
-			const currentSongRef = db.ref('current_song').child(partyId)
-			const topTenRef = db.ref('top_ten').child(partyId)
-			const shadowQueueRef = db.ref('shadow_queue').child(partyId)
-
-			topTenRef.once('value')
-			.then(snapshot => {
-
-				const topTen = snapshot && snapshot.val();
-				let nextSong;
-				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
-				let nextSongId;
-
-				if (!topTen) {
-					newPartyRef.update({needSong: false});
-					return;
-				}
-
-				for (let song in topTen){
-
-					let netPriority = topTen[song].time_priority + topTen[song].vote_priority
-
-					if(netPriority > nextSongPriority){
-						nextSong = topTen[song]
-						nextSongPriority = netPriority;
-						nextSongId = song
-					}
-				}
-
-				currentSongRef.set(nextSong);
-				newPartyRef.update({ needSong: false })
-				return topTenRef.child(nextSongId).remove()
-			})
-			.then((err) => {
-				if(err){
-					throw new Error(err);
-				} else {
-					return shadowQueueRef.once('value')
-				}
-			})
-			.then(snapshot => {
-				const shadowQueue = snapshot && snapshot.val()
-				if(!shadowQueue) return;
-
-				let nextSong;
-				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
-				let nextSongId;
-
-				for (let song in shadowQueue){
-
-					let netPriority = shadowQueue[song].time_priority + shadowQueue[song].vote_priority
-
-					if(netPriority > nextSongPriority){
-						nextSong = shadowQueue[song]
-						nextSongPriority = netPriority;
-						nextSongId = song
-					}
-				}
-				nextSong = Object.assign(nextSong, {time_priority: 0, vote_priority: 0})
-				const uidOfNewSQSong = nextSong.uid
-				topTenRef.update({[nextSongId]: nextSong})
-				shadowQueueRef.child(nextSongId).remove()
-				return uidOfNewSQSong												//We need to fix this....
-			})
-			.then((uidOfNewSQSong) => {
-				if (!uidOfNewSQSong) { return; }
-				const pQRef = db.ref('party_djs').child(partyId).child(uidOfNewSQSong).child('personal_queue')
-				pQRef.once('value')
-				.then(snapshot => {
-					const personalQueue = snapshot && snapshot.val()
-					if (!personalQueue) return;
-					const key = Object.keys(personalQueue)[0]
-					const newSongOfPQ = personalQueue[key]
-					shadowQueueRef.update( {[key]: newSongOfPQ} )
-					return pQRef.child(key).remove();
-				})
-				.then(err => {
-					if(err){
-						throw new Error(err)
-					}
-				})
-			})
-			.catch(console.error)
-		}
-	})
-})
-
-
-
-
+//
+// const partiesRef = db.ref('parties');
+//
+// partiesRef.on('child_added', (snapshot) => {
+//
+// 	const partyId = snapshot.val() && snapshot.val().id
+// 	if(!partyId) { return; }
+//
+// 	const newPartyRef = db.ref('parties').child(partyId)
+// 	newPartyRef.on('value', (snapshot) => {
+//
+// 		const needSong = snapshot.val() ? snapshot.val().needSong : false;
+// 		if(!needSong){
+// 			return;
+// 		} else {
+//
+// 			const currentSongRef = db.ref('current_song').child(partyId)
+// 			const topTenRef = db.ref('top_ten').child(partyId)
+// 			const shadowQueueRef = db.ref('shadow_queue').child(partyId)
+//
+// 			topTenRef.once('value')
+// 			.then(snapshot => {
+//
+// 				const topTen = snapshot && snapshot.val();
+// 				let nextSong;
+// 				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
+// 				let nextSongId;
+//
+// 				if (!topTen) {
+// 					newPartyRef.update({needSong: false});
+// 					return;
+// 				}
+//
+// 				for (let song in topTen){
+//
+// 					let netPriority = topTen[song].time_priority + topTen[song].vote_priority
+//
+// 					if(netPriority > nextSongPriority){
+// 						nextSong = topTen[song]
+// 						nextSongPriority = netPriority;
+// 						nextSongId = song
+// 					}
+// 				}
+//
+// 				currentSongRef.set(nextSong);
+// 				newPartyRef.update({ needSong: false })
+// 				return topTenRef.child(nextSongId).remove()
+// 			})
+// 			.then((err) => {
+// 				if(err){
+// 					throw new Error(err);
+// 				} else {
+// 					return shadowQueueRef.once('value')
+// 				}
+// 			})
+// 			.then(snapshot => {
+// 				const shadowQueue = snapshot && snapshot.val()
+// 				if(!shadowQueue) return;
+//
+// 				let nextSong;
+// 				let nextSongPriority = -1000;		//needs to address --> collisions when priority scores are equal
+// 				let nextSongId;
+//
+// 				for (let song in shadowQueue){
+//
+// 					let netPriority = shadowQueue[song].time_priority + shadowQueue[song].vote_priority
+//
+// 					if(netPriority > nextSongPriority){
+// 						nextSong = shadowQueue[song]
+// 						nextSongPriority = netPriority;
+// 						nextSongId = song
+// 					}
+// 				}
+// 				nextSong = Object.assign(nextSong, {time_priority: 0, vote_priority: 0})
+// 				const uidOfNewSQSong = nextSong.uid
+// 				topTenRef.update({[nextSongId]: nextSong})
+// 				shadowQueueRef.child(nextSongId).remove()
+// 				return uidOfNewSQSong												//We need to fix this....
+// 			})
+// 			.then((uidOfNewSQSong) => {
+// 				if (!uidOfNewSQSong) { return; }
+// 				const pQRef = db.ref('party_djs').child(partyId).child(uidOfNewSQSong).child('personal_queue')
+// 				pQRef.once('value')
+// 				.then(snapshot => {
+// 					const personalQueue = snapshot && snapshot.val()
+// 					if (!personalQueue) return;
+// 					const key = Object.keys(personalQueue)[0]
+// 					const newSongOfPQ = personalQueue[key]
+// 					shadowQueueRef.update( {[key]: newSongOfPQ} )
+// 					return pQRef.child(key).remove();
+// 				})
+// 				.then(err => {
+// 					if(err){
+// 						throw new Error(err)
+// 					}
+// 				})
+// 			})
+// 			.catch(console.error)
+// 		}
+// 	})
+// })
+//
+//
+//
+//
 module.exports = admin;

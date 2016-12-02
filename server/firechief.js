@@ -13,6 +13,7 @@ class Firechief {
 	}
 
 	createPartyAddedListener() {
+		console.log("into createPartyAddedListener");
 		const partiesRef = this.db.ref('parties');
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
@@ -22,41 +23,94 @@ class Firechief {
 	}
 
 	createNewPartyListener(partyId) {
+		console.log("into createNewPartyListener");
+
 		const newPartyRef = this.db.ref('parties').child(partyId);
 
 		newPartyRef.on('value', snapshot => {
 			const needSong = this.checkIfNeedSong(snapshot);
 			if (needSong) {
-				this.setCurrentSong(snapshot);
+				// this.setCurrentSong(snapshot);
+
+				//need to spread off of the returned promise all array
+				console.log("into need song");
+
+				this.masterReorder(partyId)
+
 			}
 		});
 	}
+
+	masterReorder(partyId) {
+		this.setCurrentSong(partyId)
+		.then(([one, two, three]) => {
+			console.log("1", one);
+			console.log("2",two);
+			console.log("3",three);
+		})
+		.catch(console.error)
+	}
+
+
+
+
+
 
 	checkIfNeedSong(snapshot) {
 		return snapshot.val() ? snapshot.val().needSong : false;
 	}
 
-	setCurrentSong(partyId) {
-		const currentSongRef = db.ref('current_song').child(partyId)
-		this.getHighestPriority(partyId, "top_ten")
-		.then(song => {
-			if(!song) {
-				return this.setNeedSongToFalse(partyId)
-				//////////////////
-				/////////////////
-			}
-		})
 
+	deconstructSongObject(song, option) {						//in Firebase unique hash vals point to songs
+		const hash = Object.keys(song)[0]							//sometimes we want the key hash val,
+		return option === "hash" ? hash : song[hash]	//sometimes the song object that it points to
 	}
-
 
 	setNeedSongToFalse(partyId) {
 		return this.db.ref('parties').child(partyId).update({ needSong: false })
 	}
 
+	setCurrentSong(partyId) {
+		const currentSongRef = this.db.ref('current_song').child(partyId)
+		console.log("into setCurrentSong");
+
+		return this.getHighestPriority(partyId, "top_ten")
+		.then(song => {		//song ==> {nextSongId: nextSong}
+			if(!song) {
+				return this.setNeedSongToFalse(partyId)
+			}
+			const newSong = this.deconstructSongObject(song)
+			const newSongId = this.deconstructSongObject(song, "hash")
+
+			return Promise.all([
+				//set current song to song
+				currentSongRef.set(newSong),
+				// update needSong to false
+				this.setNeedSongToFalse(partyId),
+				// remove song from top ten
+				this.removeSong(partyId, "top_ten", newSongId)
+			])
+		})
+		.catch(console.error);
+
+	}
+
+
+	removeSong(partyId, queue, hashId) {
+		return this.db.ref(queue).child(partyId).child(hashId).remove()
+		.then(err => {
+			if(err){
+				throw new Error(err)
+			} else {
+				return true;
+			}
+		})
+		.catch(console.error);
+	}
+
 
 	getHighestPriority(partyId, queue) {
-		const queueRef = db.ref(queue).child(partyId)
+		const queueRef = this.db.ref(queue).child(partyId)
 		return queueRef.once('value')
 		.then(snapshot => {
 			const songsInQueue = snapshot && snapshot.val();
@@ -82,14 +136,10 @@ class Firechief {
 			return {[nextSongId]: nextSong}
 		})
 		.catch(console.error);
-
-
 	}
 
-	removeSong(snapshot) {
-		//
 
-	}
+
 
 
 

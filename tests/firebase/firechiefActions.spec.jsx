@@ -3,13 +3,10 @@ const Firechief = require('../../server/firechief');
 
 import { expect } from 'chai';
 
-import { config } from '../utils/firebossTest';
-
 import {
 
 	sampleParty,
 	sampleDjHostId,
-	sampleDj,
 	sampleSong,
 	sampleSong2,
 	sampleSong5,
@@ -17,7 +14,8 @@ import {
 	sampleTopTenFull,
 	sampleSongHighestPri,
 	sampleShadowQueue,
-	samplePersonalQueue
+	samplePersonalQueue,
+  samplePartyDjs
 
 } from '../utils';
 
@@ -25,35 +23,34 @@ import {
 const db = firebase.database();
 const firechief = new Firechief(db);
 
-describe('---------- FIRECHIEF TESTS ----------', () => {
+describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 
-	let hostId = sampleDjHostId;
-	let partyId = hostId;
+	let partyId = sampleDjHostId;
+  let tomsUserId = 'tomsUserId';
 
 	let partiesRef = db.ref('parties');
 	let partyDjsRef = db.ref('party_djs');
 	let topTenRef = db.ref('top_ten');
 	let currentSongRef = db.ref('current_song');
 	let shadowQueueRef = db.ref('shadow_queue');
-	let personalQueueRef = db.ref('party_djs').child(partyId).child('tomsUserId').child('personal_queue');
+	let personalQueueRef = db.ref('party_djs').child(partyId).child(tomsUserId).child('personal_queue');
 
-
+  let sampleCurrentSong = sampleSong;
+  let samplePartyWithNeedSong = Object.assign(sampleParty, { needSong: true });
 
   describe('setCurrentSong function', () => {
 
-    let currentSong = sampleSong;
 
 		let currentSongResult, needSongResult, topTenResult;
 
 
     before('Set up a party with some DJs, a current Song, and a Top Ten', done => {
-      let samplePartyWithNeedSong = Object.assign(sampleParty, { needSong: true })
+
       const settingUpParty = [
-      	partiesRef.set({[hostId]: samplePartyWithNeedSong}),
-        partyDjsRef.set({[hostId]: {[hostId]: sampleDj}}),
-        topTenRef.set({[hostId]: sampleTopTenFull}),
-        currentSongRef.set({[hostId]: currentSong})
-      ]
+        partiesRef.set({[partyId]: samplePartyWithNeedSong}),
+        topTenRef.set({[partyId]: sampleTopTenFull}),
+        currentSongRef.set({[partyId]: sampleCurrentSong})
+      ];
 
 
       Promise.all(settingUpParty)
@@ -62,10 +59,10 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
         })
         .then(() => {
           return Promise.all([
-          	currentSongRef.child(hostId).once('value'),
-          	partiesRef.child(hostId).once('value'),
-          	topTenRef.child(hostId).once('value')
-          ])
+            currentSongRef.child(partyId).once('value'),
+            partiesRef.child(partyId).once('value'),
+            topTenRef.child(partyId).once('value')
+          ]);
         })
         .then(resultsArr => {
           currentSongResult = resultsArr[0].val();
@@ -73,59 +70,60 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
           topTenResult = resultsArr[2].val();
           done();
         })
-        .catch(done)
+        .catch(done);
     });
 
     after('destroy everything', done => {
-    	const clearingParty = [
-    		partiesRef.set({}),
-    		partyDjsRef.set({}),
-    		topTenRef.set({}),
-    		currentSongRef.set({})
-    	];
-    	Promise.all(clearingParty)
-    		.then(() => {
-    			done();
-    		})
-    		.catch(done)
+      const clearingParty = [
+        partiesRef.set({}),
+        partyDjsRef.set({}),
+        topTenRef.set({}),
+        currentSongRef.set({})
+      ];
+      Promise.all(clearingParty)
+        .then(() => {
+          done();
+        })
+        .catch(done);
     });
 
     it('gets highest priority song from Top Ten and sets it to Current Song', () => {
-			expect(currentSongResult).to.deep.equal(sampleSongHighestPri)
+			expect(currentSongResult).to.deep.equal(sampleSongHighestPri);
     });
 
     it('updates need song to false', () => {
-			expect(needSongResult.needSong).to.equal(false)
+			expect(needSongResult.needSong).to.equal(false);
     });
 
     it('removes song from Top Ten', () => {
+      const topTenLen = Object.keys(topTenResult).length;
 			expect(topTenResult.song1).to.be.undefined;
+      expect(topTenLen).to.equal(9);
     });
-  })
+  });
 
 
 	describe('pullFromShadowQueue function', () => {
 
-		let topTenResult, sqResult, uidResult
+		let topTenResult, sqResult, uidResult;
 
 		before('Set up party with a Top Ten and a Shadow Queue', done => {
 			const settingUpParty = [
-				partiesRef.set({[hostId]: sampleParty}),
-				partyDjsRef.set({[hostId]: {[hostId]: sampleDj}}),
-				topTenRef.set({[hostId]: sampleTopNine}),
-				shadowQueueRef.set({[hostId]: sampleShadowQueue})
+				partiesRef.set({[partyId]: sampleParty}),
+				topTenRef.set({[partyId]: sampleTopNine}),
+				shadowQueueRef.set({[partyId]: sampleShadowQueue})
 			];
 
 
 			Promise.all(settingUpParty)
 				.then(() => {
-					return firechief.pullFromShadowQueue(partyId)
+					return firechief.pullFromShadowQueue(partyId);
 				})
 				.then((valsArr) => {
-					uidResult = valsArr[0]
+					uidResult = valsArr[0];
 					return Promise.all([
-						topTenRef.child(hostId).once('value'),
-						shadowQueueRef.child(hostId).once('value')
+						topTenRef.child(partyId).once('value'),
+						shadowQueueRef.child(partyId).once('value')
 					]);
 				})
 				.then(resultsArr => {
@@ -133,7 +131,7 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
 					sqResult = resultsArr[1].val();
 					done();
 				})
-				.catch(done)
+				.catch(done);
 		});
 
 		after('destroy everything', done => {
@@ -144,25 +142,26 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
 				shadowQueueRef.set({})
 			];
 			Promise.all(clearingParty)
-				.then(() => {
-					done();
-				})
-				.catch(done)
+				.then(done)
+				.catch(done);
 		});
 
 		it('captures the correct user ID', () => {
-			expect(uidResult).to.deep.equal("tomsUserId");
-		})
+			expect(uidResult).to.deep.equal(tomsUserId);
+		});
 
 		it('Put highest priority song onto Top Ten', () => {
+      const topTenLen = Object.keys(topTenResult).length;
 			expect(topTenResult.song12).to.deep.equal(sampleSongHighestPri);
-		})
+      expect(topTenLen).to.equal(10);
+		});
 
 		it('Deleted song from Shadow Queue', () => {
-			expect(sqResult.song12).to.be.undefined;
-		})
-
-	})
+			const sqLen = Object.keys(sqResult).length;
+      expect(sqResult.song12).to.be.undefined;
+      expect(sqLen).to.equal(2);
+		});
+	});
 
 	describe('pullFromPersonalQueue', () => {
 
@@ -170,21 +169,21 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
 
 		before('Set up party with a Shadow Queue and Personal Queue', done => {
 			const settingUpParty = [
-				partiesRef.set({[hostId]: sampleParty}),
-				partyDjsRef.set({[hostId]: {[hostId]: sampleDj}}),
-				shadowQueueRef.set({[hostId]: sampleShadowQueue}),
-				personalQueueRef.set({'tomsUserId': samplePersonalQueue})
+				partiesRef.set({[partyId]: sampleParty}),
+				partyDjsRef.set({[partyId]: samplePartyDjs}),
+				shadowQueueRef.set({[partyId]: sampleShadowQueue}),
+				personalQueueRef.set(samplePersonalQueue)
 			];
 
 
 			Promise.all(settingUpParty)
 				.then(() => {
-					return firechief.pullFromPersonalQueue(partyId, 'tomsUserId')
+					return firechief.pullFromPersonalQueue(partyId, tomsUserId);
 				})
 				.then(() => {
 					return Promise.all([
-						shadowQueueRef.child(hostId).once('value'),
-						personalQueueRef.child('tomsUserId').once('value')
+						shadowQueueRef.child(partyId).once('value'),
+						personalQueueRef.once('value')
 					]);
 				})
 				.then(resultsArr => {
@@ -192,7 +191,7 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
 					pqResult = resultsArr[1].val();
 					done();
 				})
-				.catch(done)
+				.catch(done);
 		});
 
 		after('destroy everything', done => {
@@ -203,31 +202,102 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
 				shadowQueueRef.set({})
 			];
 			Promise.all(clearingParty)
-				.then(() => {
-					done();
-				})
-				.catch(done)
+				.then(done)
+				.catch(done);
 		});
 
 		it('Put song onto Shadow Queue', () => {
-			console.log("SQ RESULT", sqResult);
+      const sqLen = Object.keys(sqResult).length;
 			expect(sqResult.hashValInPQ1).to.deep.equal(sampleSong2);
-		})
+      expect(sqLen).to.equal(4);
+		});
 
 		it('Remove song from Personal Queue', () => {
-			console.log("PQ RESULT", pqResult);
 			expect(pqResult.hashValInPQ1).to.be.undefined;
-		})
+		});
 
 		it('Leaves remainder of Personal Queue intact', () => {
-			expect(pqResult.hashValInPQ2).to.deep.equal(sampleSong5)
-			const lengthPQ = Object.keys(pqResult).length
+			expect(pqResult.hashValInPQ2).to.deep.equal(sampleSong5);
+			const lengthPQ = Object.keys(pqResult).length;
 			expect(lengthPQ).to.equal(1);
-		})
+		});
+
+	});
+
+  describe('master reorder function', () => {
+
+    let partiesResult, currentSongResult, topTenResult, sqResult, pqResult;
+
+    before('Set up a fully-fledged party', done => {
+
+      const settingUpFullParty = [
+        partiesRef.set({[partyId]: samplePartyWithNeedSong}),
+        partyDjsRef.set({[partyId]: samplePartyDjs}),
+        currentSongRef.set({[partyId]: sampleCurrentSong}),
+        topTenRef.set({[partyId]: sampleTopTenFull}),
+        shadowQueueRef.set({[partyId]: sampleShadowQueue}),
+        personalQueueRef.set(samplePersonalQueue)
+      ];
+
+      Promise.all(settingUpFullParty)
+        .then(() => {
+          return firechief.masterReorder(partyId);
+        })
+        .then(() => {
+          return Promise.all([
+            partiesRef.child(partyId).once('value'),
+            currentSongRef.child(partyId).once('value'),
+            topTenRef.child(partyId).once('value'),
+            shadowQueueRef.child(partyId).once('value'),
+            personalQueueRef.once('value')
+          ]);
+        })
+        .then(resultsArr => {
+          partiesResult = resultsArr[0].val();
+          currentSongResult = resultsArr[1].val();
+          topTenResult = resultsArr[2].val();
+          sqResult = resultsArr[3].val();
+          pqResult = resultsArr[4].val();
+          done();
+        })
+        .catch(done);
+
+    });
+
+    after('destroy everything', done => {
+      const clearingParty = [
+      partiesRef.set({}),
+        partyDjsRef.set({}),
+        currentSongRef.set({}),
+        topTenRef.set({}),
+        shadowQueueRef.set({}),
+        personalQueueRef.set({})
+      ];
+      Promise.all(clearingParty)
+        .then(done)
+        .catch(done);
+    });
+
+    it('gets highest priority song from Top Ten and sets it to Current Song', () => {
+      expect(currentSongResult).to.deep.equal(sampleSongHighestPri);
+    });
+
+    it('updates need song to false', () => {
+      expect(needSongResult.needSong).to.equal(false);
+    });
+
+    it('')
+
+    it('gets highest priority song from SQ and puts it on the Top Ten', () => {
+      //
+    })
 
 
 
-	})
+
+
+
+  })
 
 
 
@@ -236,4 +306,4 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
 
 
 
-})
+});

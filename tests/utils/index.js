@@ -65,7 +65,7 @@ export const sampleDjHost = {
   "photo" : "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
   "uid" : "dillonsUserIdwhichisalsothepartyid"
 };
-export const sampleDjHostId = "dillonsUserIdwhichisalsothepartyid"
+export const sampleDjHostId = "dillonsUserIdwhichisalsothepartyid";
 
 
 export const sampleDjGuest = {
@@ -74,7 +74,7 @@ export const sampleDjGuest = {
   "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
   "uid" : "tomsUserId"
 };
-export const sampleDjGuestId = "tomsUserId"
+export const sampleDjGuestId = "tomsUserId";
 
 
 export const sampleDj = {
@@ -92,6 +92,12 @@ export const sampleDJsInSingleParty = {
   shanesUserId: sampleDj
 }
 
+
+export const samplePartyDjs = {
+  [sampleDjHostId]: sampleDjHost,
+  [sampleDjGuestId]: sampleDjGuest,
+  [sampleDjId]: sampleDj
+};
 
 
 /*---------- SONGS ----------*/

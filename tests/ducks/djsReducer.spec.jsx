@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { createStore } from 'redux';
 import mainReducer from '../../app/ducks/index';
-import { sampleDJs } from '../utils';
+import { sampleDJsInSingleParty } from '../utils';
 
 describe('djsReducer', () => {
 
@@ -15,12 +15,12 @@ describe('djsReducer', () => {
     expect(testStore.getState().djs).to.be.deep.equal({});
   });
 
-  describe('SET_djs', () => {
+  describe('SET_DJS', () => {
 
     it('sets djs to action.djs', () => {
-      testStore.dispatch({ type: 'SET_DJS', djs: sampleDJs });
+      testStore.dispatch({ type: 'SET_DJS', djs: sampleDJsInSingleParty });
       const newState = testStore.getState();
-      expect(newState.djs).to.be.deep.equal(sampleDJs);
+      expect(newState.djs).to.be.deep.equal(sampleDJsInSingleParty);
     });
 
   });
@@ -28,11 +28,11 @@ describe('djsReducer', () => {
   describe('LEAVE_PARTY', () => {
 
     it('clears the djs when a user leaves a party', () => {
-      testStore.dispatch({ type: 'SET_DJS', djs: sampleDJs });
+      testStore.dispatch({ type: 'SET_DJS', djs: sampleDJsInSingleParty });
       const prevState = testStore.getState();
       testStore.dispatch({ type: 'LEAVE_PARTY' });
       const newState = testStore.getState();
-      expect(prevState.djs).to.be.deep.equal(sampleDJs);
+      expect(prevState.djs).to.be.deep.equal(sampleDJsInSingleParty);
       expect(newState.djs).to.be.deep.equal({});
     });
 

@@ -1,16 +1,14 @@
-// start firebase test server
-import firebase from 'firebase'
-import Fireboss from '../../app/utils/fireboss'
+const firebase = require('./firebaseTestIndex.spec');
+
+import Fireboss from '../../app/utils/fireboss';
 import { expect } from 'chai';
 
-import { dispatchers, config, samplePartyObj } from '../utils/firebossTest'
-import { sampleParty, sampleDj, sampleUser, sampleSong, sampleSong2 } from '../utils/index'
+import { dispatchers } from '../utils/firebossTest';
+import { sampleParty, sampleDj, sampleUser, sampleSong, sampleSong2 } from '../utils';
 
-const browserHistory = []
+const browserHistory = [];
 
-firebase.initializeApp(config);
-
-const fireboss = new Fireboss(firebase, dispatchers, browserHistory)
+const fireboss = new Fireboss(firebase, dispatchers, browserHistory);
 
 let fakeTopTen = {
   song1: sampleSong,
@@ -23,11 +21,10 @@ let fakeTopTen = {
   song8: sampleSong,
   song9: sampleSong,
   song10: sampleSong
-}
+};
 
 
 describe('---------- FIREBOSS TESTS ----------', () => {
-
 
   describe('TESTING JOIN PARTY METHOD', () => {
     let hostId = "abc123";
@@ -65,7 +62,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
           return Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
         })
         .then(() => {
-          done()
+          done();
         })
         .catch(done)
     });
@@ -105,7 +102,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
 
     before('create a new party', done => {
-      fireboss.createPartyWithListeners(partyId, sampleUser, samplePartyObj)
+      fireboss.createPartyWithListeners(partyId, sampleUser, sampleParty)
         .then(() => {
           return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')])
         })
@@ -150,8 +147,8 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
     it('creates a new party', () => {
       expect(Object.keys(partiesResult)).to.have.length.of(1)
-      expect(partiesResult[partyId].name).to.equal(samplePartyObj.name)
-      expect(partiesResult[partyId].location).to.equal(samplePartyObj.location)
+      expect(partiesResult[partyId].name).to.equal(sampleParty.name)
+      expect(partiesResult[partyId].location).to.equal(sampleParty.location)
       expect(partiesResult[partyId].active).to.equal(true)
       expect(partiesResult[partyId].needSong).to.equal(false)
     });

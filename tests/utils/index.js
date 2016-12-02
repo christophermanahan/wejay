@@ -1,53 +1,17 @@
-export const sampleSong = {
-	artist: "dazzel-almond",
-	dj_name: "DJ Dull Stingray",
-	song_uri: "https://soundcloud.com/dazzel-almond/dark-ally",
-	time_priority: 0,
-	title: "Dark Ally",
-	uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
-	vote_priority: 0
-}
+/*---------- FIREBASE ----------*/
 
-export const sampleSong2 = {
-  artist: "dazzel-almond 2",
-  dj_name: "DJ Dull Stingray 2",
-  song_uri: "https://soundcloud.com/dazzel-almond/dark-ally",
-  time_priority: 0,
-  title: "Darker Ally",
-  uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
-  vote_priority: 0
-}
-
-export const sampleShadowQueue = {
-	song1: sampleSong,
-	song2: sampleSong
+export const fakeFirebase = {
+  FacebookAuth: function () {},
+  GoogleAuth: function () {},
+  database: function () {},
+  auth: function () {}
 };
 
-export const sampleUser = {
-	displayName: 'Tom Kelly',
-	email: 'tom@kelly.com',
-	uid: '9B11fZ5AsNU7DupbJX1pajU7z808'
-};
-
-export const sampleDjHost = {
-  "dj_name" : "DJ Puppybook",
-  "dj_points" : 10,
-  "photo" : "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
-  "uid" : "9B11fZ5AsNU7DupbJX1pajU7z808"
-}
-
-export const sampleDjGuest = {
-  "dj_name" : "DJ Polite Kangaroo",
-  "dj_points" : 14,
-  "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
-  "uid" : "KDfLhibkeqd55sYOyeQsrmScmKm1"
-}
-
-// multiple parties
+/*---------- PARTIES ----------*/
 export const sampleParties = {
-  "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2" : {
+  "dillonsUserIdwhichisalsothepartyid" : {
     "active" : true,
-    "id" : "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2",
+    "id" : "dillonsUserIdwhichisalsothepartyid",
     "location" : "5 Hanover Sq",
     "name" : "Dillon's ppppparty",
     "needSong" : false
@@ -58,138 +22,182 @@ export const sampleParties = {
     "location" : "weJay Demo Table",
     "name" : "OFFICIAL weJay Party!",
     "needSong" : false
-  },
-  "SY3eHcxTHiTZ8DS09KgyvNhFqqo2" : {
-    "active" : true,
-    "id" : "SY3eHcxTHiTZ8DS09KgyvNhFqqo2",
-    "location" : "HERE",
-    "name" : "CoolPARTY",
-    "needSong" : false
-  },
-  "XHQntPtSw2dKzCxkhTsTfaaSVoH2" : {
-    "active" : true,
-    "id" : "XHQntPtSw2dKzCxkhTsTfaaSVoH2",
-    "location" : "Shane's House",
-    "name" : "1609-Seniors",
-    "needSong" : false
-  },
-  "aL4wl1PWWIQZNVjylEULKdkoT5O2" : {
-    "active" : true,
-    "id" : "aL4wl1PWWIQZNVjylEULKdkoT5O2",
-    "location" : "Internet",
-    "name" : "Remote",
-    "needSong" : false
-  },
-  "eloPVeiYDOdr6AjddzMJmDGTyHA2" : {
-    "active" : true,
-    "id" : "eloPVeiYDOdr6AjddzMJmDGTyHA2",
-    "location" : "NYC ",
-    "name" : "Party party ",
-    "needSong" : false
-  },
-  "ii0iTIr4fXfS0wSotnhN6i80tDs1" : {
-    "active" : true,
-    "id" : "ii0iTIr4fXfS0wSotnhN6i80tDs1",
-    "location" : "Mi Casa",
-    "name" : "ThyParty",
-    "needSong" : false
   }
 }
 
+export const sampleParty = {
+    active: true,
+    id: "dillonsUserIdwhichisalsothepartyid",
+    location: "5 Hanover Sq",
+    name: "Dillon's ppppparty",
+    needSong: false
+}
 
-// one party only
-export const sampleDJs = {
-  "2oYoTn2yZqZFmpTENsUp2psija02" : {
-    "dj_name" : "DJ Persistent",
-    "dj_points" : 10,
-    "photo" : "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
-    "uid" : "2oYoTn2yZqZFmpTENsUp2psija02"
-  },
-  "Bww7JAup5BXl3EoSxqeAgVSB08b2" : {
-    "dj_name" : "DJ T-Rex Arms",
-    "dj_points" : -10,
-    "photo" : "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
-    "uid" : "Bww7JAup5BXl3EoSxqeAgVSB08b2"
-  },
-  "KDfLhibkeqd55sYOyeQsrmScmKm1" : {
-    "dj_name" : "DJ Polite Kangaroo",
-    "dj_points" : 14,
-    "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
-    "uid" : "KDfLhibkeqd55sYOyeQsrmScmKm1"
-  },
-  "OeVZ7Eu8vNNQqRlFiims1qVVNBp1" : {
-    "dj_name" : "DJ Happy Panther",
-    "dj_points" : 0,
-    "photo" : "https://cdn3.iconfinder.com/data/icons/block/32/headphones-512.png",
-    "uid" : "OeVZ7Eu8vNNQqRlFiims1qVVNBp1"
-  },
-  "PaZPQ75GmhNhmOOdhijPo6TSL3A2" : {
-    "dj_name" : "DJ Quick Emu",
-    "dj_points" : 27,
-    "photo" : "https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-headphone-512.png",
-    "uid" : "PaZPQ75GmhNhmOOdhijPo6TSL3A2"
-  },
-  "QFzuuBFRexSWEVTzQELyUxT3Kos1" : {
-    "dj_name" : "DJ Tough Fish",
-    "dj_points" : 9,
-    "photo" : "https://image.freepik.com/free-icon/disc-jockey-with-shades-and-headphones-at-dj-booth_318-43815.jpg",
-    "uid" : "QFzuuBFRexSWEVTzQELyUxT3Kos1"
-  },
-  "RUOtMwp3qkWF7tZDjclrLOBT32s1" : {
-    "dj_name" : "DJ Splendid Turkey",
-    "dj_points" : 11,
-    "photo" : "https://cdn3.iconfinder.com/data/icons/block/32/headphones-512.png",
-    "uid" : "RUOtMwp3qkWF7tZDjclrLOBT32s1"
-  },
-  "RbBOg1NwjgU38JjINPKxWTcPMWg1" : {
-    "dj_name" : "DJ Shy Badger",
-    "dj_points" : 12,
-    "photo" : "https://maxcdn.icons8.com/Share/icon/Music/dj1600.png",
-    "uid" : "RbBOg1NwjgU38JjINPKxWTcPMWg1"
-  },
-  "RnQI9Q6TZZQlQTsywgvhNgWpx1H2" : {
-    "dj_name" : "DJ Cold Parrot",
-    "dj_points" : 20,
-    "photo" : "http://northernlinestudio.co.uk/wp-content/themes/NorthernLineWPTheme/assets/img/icon_dj.png",
-    "uid" : "RnQI9Q6TZZQlQTsywgvhNgWpx1H2"
-  },
-  "TcszQ843sDb0bzYLg7pUowuvCWu1" : {
-    "dj_name" : "DJ Foolish Falcon",
-    "dj_points" : 0,
-    "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
-    "uid" : "TcszQ843sDb0bzYLg7pUowuvCWu1"
-  },
-  "VWhXBFqUXmPn59NhJi8XtQbPYg73" : {
-    "dj_name" : "DJ Weak Moose",
-    "dj_points" : 0,
-    "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
-    "uid" : "VWhXBFqUXmPn59NhJi8XtQbPYg73"
-  },
-  "rCDCvPAC0hhJmzLLnHgOpvTnzez2" : {
-    "dj_name" : "DJ Pretty Donkey",
-    "dj_points" : 0,
-    "photo" : "http://icons.iconarchive.com/icons/icons8/android/512/Music-Dj-icon.png",
-    "uid" : "rCDCvPAC0hhJmzLLnHgOpvTnzez2"
-  },
-  "spJocqyx4STr9cDKG7zDbDBUdxY2" : {
-    "dj_name" : "DJ Curly Fox",
-    "dj_points" : 2,
-    "photo" : "https://maxcdn.icons8.com/Share/icon/Music/dj1600.png",
-    "uid" : "spJocqyx4STr9cDKG7zDbDBUdxY2"
+export const sampleNewParty = {
+  "idForNewSampleParty" : {
+    active: true,
+    id : "idForNewSampleParty",
+    location: "newly added spacetime",
+    name: "New Party!",
+    needSong: false
   }
 }
 
-export const fakeFirebase = {
-  FacebookAuth: function () {},
-  GoogleAuth: function () {},
-  database: function () {},
-  auth: function () {}
+/*---------- USER ----------*/
+
+// sampleUser is also sampleDjGuest
+export const sampleUser = {
+	displayName: 'Tom Kelly',
+	email: 'tom@kelly.com',
+	uid: 'tomsUserId'
+}; 
+
+
+/*---------- DJS ----------*/
+// these DJs are inside of the first of sampleParties
+// titled: Dillon's ppppparty.
+// the host is DJ Dirron
+
+
+export const sampleDjHost = {
+  "dj_name" : "DJ Dirron",
+  "dj_points" : 10,
+  "photo" : "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
+  "uid" : "dillonsUserIdwhichisalsothepartyid"
+};
+export const sampleDjHostId = "dillonsUserIdwhichisalsothepartyid"
+
+
+export const sampleDjGuest = {
+  "dj_name" : "DJ Tom",
+  "dj_points" : 14,
+  "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
+  "uid" : "tomsUserId"
+};
+export const sampleDjGuestId = "tomsUserId"
+
+
+export const sampleDj = {
+  "dj_name" : "DJ Shane",
+  "dj_points" : 2,
+  "photo" : "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
+  "uid" : "shanesUserId"
+};
+export const sampleDjId = "shanesUserId";
+
+
+export const sampleDJsInSingleParty = {
+  dillonsUserIdwhichisalsothepartyid: sampleDjHost,
+  tomsUserId: sampleDjGuest,
+  shanesUserId: sampleDj
 }
+
+
+
+/*---------- SONGS ----------*/
+
+export const sampleSong = {
+  artist: "dazzel-almond",
+  dj_name: "DJ Dirron",
+  song_uri: "https://soundcloud.com/dazzel-almond/dark-ally",
+  time_priority: 0,
+  title: "Dark Ally",
+  uid: "dillonsUserIdwhichisalsothepartyid",
+  vote_priority: 0
+}
+
+export const sampleSong2 = {
+  artist: "dazzel-almond 2",
+  dj_name: "DJ Tom",
+  song_uri: "https://soundcloud.com/dazzel-almond/dark-ally",
+  time_priority: 2,
+  title: "Darker Ally",
+  uid: "tomsUserId",
+  vote_priority: 0
+}
+
+export const sampleSong3 = {
+  "artist" : "FettyWap1738",
+  "artwork_url" : "https://i1.sndcdn.com/artworks-B72n1OeTuXRb-0-large.jpg",
+  "dj_name" : "DJ Shane",
+  "song_uri" : "https://soundcloud.com/harlem_fetty/fetty-wap-trap-queen-rough",
+  "time_priority" : 3,
+  "title" : "Trap Queen",
+  "uid" : "shanesUserId",
+  "vote_priority" : 3
+}
+
+export const sampleSong4 = {
+  "artist" : "Shane And Friends",
+  "artwork_url" : "https://i1.sndcdn.com/artworks-000162860668-hccoaa-large.jpg",
+  "dj_name" : "DJ Shane",
+  "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
+  "time_priority" : 0,
+  "title" : "Shane And Friends - Ep. 1 (with Rebecca Black)",
+  "uid" : "shanesUserId",
+  "vote_priority" : 4
+}
+
+export const sampleSong5 = {
+  "artist" : "more puppies",
+  "artwork_url" : "whatever.com/jpg",
+  "dj_name" : "DJ Tom",
+  "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
+  "time_priority" : 0,
+  "title" : "other song tom has",
+  "uid" : "tomsUserId",
+  "vote_priority" : 0
+}
+
+
+export const sampleSongHighestPri = {
+  "artist" : "PUPPIES",
+  "artwork_url" : "whatever.com/jpg",
+  "dj_name" : "DJ Tom",
+  "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
+  "time_priority" : 10,
+  "title" : "BEST SONG OF ALL TIME",
+  "uid" : "tomsUserId",
+  "vote_priority" : 10
+}
+
+
+/*---------- QUEUES ----------*/
+
+export const sampleCurrentSong = sampleSong;
 
 export const sampleTopTen = {
   song1: sampleSong,
-  song2: sampleSong
-}
+  song2: sampleSong2
+};
+
+export const sampleTopTenFull = {
+  song1: sampleSongHighestPri,
+  song2: sampleSong3,
+  song3: sampleSong3,
+  song4: sampleSong4,
+  song5: sampleSong,
+  song6: sampleSong2,
+  song7: sampleSong3,
+  song8: sampleSong4,
+  song9: sampleSong,
+  song10: sampleSong2,
+};
+
+export const sampleShadowQueue = {
+  dillonsUserIdwhichisalsothepartyid: sampleSong,
+  tomsUserId: sampleSong2,
+  shanesUserId: sampleSong3 // HIGHEST PRIORITY
+};
+
+// will belong to DJ Tom
+export const samplePersonalQueue = {
+  "hashValInPQ1": sampleSong2,
+  "hashValInPQ2": sampleSong5
+};
+
+
+/*---------- SEARCH RESULTS ----------*/
 
 export const sampleSearchResult = {
 	id: 107780701,
@@ -206,40 +214,4 @@ export const sampleSearchResults = [
 	sampleSearchResult
 ]
 
-export const samplePersonalQueue = {
-  "SY3eHcxTHiTZ8DS09KgyvNhFqqo2" : {
-    "artist" : "FettyWap1738",
-    "artwork_url" : "https://i1.sndcdn.com/artworks-B72n1OeTuXRb-0-large.jpg",
-    "dj_name" : "DJ Purple Rabbit",
-    "song_uri" : "https://soundcloud.com/harlem_fetty/fetty-wap-trap-queen-rough",
-    "time_priority" : 0,
-    "title" : "Trap Queen",
-    "uid" : "eOsN09Cyo1PkoZVXLka1FRmh00E2",
-    "vote_priority" : 6
-  },
-  "XHQntPtSw2dKzCxkhTsTfaaSVoH2" : {
-    "artist" : "Shane And Friends",
-    "artwork_url" : "https://i1.sndcdn.com/artworks-000162860668-hccoaa-large.jpg",
-    "dj_name" : "DJ Polite Fireant",
-    "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
-    "time_priority" : 0,
-    "title" : "Shane And Friends - Ep. 1 (with Rebecca Black)",
-    "uid" : "XHQntPtSw2dKzCxkhTsTfaaSVoH2",
-    "vote_priority" : 2
-  }
-}
 
-export const sampleParty = {
-    active: true,
-    id: "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2",
-    location: "5 Hanover Sq",
-    name: "Dillon's ppppparty",
-    needSong: false
-}
-
-export const sampleDj = {
-    "dj_name" : "DJ Persistent",
-    "dj_points" : 10,
-    "photo" : "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
-    "uid" : "abc123"
-  }

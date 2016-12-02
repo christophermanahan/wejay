@@ -8,7 +8,6 @@ describe('djsReducer', () => {
 
   let testStore;
   beforeEach('Create testing store', () => {
-    console.log('sampleDJsInSingleParty is', sampleDJsInSingleParty)
     testStore = createStore(mainReducer);
   });
 

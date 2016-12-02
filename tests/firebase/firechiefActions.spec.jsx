@@ -1,16 +1,23 @@
-import firebase from 'firebase';
-import Firechief from '../../app/utils/firechief';
+const firebase = require('./firebaseTestIndex.spec');
+const Firechief = require('../../server/firechief');
+
 import { expect } from 'chai';
 
 import { config } from '../utils/firebossTest';
 
-import {  } from '../utils';
+import {
 
-// initialize test firebase server
-firebase.initializeApp(config);
+	sampleParty,
+	sampleDjHostId,
+	sampleDj,
+	sampleSong,
+	sampleTopTenFull,
+	sampleSongHighestPri
+
+} from '../utils';
+
 
 const db = firebase.database();
-
 const firechief = new Firechief(db);
 
 describe('---------- FIRECHIEF TESTS ----------', () => {
@@ -19,48 +26,61 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
 	// pullFromShadowQueue
 	// pullFromPersonalQueue
 
+
   describe('setCurrentSong function', () => {
-    let partiesRef = firebase.database().ref('parties');
-    let userPartiesRef = firebase.database().ref('user_parties');
-    let partyDjsRef = firebase.database().ref('party_djs');
-    let topTenRef = firebase.database().ref('top_ten');
-    let shadowQueueRef = firebase.database().ref('top_ten');
-    // let personalQueueRef1 = firebase.database().ref('party_djs').child(###SOME PARTY ID###).child(##SOME UID##).child('personal_queue')
+    let partiesRef = db.ref('parties');
+    let partyDjsRef = db.ref('party_djs');
+    let topTenRef = db.ref('top_ten');
+    let currentSongRef = db.ref('current_song');
 
-
-    let hostId = samplePartyHostId;
+    let hostId = sampleDjHostId;
     let partyId = hostId;
 
-    before('Set up a party with a full queues and some DJs', done => {
-      const setUpParty = [partiesRef.set({[hostId]: sampleParty}),
-                          userPartiesRef.set({[hostId]: hostId}),
-                          partyDjsRef.set({[hostId]: {[hostId]: sampleDj}})]
+    let currentSong = sampleSong;
 
-      Promise.all(setUpParty)
+    before('Set up a party with some DJs, a current Song, and a Top Ten', done => {
+      let samplePartyWithNeedSong = Object.assign(sampleParty, { needSong: true })
+      const settingUpParty = [
+      	partiesRef.set({[hostId]: samplePartyWithNeedSong}),
+        partyDjsRef.set({[hostId]: {[hostId]: sampleDj}}),
+        topTenRef.set({[hostId]: sampleTopTenFull}),
+        currentSongRef.set({[hostId]: currentSong})
+      ]
+
+      let currentSongResult, needSongResult, topTenResult;
+
+      Promise.all(settingUpParty)
         .then(() => {
-          return fireboss.joinParty(partyId, sampleUser)
+          return firechief.setCurrentSong(partyId)
         })
         .then(() => {
-          return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')])
+          return Promise.all([
+          	currentSongRef.child(hostId).once('value'),
+          	partiesRef.child(hostId).once('value'),
+          	topTenRef.child(hostId).once('value')
+          ])
         })
         .then(resultsArr => {
-          partiesResult = resultsArr[0].val();
-          userPartiesResult = resultsArr[1].val();
-          partyDjsResult = resultsArr[2].val();
-          done()
+          currentSongResult = resultsArr[0].val();
+          needSongResult = resultsArr[1].val();
+          topTenResult = resultsArr[2].val();
+          done();
         })
         .catch(done)
     });
 
     after('destroy everything', done => {
-      // fireboss.removePartyListeners(partyId, sampleUser)
-      //   .then(() => {
-      //     return Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
-      //   })
-      //   .then(() => {
-      //     done()
-      //   })
-      //   .catch(done)
+    	const clearingParty = [
+    		partiesRef.set({}),
+    		partyDjsRef.set({}),
+    		topTenRef.set({}),
+    		currentSongRef.set({})
+    	];
+    	Promise.all(clearingParty)
+    		.then(() => {
+    			done();
+    		})
+    		.catch(done)
     });
 
     it('gets highest priority song from Top Ten and sets it to Current Song', () => {
@@ -74,9 +94,5 @@ describe('---------- FIRECHIEF TESTS ----------', () => {
     it('removes song from Top Ten', () => {
       console.log('test shit')
     });
-
-
-
-  });
-
- }
+  })
+})

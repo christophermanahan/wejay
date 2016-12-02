@@ -50,7 +50,7 @@ export const sampleUser = {
 	displayName: 'Tom Kelly',
 	email: 'tom@kelly.com',
 	uid: 'tomsUserId'
-}; 
+};
 
 
 /*---------- DJS ----------*/
@@ -181,13 +181,25 @@ export const sampleTopTenFull = {
   song7: sampleSong3,
   song8: sampleSong4,
   song9: sampleSong,
-  song10: sampleSong2,
+  song10: sampleSong2
+};
+
+export const sampleTopNine = {
+  song2: sampleSong3,
+  song3: sampleSong3,
+  song4: sampleSong4,
+  song5: sampleSong,
+  song6: sampleSong2,
+  song7: sampleSong3,
+  song8: sampleSong4,
+  song9: sampleSong,
+  song10: sampleSong2
 };
 
 export const sampleShadowQueue = {
-  dillonsUserIdwhichisalsothepartyid: sampleSong,
-  tomsUserId: sampleSong2,
-  shanesUserId: sampleSong3 // HIGHEST PRIORITY
+  song11: sampleSong,
+  song12: sampleSongHighestPri,                 // HIGHEST PRIORITY
+  song13: sampleSong3
 };
 
 // will belong to DJ Tom
@@ -213,5 +225,3 @@ export const sampleSearchResults = [
 	sampleSearchResult,
 	sampleSearchResult
 ]
-
-

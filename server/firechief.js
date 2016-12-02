@@ -90,6 +90,7 @@ class Firechief {
 
 
 	pullFromPersonalQueue(partyId, uid) {
+		console.log("I RAN FROM FIRECHIEF");
 		return this.getHighestPriority(partyId, 'personal_queue', uid) //grab song from PQ
 		.then(song => {
 			if (!song) return;

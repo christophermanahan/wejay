@@ -8,6 +8,16 @@ export const sampleSong = {
 	vote_priority: 0
 }
 
+export const sampleSong2 = {
+  artist: "dazzel-almond 2",
+  dj_name: "DJ Dull Stingray 2",
+  song_uri: "https://soundcloud.com/dazzel-almond/dark-ally",
+  time_priority: 0,
+  title: "Darker Ally",
+  uid: "iSyxOOxMjwau7rLEzUGx7zjjTz83",
+  vote_priority: 0
+}
+
 export const sampleShadowQueue = {
 	song1: sampleSong,
 	song2: sampleSong

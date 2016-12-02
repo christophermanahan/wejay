@@ -20,3 +20,8 @@ export const dispatchers = {
   setCurrentParty: () => {},
   setShadowQueue: () => {}
 }
+
+export const samplePartyObj = {
+  name: 'cool party',
+  location: 'fun'
+}

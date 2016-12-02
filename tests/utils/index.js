@@ -19,6 +19,20 @@ export const sampleUser = {
 	uid: '9B11fZ5AsNU7DupbJX1pajU7z808'
 };
 
+export const sampleDjHost = {
+  "dj_name" : "DJ Puppybook",
+  "dj_points" : 10,
+  "photo" : "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
+  "uid" : "9B11fZ5AsNU7DupbJX1pajU7z808"
+}
+
+export const sampleDjGuest = {
+  "dj_name" : "DJ Polite Kangaroo",
+  "dj_points" : 14,
+  "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
+  "uid" : "KDfLhibkeqd55sYOyeQsrmScmKm1"
+}
+
 // multiple parties
 export const sampleParties = {
   "R5xiyzn3HgVi8ZCTC5TBWgJbzZp2" : {
@@ -71,6 +85,7 @@ export const sampleParties = {
     "needSong" : false
   }
 }
+
 
 // one party only
 export const sampleDJs = {
@@ -160,7 +175,7 @@ import Fireboss from '../../app/utils/fireboss'
 export const fakeFirebase = {
 	auth: function() { return true },
 	database: function() { return true }
-
+}
 
 export const sampleTopTen = {
   song1: sampleSong,

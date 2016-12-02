@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build-css": "node-sass  app/assets/main/ -o public/stylesheets",
-    "test": "check-node-version --node '>= 6.7.0' && bin/setup && mocha --compilers js:babel-register tests/**/*.spec.jsx tests/**/*.spec.js",
+    "test": "check-node-version --node '>= 6.7.0' && bin/setup && mocha --compilers js:babel-register --require ignore-styles tests/**/*.spec.jsx tests/**/*.spec.js",
     "test-watch": "check-node-version --node '>= 6.7.0' && bin/setup && mocha --compilers js:babel-register --watch app/**/*.test.js app/**/*.test.jsx db/**/*.test.js server/**/*.test.js",
     "build": "check-node-version --node '>= 6.7.0' && bin/setup && webpack",
     "build-watch": "check-node-version --node '>= 6.7.0' && bin/setup && webpack -w",
@@ -76,6 +76,7 @@
     "babel-register": "^6.18.0",
     "chai": "^3.5.0",
     "enzyme": "^2.5.1",
+    "ignore-styles": "^5.0.1",
     "mocha": "^3.1.2",
     "npm": "^4.0.2",
     "sinon": "^1.17.6",

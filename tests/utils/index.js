@@ -25,6 +25,8 @@ export const sampleParties = {
   }
 }
 
+export const dillonsUserIdwhichisalsothepartyid = 'dillonsUserIdwhichisalsothepartyid'
+
 export const sampleParty = {
     active: true,
     id: "dillonsUserIdwhichisalsothepartyid",
@@ -34,14 +36,15 @@ export const sampleParty = {
 }
 
 export const sampleNewParty = {
-  "idForNewSampleParty" : {
-    active: true,
-    id : "idForNewSampleParty",
-    location: "newly added spacetime",
-    name: "New Party!",
-    needSong: false
-  }
+  active: true,
+  id : "idForNewSampleParty",
+  location: "newly added spacetime",
+  name: "New Party!",
+  needSong: false
 }
+
+export const idForNewSampleParty = "idForNewSampleParty";
+
 
 /*---------- USER ----------*/
 
@@ -50,7 +53,7 @@ export const sampleUser = {
 	displayName: 'Tom Kelly',
 	email: 'tom@kelly.com',
 	uid: 'tomsUserId'
-}; 
+};
 
 
 /*---------- DJS ----------*/
@@ -65,7 +68,7 @@ export const sampleDjHost = {
   "photo" : "https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/turntable-512.png",
   "uid" : "dillonsUserIdwhichisalsothepartyid"
 };
-export const sampleDjHostId = "dillonsUserIdwhichisalsothepartyid"
+export const sampleDjHostId = "dillonsUserIdwhichisalsothepartyid";
 
 
 export const sampleDjGuest = {
@@ -74,7 +77,7 @@ export const sampleDjGuest = {
   "photo" : "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
   "uid" : "tomsUserId"
 };
-export const sampleDjGuestId = "tomsUserId"
+export const sampleDjGuestId = "tomsUserId";
 
 
 export const sampleDj = {
@@ -92,6 +95,12 @@ export const sampleDJsInSingleParty = {
   shanesUserId: sampleDj
 }
 
+
+export const samplePartyDjs = {
+  [sampleDjHostId]: sampleDjHost,
+  [sampleDjGuestId]: sampleDjGuest,
+  [sampleDjId]: sampleDj
+};
 
 
 /*---------- SONGS ----------*/
@@ -181,18 +190,30 @@ export const sampleTopTenFull = {
   song7: sampleSong3,
   song8: sampleSong4,
   song9: sampleSong,
-  song10: sampleSong2,
+  song10: sampleSong2
+};
+
+export const sampleTopNine = {
+  song2: sampleSong3,
+  song3: sampleSong3,
+  song4: sampleSong4,
+  song5: sampleSong,
+  song6: sampleSong2,
+  song7: sampleSong3,
+  song8: sampleSong4,
+  song9: sampleSong,
+  song10: sampleSong2
 };
 
 export const sampleShadowQueue = {
-  dillonsUserIdwhichisalsothepartyid: sampleSong,
-  tomsUserId: sampleSong2,
-  shanesUserId: sampleSong3 // HIGHEST PRIORITY
+  song11: sampleSong,
+  song12: sampleSongHighestPri,                 // HIGHEST PRIORITY
+  song13: sampleSong3
 };
 
 // will belong to DJ Tom
 export const samplePersonalQueue = {
-  "hashValInPQ1": sampleSong2,
+  "hashValInPQ1": sampleSong2,          //higher priority of the 2
   "hashValInPQ2": sampleSong5
 };
 
@@ -213,5 +234,3 @@ export const sampleSearchResults = [
 	sampleSearchResult,
 	sampleSearchResult
 ]
-
-

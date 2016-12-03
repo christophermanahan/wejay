@@ -222,7 +222,6 @@ class Fireboss {
           userSongsInSQ[song] = fullShadowQueue[song];
         }
       }
-
       this.dispatchers.setShadowQueue(userSongsInSQ);
     });
   };

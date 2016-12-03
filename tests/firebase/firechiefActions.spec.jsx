@@ -15,7 +15,12 @@ import {
 	sampleSongHighestPri,
 	sampleShadowQueue,
 	samplePersonalQueue,
-  samplePartyDjs
+  samplePartyDjs,
+  sampleSQBefore,
+  sampleSQAfter,
+  sampleTTBefore,
+  sampleTTAfter
+
 
 } from '../utils';
 
@@ -295,7 +300,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 			expect(sqResult.hashValInPQ1).to.deep.equal(sampleSong2);
     });
 
-		it('pulls song from Personal Queue of user whose song was just pulled from the Shadoq Queue', () => {
+		it('pulls song from Personal Queue of user whose song was just pulled from the Shadow Queue', () => {
 			const pqLen = Object.keys(pqResult).length;
 			expect(pqLen).to.equal(1);
 			expect(pqResult.hashValInPQ1).to.be.undefined;
@@ -303,6 +308,90 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
     });
 
   });
+
+  describe('createTimePriorityIncrementer function', () => {
+
+		let topTenResult, sqResult, sqIncrementerState, ttIncrementerState;
+
+
+		before('Set up party with a Top Ten and a Shadow Queue', done => {
+			const settingUpParty = [
+				partiesRef.set({[partyId]: sampleParty}),
+				topTenRef.set({[partyId]: sampleTTBefore}),
+				shadowQueueRef.set({[partyId]: sampleSQBefore})
+			];
+
+			const interval = 200;
+			const num = 5;
+
+
+			Promise.all(settingUpParty)
+				.then(() => {
+					firechief.createTimePriorityIncrementer(partyId, interval, 'top_ten');
+					firechief.createTimePriorityIncrementer(partyId, interval, 'shadow_queue');
+				})
+				.then(() => {
+					return new Promise((res, rej) => {
+						setTimeout(res, 1100);	// leave extra 100ms for wiggle room
+					});
+				})
+				.then(() => {
+					return Promise.all([
+						topTenRef.child(partyId).once('value'),
+						shadowQueueRef.child(partyId).once('value')
+					]);
+				})
+				.then(resultsArr => {
+					topTenResult = resultsArr[0].val();
+					sqResult = resultsArr[1].val();
+
+					firechief.removeTimePriorityIncrementer(partyId, 'top_ten');
+					firechief.removeTimePriorityIncrementer(partyId, 'shadow_queue');
+
+					ttIncrementerState = firechief.incrementers[partyId].top_ten;
+					sqIncrementerState = firechief.incrementers[partyId].shadow_queue;
+
+					done();
+				})
+				.catch(done);
+		});
+
+		after('destroy everything', done => {
+
+			const clearingParty = [
+				partiesRef.set({}),
+				topTenRef.set({}),
+				shadowQueueRef.set({})
+			];
+			Promise.all(clearingParty)
+				.then(() => done())
+				.catch(done);
+		});
+
+
+		it('adds only two incrementers', () => {
+			const numIncrementers = Object.keys(firechief.incrementers[partyId]).length;
+			expect(numIncrementers).to.equal(2);
+		});
+
+		it('increments the time_priority of each song in the top_ten once per specified interval', () => {
+			expect(topTenResult).to.deep.equal(sampleTTAfter);
+		});
+
+		it('increments the time_priority of each song in the shadow_queue once per specified interval', () => {
+			expect(sqResult).to.deep.equal(sampleSQAfter);
+		});
+
+		describe('removeTimePriorityIncrementer function', () => {
+
+			it('removes the specified incrementer', () => {
+				expect(ttIncrementerState).to.be.a('null');
+				expect(sqIncrementerState).to.be.a('null');
+			});
+
+		});
+
+	});
 
 
 });

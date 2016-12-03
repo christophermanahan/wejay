@@ -20,7 +20,6 @@ class Firechief {
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
-			console.log("RAN");
 			this.createNewPartyListener(partyId);
 		});
 	}

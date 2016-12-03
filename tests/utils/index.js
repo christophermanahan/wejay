@@ -25,6 +25,8 @@ export const sampleParties = {
   }
 }
 
+export const dillonsUserIdwhichisalsothepartyid = 'dillonsUserIdwhichisalsothepartyid'
+
 export const sampleParty = {
     active: true,
     id: "dillonsUserIdwhichisalsothepartyid",
@@ -34,13 +36,11 @@ export const sampleParty = {
 }
 
 export const sampleNewParty = {
-  "idForNewSampleParty" : {
-    active: true,
-    id : "idForNewSampleParty",
-    location: "newly added spacetime",
-    name: "New Party!",
-    needSong: false
-  }
+  active: true,
+  id : "idForNewSampleParty",
+  location: "newly added spacetime",
+  name: "New Party!",
+  needSong: false
 }
 
 export const idForNewSampleParty = "idForNewSampleParty";

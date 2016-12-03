@@ -2,7 +2,7 @@ const firebase = require('./firebaseTestIndex.spec');
 
 import Fireboss from '../../app/utils/fireboss';
 import { expect } from 'chai';
-import sinon from 'sinon';
+import { spy } from 'sinon';
 
 import { dispatchers } from '../utils/firebossTest';
 import {
@@ -12,11 +12,13 @@ import {
           sampleUser,
           sampleDjHostId,
           sampleDjHost,
+          fbSamplePartyDjs,
           sampleSong,
           sampleSong2,
           sampleTopTenFull,
-          sampleShadowQueue,
-          sampleDJsInSingleParty
+          fbSampleShadowQueue,
+          sampleDJsInSingleParty,
+          samplePersonalQueue
 
 } from '../utils';
 
@@ -24,8 +26,6 @@ const browserHistory = [];
 
 const fireboss = new Fireboss(firebase, dispatchers, browserHistory);
 
-// create spy dispatchers
-// make sure they are called with the right data
 
 describe('------ FIREBOSS LISTENER TESTS ------', () => {
 
@@ -36,31 +36,47 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
   let topTenRef = firebase.database().ref('top_ten')
   let shadowQueueRef = firebase.database().ref('shadow_queue')
 
+
   describe('TESTING GLOBAL PARTIES LISTENER', () => {
     let partiesSpy;
 
     before('set up parties listener and update party data', done => {
-      let hostId = "abc123";
-      partiesSpy = sinon.spy(fireboss.dispatchers, 'setParties')
-
+      partiesSpy = spy(fireboss.dispatchers, 'setParties')
       fireboss.createPartiesListener()
-      partiesRef.set(sampleParties)
-        .then(() => setTimeout(() => done(), 500))
-        .catch(done)
+
+      setTimeout(() => {
+        partiesRef.set(sampleParties)
+          .then(() => setTimeout(done, 100))
+          .catch(done)
+      }, 100)
+
+
     });
 
-    after('turn off parties listener', () => {
+    after('turn off parties listener', done => {
       fireboss.database.ref('parties').off()
       partiesSpy.restore()
+      done()
+
+      // breaks tests?
+      // partiesRef.remove()
+      //   .then(() => done())
+      //   .catch(done)
     });
 
-    it('setParties dispatcher has been called once within 500ms', () => {
-      expect(partiesSpy.callCount).to.equal(1)
-    });
+    describe('setParties', () => {
+      it('has been called twice within 200ms', () => {
+        expect(partiesSpy.calledTwice)
+      });
 
-    it('setParties dispatcher has been called with correct data', () => {
-      expect(partiesSpy.calledWithExactly(sampleParties)).to.equal(true)
-    });
+      it('has been called with a value of null', () => {
+        expect(partiesSpy.firstCall.calledWith(null))
+      });
+
+      it('has been called with properly formatted data', () => {
+        expect(partiesSpy.secondCall.calledWith(sampleParties))
+      });
+    })
 
   });
 
@@ -73,112 +89,238 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
     let personalQueueSpy;
 
     before('set up parties listener and update party data', done => {
-      currentSongSpy = sinon.spy(fireboss.dispatchers, 'setCurrentSong');
-      topTenSpy = sinon.spy(fireboss.dispatchers, 'setTopTen');
-      partyDjsSpy = sinon.spy(fireboss.dispatchers, 'setDjs');
-      shadowQueueSpy = sinon.spy(fireboss.dispatchers, 'setShadowQueue');
-      personalQueueSpy = sinon.spy(fireboss.dispatchers, 'setPersonalQueue');
-      // let hostId = "abc123";
-      // set up current song, top_ten, party_djs, personal queue, shadow queue, user
-      fireboss.setUpAllPartyListeners(sampleDjHostId, sampleDjHost)
-      done()
-      let setUpNewParty = Promise.all([partiesRef.set(sampleParties), userPartiesRef.set({[sampleDjHostId]: sampleDjHostId}), partyDjsRef.set({[sampleDjHostId]: sampleDJsInSingleParty})])
+      // set up spies
+      currentSongSpy = spy(fireboss.dispatchers, 'setCurrentSong');
+      topTenSpy = spy(fireboss.dispatchers, 'setTopTen');
+      partyDjsSpy = spy(fireboss.dispatchers, 'setDjs');
+      shadowQueueSpy = spy(fireboss.dispatchers, 'setShadowQueue');
+      personalQueueSpy = spy(fireboss.dispatchers, 'setPersonalQueue');
 
-      let addMusicToPartyPlaylists = Promise.all([currentSongRef.child(sampleDjHostId).set(sampleSong), topTenRef.child(sampleDjHostId).set(sampleTopTenFull), shadowQueueRef.child(sampleDjHostId).set(sampleShadowQueue)])
+      // activate party listeners
+      fireboss.setUpAllPartyListeners(sampleDjHostId, sampleUser);
 
-      Promise.all([setUpNewParty, addMusicToPartyPlaylists])
+      // wait 100ms for initial responses, then udpate db
+      setTimeout(() => {
+        const setFakeParties = partiesRef.set(sampleParties);
+
+        // complete updates, then wait for data updates
+        setFakeParties
         .then(() => {
-          return partyDjsRef.child(sampleParty.id).child(sampleUser.uid).child('personal_queue').set({song1: sampleSong2})
+          const setFakeUserParties = userPartiesRef.set({[sampleDjHostId]: sampleDjHostId});
+          const setFakePartyDjs = partyDjsRef.child(sampleDjHostId).set(fbSamplePartyDjs);
+          const setFakeCurrentSong = currentSongRef.child(sampleDjHostId).set(sampleSong);
+          const setFakeTopTen = topTenRef.child(sampleDjHostId).set(sampleTopTenFull);
+          const setFakeShadowQueue = shadowQueueRef.child(sampleDjHostId).set(fbSampleShadowQueue);
+
+          return Promise.all([setFakeUserParties, setFakePartyDjs, setFakeCurrentSong, setFakeTopTen, setFakeShadowQueue])
         })
-        .then(() => setTimeout(() => done(), 500))
-        .catch(done)
+        .then(() => {
+          setTimeout(done, 100)
+        })
+      }, 100)
+
     });
 
-    after('turn off parties listener', () => {
-      // fireboss.database.ref('parties').off()
+    after('turn off party listeners and clear db', done => {
+      // removing spies
+      currentSongSpy.restore();
+      topTenSpy.restore();
+      partyDjsSpy.restore();
+      shadowQueueSpy.restore();
+      personalQueueSpy.restore();
+
+      // removing listeners
+      fireboss.removePartyListeners(sampleDjHostId, sampleUser)
+
+      // clearing db
+      Promise.all([partiesRef.remove(), userPartiesRef.remove(), partyDjsRef.remove(),
+                  currentSongRef.remove(), topTenRef.remove(), shadowQueueRef.remove()])
+      .then(() => done())
+      .catch(done)
     });
 
-    it('setCurrentSong dispatcher has been called once within 500ms', () => {
-      expect(currentSongSpy.callCount).to.equal(1)
+    describe('setCurrentSong', () => {
+      it('has been called twice within 200ms', () => {
+        expect(currentSongSpy.calledTwice)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(currentSongSpy.firstCall.calledWith(null))
+      });
+
+      it('has been called with properly formatted data', () => {
+        expect(currentSongSpy.secondCall.calledWith(sampleSong))
+      });
     });
 
-    it('currentSong dispatcher has been called with correct data', () => {
-      expect(currentSongSpy.calledWith(sampleSong)).to.equal(true)
+    describe('setTopTen', () => {
+      it('has been called twice within 200ms', () => {
+        expect(topTenSpy.calledTwice)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(topTenSpy.firstCall.calledWith(null))
+      });
+
+      it('has been called with properly formatted data', () => {
+        expect(topTenSpy.secondCall.calledWith(sampleTopTenFull))
+      });
     });
 
-    it('topTen dispatcher has been called once within 500ms', () => {
-      expect(currentSongSpy.callCount).to.equal(1)
+    describe('setShadowQueue', () => {
+      it('has been called twice within 200ms', () => {
+        expect(shadowQueueSpy.calledTwice)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(shadowQueueSpy.firstCall.calledWith(null))
+      });
+
+      it('has been called with properly formatted data', () => {
+        expect(shadowQueueSpy.secondCall.calledWith({song11: sampleSong}))
+      });
     });
 
-    it('topTen dispatcher has been called with correct data', () => {
-      expect(topTenSpy.calledWith(sampleTopTenFull)).to.equal(true)
-    });
+    describe('setDjs', () => {
+      it('has been called twice within 200ms', () => {
+        expect(partyDjsSpy.calledTwice)
+      });
 
-    it('shadowQueue dispatcher has been called once within 500ms', () => {
-      expect(currentSongSpy.callCount).to.equal(1)
-    });
+      it('has been called with a value of null', () => {
+        expect(partyDjsSpy.firstCall.calledWith(null))
+      });
 
-    it('shadowQueue dispatcher has been called with correct data', () => {
-      // check child
-      expect(topTenSpy.calledWith(sampleShadowQueue)).to.equal(true)
-    });
-
-    it('partyDjs dispatcher has been called once within 500ms', () => {
-      expect(currentSongSpy.callCount).to.equal(1)
+      it('has been called with properly formatted data', () => {
+        expect(partyDjsSpy.secondCall.calledWith(fbSamplePartyDjs))
+      });
     });
 
 
+    describe('setPersonalQueue', () => {
+      it('has been called twice within 200ms', () => {
+        expect(personalQueueSpy.calledTwice)
+      });
 
-    it('personalQueue dispatcher has been called once within 500ms', () => {
-      expect(currentSongSpy.callCount).to.equal(1)
+      it('has been called with a value of null', () => {
+        expect(personalQueueSpy.firstCall.calledWith(null))
+      });
+
+      it('has been called with properly formatted data', () => {
+        expect(personalQueueSpy.secondCall.calledWith(fbSamplePartyDjs[sampleUser.uid]['personal_queue']))
+      });
     });
-
-
-
   });
 
 
-  describe('TESTING END PARTY LISTENER', () => {
+  describe('TESTING REMOVE ALL PARTY LISTENERS', () => {
     let currentSongSpy;
     let topTenSpy;
+    let partyDjsSpy;
     let shadowQueueSpy;
-    let Spy;
-    let partiesSpy;
+    let personalQueueSpy;
 
     before('set up parties listener and update party data', done => {
-      let hostId = "abc123";
-      // set up current song, top_ten, party_djs, personal queue, shadow queue, party
-      // fireboss.setUpAllPartyListeners()
-      // --- THEN: delete the party
-      // change current song
-      // change top_ten
-      // change party_djs
-      // change personal queue
-      // change shadow queue
-      // everything called 1x
-      // push to /parties
-      done()
+      // set up spies
+      currentSongSpy = spy(fireboss.dispatchers, 'setCurrentSong');
+      topTenSpy = spy(fireboss.dispatchers, 'setTopTen');
+      partyDjsSpy = spy(fireboss.dispatchers, 'setDjs');
+      shadowQueueSpy = spy(fireboss.dispatchers, 'setShadowQueue');
+      personalQueueSpy = spy(fireboss.dispatchers, 'setPersonalQueue');
+
+      // activate party listeners
+      fireboss.setUpAllPartyListeners(sampleDjHostId, sampleUser);
+
+      // wait 100ms for initial responses, remove, listeners, then udpate db
+      setTimeout(() => {
+        const setFakeParties = partiesRef.set(sampleParties);
+
+        // complete updates, then wait for data updates
+        setFakeParties
+        .then(() => {
+          const setFakeUserParties = userPartiesRef.set({[sampleDjHostId]: sampleDjHostId});
+          const setFakePartyDjs = partyDjsRef.child(sampleDjHostId).set(fbSamplePartyDjs);
+          const setFakeCurrentSong = currentSongRef.child(sampleDjHostId).set(sampleSong);
+          const setFakeTopTen = topTenRef.child(sampleDjHostId).set(sampleTopTenFull);
+          const setFakeShadowQueue = shadowQueueRef.child(sampleDjHostId).set(fbSampleShadowQueue);
+
+          return Promise.all([setFakeUserParties, setFakePartyDjs, setFakeCurrentSong, setFakeTopTen, setFakeShadowQueue])
+        })
+        .then(() => {
+          setTimeout(done, 100)
+        })
+      }, 100)
 
     });
 
-    after('turn off parties listener', () => {
-      // fireboss.database.ref('parties').off()
+    after('turn off party listeners and clear db', done => {
+      // removing spies
+      currentSongSpy.restore();
+      topTenSpy.restore();
+      partyDjsSpy.restore();
+      shadowQueueSpy.restore();
+      personalQueueSpy.restore();
+
+      // removing listeners
+      fireboss.removePartyListeners(sampleDjHostId, sampleUser)
+
+      // clearing db
+      Promise.all([partiesRef.remove(), userPartiesRef.remove(), partyDjsRef.remove(),
+                  currentSongRef.remove(), topTenRef.remove(), shadowQueueRef.remove()])
+      .then(() => done())
+      .catch(done)
     });
 
-    it('setParties dispatcher has been called once within 500ms', () => {
-      // expect(partiesSpy.callCount).to.equal(1)
+    describe('setCurrentSong', () => {
+      it('has been called twice within 200ms', () => {
+        expect(currentSongSpy.calledOnce)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(currentSongSpy.firstCall.calledWith(null))
+      });
     });
 
-    it('setParties dispatcher has been called with correct data', () => {
-      // expect(partiesSpy.calledWithExactly(sampleParties)).to.equal(true)
+    describe('setTopTen', () => {
+      it('has been called twice within 200ms', () => {
+        expect(topTenSpy.calledOnce)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(topTenSpy.firstCall.calledWith(null))
+      });
     });
 
+    describe('setShadowQueue', () => {
+      it('has been called twice within 200ms', () => {
+        expect(shadowQueueSpy.calledOnce)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(shadowQueueSpy.firstCall.calledWith(null))
+      });
+    });
+
+    describe('setDjs', () => {
+      it('has been called twice within 200ms', () => {
+        expect(partyDjsSpy.calledOnce)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(partyDjsSpy.firstCall.calledWith(null))
+      });
+    });
+
+
+    describe('setPersonalQueue', () => {
+      it('has been called twice within 200ms', () => {
+        expect(personalQueueSpy.calledOnce)
+      });
+
+      it('has been called with a value of null', () => {
+        expect(personalQueueSpy.firstCall.calledWith(null))
+      });
+    });
   });
-
-
-
-
-
 
 
 

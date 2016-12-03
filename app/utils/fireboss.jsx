@@ -162,21 +162,19 @@ class Fireboss {
   };
 
   createPartyListener (partyId, type) {
-    switch(type) {
-      case 'current_song':
-        this.database.ref('current_song').child(partyId).on('value', snapshot => {
-          this.dispatchers.setCurrentSong(snapshot.val());
-        });
+    if(type === 'top_ten') {
+      this.database.ref('top_ten').child(partyId).on('value', snapshot => {
+        this.dispatchers.setTopTen(snapshot.val());
+      });
+    } else if (type === 'current_song') {
+      this.database.ref('current_song').child(partyId).on('value', snapshot => {
+        this.dispatchers.setCurrentSong(snapshot.val());
+      });
 
-      case 'top_ten':
-        this.database.ref('top_ten').child(partyId).on('value', snapshot => {
-          this.dispatchers.setTopTen(snapshot.val());
-        });
-
-      case 'party_djs':
-        this.database.ref('party_djs').child(partyId).on('value', snapshot => {
-          this.dispatchers.setDjs(snapshot.val());
-        });
+    } else if (type === 'party_djs') {
+      this.database.ref('party_djs').child(partyId).on('value', snapshot => {
+        this.dispatchers.setDjs(snapshot.val());
+      });
     }
   };
 
@@ -224,6 +222,7 @@ class Fireboss {
           userSongsInSQ[song] = fullShadowQueue[song];
         }
       }
+
       this.dispatchers.setShadowQueue(userSongsInSQ);
     });
   };
@@ -232,7 +231,7 @@ class Fireboss {
     this.database.ref('current_song').child(partyId).off();
     this.database.ref('top_ten').child(partyId).off();
     this.database.ref('party_djs').child(partyId).off();
-    this.getParty(partyId).child('partyEnded').off();
+    this.getParty(partyId).child('active').off();
     this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').off();
     this.database.ref('shadow_queue').child(partyId).off();
     this.getParty(partyId).child('active').off()

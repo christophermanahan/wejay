@@ -43,6 +43,9 @@ export const sampleNewParty = {
   }
 }
 
+export const idForNewSampleParty = "idForNewSampleParty";
+
+
 /*---------- USER ----------*/
 
 // sampleUser is also sampleDjGuest
@@ -210,7 +213,7 @@ export const sampleShadowQueue = {
 
 // will belong to DJ Tom
 export const samplePersonalQueue = {
-  "hashValInPQ1": sampleSong2,
+  "hashValInPQ1": sampleSong2,          //higher priority of the 2
   "hashValInPQ2": sampleSong5
 };
 

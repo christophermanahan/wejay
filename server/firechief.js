@@ -54,7 +54,7 @@ class Firechief {
 
 
 	masterReorder(partyId) {
-		this.setCurrentSong(partyId)
+		return this.setCurrentSong(partyId)
 		.then(() => {
 			return this.pullFromShadowQueue(partyId);
 		})

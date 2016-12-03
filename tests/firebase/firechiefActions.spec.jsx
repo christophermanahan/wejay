@@ -81,9 +81,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
         currentSongRef.set({})
       ];
       Promise.all(clearingParty)
-        .then(() => {
-          done();
-        })
+        .then(() => done())
         .catch(done);
     });
 
@@ -142,7 +140,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 				shadowQueueRef.set({})
 			];
 			Promise.all(clearingParty)
-				.then(done)
+				.then(() => done())
 				.catch(done);
 		});
 
@@ -202,7 +200,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 				shadowQueueRef.set({})
 			];
 			Promise.all(clearingParty)
-				.then(done)
+				.then(() => done())
 				.catch(done);
 		});
 
@@ -266,7 +264,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 
     after('destroy everything', done => {
       const clearingParty = [
-      partiesRef.set({}),
+      	partiesRef.set({}),
         partyDjsRef.set({}),
         currentSongRef.set({}),
         topTenRef.set({}),
@@ -274,36 +272,37 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
         personalQueueRef.set({})
       ];
       Promise.all(clearingParty)
-        .then(done)
+        .then(() => done())
         .catch(done);
     });
 
+		it('updates need song to false', () => {
+			expect(partiesResult.needSong).to.equal(false);
+		});
+
     it('gets highest priority song from Top Ten and sets it to Current Song', () => {
       expect(currentSongResult).to.deep.equal(sampleSongHighestPri);
+			expect(topTenResult.song1).to.be.undefined;
+			const topTenLen = Object.keys(topTenResult).length;
+			expect(topTenLen).to.equal(10);
     });
-
-    it('updates need song to false', () => {
-      expect(needSongResult.needSong).to.equal(false);
-    });
-
-    it('')
 
     it('gets highest priority song from SQ and puts it on the Top Ten', () => {
-      //
-    })
+      expect(topTenResult.song12).to.deep.equal(sampleSongHighestPri);
+			const sqLen = Object.keys(sqResult).length;
+			expect(sqLen).to.equal(3);
+			expect(sqResult.song12).to.be.undefined;
+			expect(sqResult.hashValInPQ1).to.deep.equal(sampleSong2);
+    });
 
+		it('pulls song from Personal Queue of user whose song was just pulled from the Shadoq Queue', () => {
+			const pqLen = Object.keys(pqResult).length;
+			expect(pqLen).to.equal(1);
+			expect(pqResult.hashValInPQ1).to.be.undefined;
+			expect(pqResult.hashValInPQ2).to.deep.equal(sampleSong5)
+    });
 
-
-
-
-
-  })
-
-
-
-
-
-
+  });
 
 
 });

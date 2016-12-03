@@ -79,7 +79,6 @@ export const sampleDjGuest = {
 };
 export const sampleDjGuestId = "tomsUserId";
 
-
 export const sampleDj = {
   "dj_name" : "DJ Shane",
   "dj_points" : 2,
@@ -101,7 +100,6 @@ export const samplePartyDjs = {
   [sampleDjGuestId]: sampleDjGuest,
   [sampleDjId]: sampleDj
 };
-
 
 /*---------- SONGS ----------*/
 
@@ -211,6 +209,11 @@ export const sampleShadowQueue = {
   song13: sampleSong3
 };
 
+export const fbSampleShadowQueue = {
+  song11: sampleSong,
+  song13: sampleSong3
+};
+
 // will belong to DJ Tom
 export const samplePersonalQueue = {
   "hashValInPQ1": sampleSong2,          //higher priority of the 2
@@ -234,3 +237,18 @@ export const sampleSearchResults = [
 	sampleSearchResult,
 	sampleSearchResult
 ]
+
+
+const fbSampleDjGuest = {
+  dj_name: "DJ Tom",
+  dj_points: 14,
+  photo: "https://image.freepik.com/free-icon/dj-boy-playing-music_318-29813.png",
+  uid: "tomsUserId",
+  personal_queue: samplePersonalQueue
+};
+
+export const fbSamplePartyDjs = {
+  [sampleDjHostId]: sampleDjHost,
+  [sampleDjGuestId]: fbSampleDjGuest,
+  [sampleDjId]: sampleDj
+};

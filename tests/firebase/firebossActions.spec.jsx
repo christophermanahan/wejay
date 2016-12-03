@@ -260,18 +260,20 @@ describe('---------- FIREBOSS TESTS ----------', () => {
   });
 
   describe('TESTING LOG OUT METHOD', () => {
-    let partyId = sampleDjHost.uid;
     let partiesResult, userPartiesResult, partyDjsResult;
 
     describe("TESTING GUEST USER LOGOUT", () => {
+      let sampleDjHostCopy = Object.assign({}, sampleDjHost)
+      let samplePartyCopy = Object.assign({}, sampleParty2)
+      let partyId = sampleDjHostCopy.uid;
 
       before('create the party with a host and add a guest user to it', done => {
         const setUpParty = [
-          partiesRef.set({[sampleDjHost.uid]: sampleParty2}),
-          userPartiesRef.set({[sampleDjHost.uid]: sampleDjHost.uid}),
-          partyDjsRef.set({[sampleDjHost.uid]: {[sampleDjHost.uid]: sampleDjHost}}),
-          userPartiesRef.update({[sampleUser.uid]: sampleDjHost.uid}),
-          partyDjsRef.update({[sampleDjHost.uid]: {[sampleUser.uid]: sampleUser}})
+          partiesRef.set({[sampleDjHostCopy.uid]: samplePartyCopy}),
+          userPartiesRef.set({[sampleDjHostCopy.uid]: sampleDjHostCopy.uid}),
+          partyDjsRef.set({[sampleDjHostCopy.uid]: {[sampleDjHostCopy.uid]: sampleDjHostCopy}}),
+          userPartiesRef.update({[sampleUser.uid]: sampleDjHostCopy.uid}),
+          partyDjsRef.update({[sampleDjHostCopy.uid]: {[sampleUser.uid]: sampleUser}})
         ]
 
         Promise.all(setUpParty)
@@ -285,7 +287,6 @@ describe('---------- FIREBOSS TESTS ----------', () => {
             partiesResult = resultsArr[0].val();
             userPartiesResult = resultsArr[1].val();
             partyDjsResult = resultsArr[2].val();
-            console.log(partyDjsResult)
             done()
           })
           .catch(done)
@@ -294,10 +295,10 @@ describe('---------- FIREBOSS TESTS ----------', () => {
       after('destroy everything', done => {
         fireboss.removePartyListeners(partyId, sampleUser)
         Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
-        .then(() => {
-          done();
-        })
-        .catch(done)
+          .then(() => {
+            done();
+          })
+          .catch(done)
       });
 
       it('the host party remains active', () => {
@@ -316,14 +317,18 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     });
 
     // describe("TESTING HOST USER LOGOUT", () => {
+    //   let sampleDjHostCopy = Object.assign({}, sampleDjHost)
+    //   let samplePartyCopy = Object.assign({}, sampleParty2)
+    //   let partyId = sampleDjHost.uid;
+
     //   before('create the party with a host and add a guest user to it', done => {
     //     const setUpParty = [
-    //       partiesRef.set({[sampleDjHost.uid]: sampleParty2}),
-    //       userPartiesRef.set({[sampleDjHost.uid]: sampleDjHost.uid}),
-    //       partyDjsRef.set({[sampleDjHost.uid]: {[sampleDjHost.uid]: sampleDjHost}}),
-    //       userPartiesRef.update({[sampleUser.uid]: sampleDjHost.uid}),
-    //       partyDjsRef.update({[sampleDjHost.uid]: {[sampleUser.uid]: sampleUser}})
-    //     ]
+        //   partiesRef.set({[sampleDjHostCopy.uid]: samplePartyCopy}),
+        //   userPartiesRef.set({[sampleDjHostCopy.uid]: sampleDjHostCopy.uid}),
+        //   partyDjsRef.set({[sampleDjHostCopy.uid]: {[sampleDjHostCopy.uid]: sampleDjHostCopy}}),
+        //   userPartiesRef.update({[sampleUser.uid]: sampleDjHostCopy.uid}),
+        //   partyDjsRef.update({[sampleDjHostCopy.uid]: {[sampleUser.uid]: sampleUser}})
+        // ]
 
     //     Promise.all(setUpParty)
     //       .then(() => {

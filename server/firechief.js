@@ -132,66 +132,65 @@ class Firechief {
 	/*----------------------  HELPER SETTERS  -------------------------*/
 
 	// below is a more heavy-handed version that may over-write changes in the queue
-	// it passes spec but is inferior to the .transaction solution 
+	// we have the .transaction solution (less reliable) commented out below
 
-	// incrementerHelper(pid, queue) {
+	incrementerHelper(pid, queue) {
 
-	// 	const addOne = songsInQueue => {
-	// 		if (!songsInQueue) return;
+		const addOne = songsInQueue => {
+			const keys = Object.keys(songsInQueue);
 
-	// 		const keys = Object.keys(songsInQueue);
+			keys.forEach(key => {
+				songsInQueue[key].time_priority++;
+			});
+			return songsInQueue;
+		};
 
-	// 		keys.forEach(key => {
-	// 			songsInQueue[key].time_priority++;
-	// 		});
-	// 		return songsInQueue;
+		this.db.ref(queue).child(pid).once('value')
+		.then(snapshot => {
+			const songs = snapshot && snapshot.val();
+			if (!songs) return;
+
+			const newSongs = addOne(songs);
+			return this.db.ref(queue).child(pid).set(newSongs);
+		})
+		.then(() => {})
+		.catch(console.error);
+	}
+
+	// incrementerHelper(partyId, queue) {
+
+	// 	const plusOne = timePriority => {
+	// 		return (timePriority || 0) + 1;
 	// 	};
 
-	// 	this.db.ref(queue).child(pid).once('value')
+	// 	const onSuccess = success => {};
+
+	// 	const onFailure = failure => {
+	// 		console.error('FAILED TO UPDATE!');
+	// 	};
+
+	// 	this.db.ref(queue).child(partyId).once('value')
 	// 	.then(snapshot => {
-	// 		if (!snapshot && snapshot.val()) return;
-
-	// 		const newSongs = addOne(snapshot.val());
-	// 		return this.db.ref(queue).child(pid).set(newSongs);
+	// 		const fullQueue = snapshot && snapshot.val();
+	// 		if (!fullQueue) return;
+	// 		return Object.keys(fullQueue);
 	// 	})
-	// 	.then(() => {})
+	// 	.then(songKeys => {
+	// 		if (!songKeys) return;
+	// 		const transactionPromises = songKeys.map(key => {
+	// 			return this.db.ref(queue).child(partyId).child(key).child('time_priority')
+	// 								 .transaction(plusOne).then(onSuccess, onFailure);
+	// 		});
+
+	// 		return Promise.all(transactionPromises);
+
+	// 	})
+	// 	.then(data => {
+	// 		// console.log('finished incrementing!');
+	// 	})
 	// 	.catch(console.error);
+
 	// }
-
-	incrementerHelper(partyId, queue) {
-
-		const plusOne = timePriority => {
-			return (timePriority || 0) + 1;
-		};
-
-		const onSuccess = success => {};
-
-		const onFailure = failure => {
-			console.error('FAILED TO UPDATE!');
-		};
-
-		this.db.ref(queue).child(partyId).once('value')
-		.then(snapshot => {
-			const fullQueue = snapshot && snapshot.val();
-			if (!fullQueue) return;
-			return Object.keys(fullQueue);
-		})
-		.then(songKeys => {
-			if (!songKeys) return;
-			const transactionPromises = songKeys.map(key => {
-				return this.db.ref(queue).child(partyId).child(key).child('time_priority')
-									 .transaction(plusOne).then(onSuccess, onFailure);
-			});
-
-			return Promise.all(transactionPromises);
-
-		})
-		.then(data => {
-			// console.log('finished incrementing!');
-		})
-		.catch(console.error);
-
-	}
 
 	setNeedSongToFalse(partyId) {
 		return this.db.ref('parties').child(partyId).update({ needSong: false });

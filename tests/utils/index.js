@@ -210,6 +210,8 @@ export const sampleShadowQueue = {
   song13: sampleSong3
 };
 
+export const sqSong2 = Object.assign({}, sampleSong, {uid: sampleUser.uid})
+
 export const sampleSQBefore = {
   firstsong: sampleSongHighestPri,
   secondsong: sampleSong3,
@@ -246,9 +248,8 @@ export const sampleTTAfter = {  // increment all by 5
   num10: Object.assign({}, sampleSongHighestPri, {time_priority: 15})
 }
 
-
 export const fbSampleShadowQueue = {
-  song11: sampleSong,
+  song12: sqSong2,
   song13: sampleSong3
 };
 

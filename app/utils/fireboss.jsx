@@ -221,6 +221,7 @@ class Fireboss {
           userSongsInSQ[song] = fullShadowQueue[song];
         }
       }
+
       this.dispatchers.setShadowQueue(userSongsInSQ);
     });
   };
@@ -229,7 +230,7 @@ class Fireboss {
     this.database.ref('current_song').child(partyId).off();
     this.database.ref('top_ten').child(partyId).off();
     this.database.ref('party_djs').child(partyId).off();
-    this.getParty(partyId).child('partyEnded').off();
+    this.getParty(partyId).child('active').off();
     this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').off();
     this.database.ref('shadow_queue').child(partyId).off();
     this.getParty(partyId).child('active').off()

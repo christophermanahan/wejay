@@ -10,20 +10,26 @@
 class Firechief {
 	constructor(db) {
 		this.db = db;
-		this.incrementers = [];
+		this.incrementers = {};
 
 		this.incrementerHelper = this.incrementerHelper.bind(this);
 	}
 
 	/*---------------------- CORE LISTENERS -------------------------*/
 
-	createPartyAddedListener() {
+	createPartyAddedListener(topTenInterval, sqInterval) {
 		const partiesRef = this.db.ref('parties');
 
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
 			this.createNewPartyListener(partyId);
+			if (topTenInterval) {
+				this.createTimePriorityIncrementer(partyId, topTenInterval, 'top_ten');
+			}
+			if (sqInterval) {
+				this.createTimePriorityIncrementer(partyId, sqInterval, 'shadow_queue');
+			}
 		});
 	}
 
@@ -34,6 +40,8 @@ class Firechief {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
 			this.removePartyListener(partyId);
+			this.removeTimePriorityIncrementer(partyId, 'top_ten');
+			this.removeTimePriorityIncrementer(partyId, 'shadow_queue');
 		});
 	}
 
@@ -179,7 +187,7 @@ class Firechief {
 
 		})
 		.then(data => {
-			console.log('finished incrementing!');
+			// console.log('finished incrementing!');
 		})
 		.catch(console.error);
 

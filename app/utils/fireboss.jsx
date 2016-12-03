@@ -248,8 +248,10 @@ class Fireboss {
   };
 
   getCurrentPartySnapshot (partyId) {
-    return this.getParty(partyId).once('value', snapshot => {
-      this.dispatchers.setCurrentParty(snapshot.val());
+    return this.getParty(partyId).on('value', snapshot => {
+      const party = snapshot && snapshot.val()
+      if(!party) return;
+      this.dispatchers.setCurrentParty(party);
     });
   };
 

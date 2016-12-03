@@ -137,7 +137,7 @@ class CustomPlayer extends React.Component {
       // has been received from SoundCloud
 
       //isPLaying is always false with this below....
-      // if(nextProps.currentParty.isPlaying === true){
+      // if(!nextProps.currentParty.isPlaying){
       //   this.play()
       // }
 

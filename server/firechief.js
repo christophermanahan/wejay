@@ -10,17 +10,26 @@
 class Firechief {
 	constructor(db) {
 		this.db = db;
+		this.incrementers = {};
+
+		this.incrementerHelper = this.incrementerHelper.bind(this);
 	}
 
 	/*---------------------- CORE LISTENERS -------------------------*/
 
-	createPartyAddedListener() {
+	createPartyAddedListener(topTenInterval, sqInterval) {
 		const partiesRef = this.db.ref('parties');
 
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
 			this.createNewPartyListener(partyId);
+			if (topTenInterval) {
+				this.createTimePriorityIncrementer(partyId, topTenInterval, 'top_ten');
+			}
+			if (sqInterval) {
+				this.createTimePriorityIncrementer(partyId, sqInterval, 'shadow_queue');
+			}
 		});
 	}
 
@@ -31,6 +40,8 @@ class Firechief {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
 			this.removePartyListener(partyId);
+			this.removeTimePriorityIncrementer(partyId, 'top_ten');
+			this.removeTimePriorityIncrementer(partyId, 'shadow_queue');
 		});
 	}
 
@@ -48,6 +59,19 @@ class Firechief {
 
 	removePartyListener(partyId) {
 		this.db.ref('parties').child(partyId).off();
+	}
+
+	/*---------------------- TIME PRIORITY -------------------------*/
+
+	createTimePriorityIncrementer(partyId, interval, queue) {
+		this.incrementers[partyId] = this.incrementers[partyId] || {};
+		this.incrementers[partyId][queue] = setInterval(this.incrementerHelper, interval, partyId, queue);
+
+	}
+
+	removeTimePriorityIncrementer(partyId, queue) {
+		clearInterval(this.incrementers[partyId][queue]);
+		this.incrementers[partyId][queue] = null;
 	}
 
 	/*---------------------- CORE RE-ORDERING -------------------------*/
@@ -107,6 +131,67 @@ class Firechief {
 
 	/*----------------------  HELPER SETTERS  -------------------------*/
 
+	// below is a more heavy-handed version that may over-write changes in the queue
+	// it passes spec but is inferior to the .transaction solution 
+
+	// incrementerHelper(pid, queue) {
+
+	// 	const addOne = songsInQueue => {
+	// 		if (!songsInQueue) return;
+
+	// 		const keys = Object.keys(songsInQueue);
+
+	// 		keys.forEach(key => {
+	// 			songsInQueue[key].time_priority++;
+	// 		});
+	// 		return songsInQueue;
+	// 	};
+
+	// 	this.db.ref(queue).child(pid).once('value')
+	// 	.then(snapshot => {
+	// 		if (!snapshot && snapshot.val()) return;
+
+	// 		const newSongs = addOne(snapshot.val());
+	// 		return this.db.ref(queue).child(pid).set(newSongs);
+	// 	})
+	// 	.then(() => {})
+	// 	.catch(console.error);
+	// }
+
+	incrementerHelper(partyId, queue) {
+
+		const plusOne = timePriority => {
+			return (timePriority || 0) + 1;
+		};
+
+		const onSuccess = success => {};
+
+		const onFailure = failure => {
+			console.error('FAILED TO UPDATE!');
+		};
+
+		this.db.ref(queue).child(partyId).once('value')
+		.then(snapshot => {
+			const fullQueue = snapshot && snapshot.val();
+			if (!fullQueue) return;
+			return Object.keys(fullQueue);
+		})
+		.then(songKeys => {
+			if (!songKeys) return;
+			const transactionPromises = songKeys.map(key => {
+				return this.db.ref(queue).child(partyId).child(key).child('time_priority')
+									 .transaction(plusOne).then(onSuccess, onFailure);
+			});
+
+			return Promise.all(transactionPromises);
+
+		})
+		.then(data => {
+			// console.log('finished incrementing!');
+		})
+		.catch(console.error);
+
+	}
 
 	setNeedSongToFalse(partyId) {
 		return this.db.ref('parties').child(partyId).update({ needSong: false });

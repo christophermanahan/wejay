@@ -209,8 +209,10 @@ export const sampleShadowQueue = {
   song13: sampleSong3
 };
 
+export const sqSong2 = Object.assign({}, sampleSong, {uid: sampleUser.uid})
+
 export const fbSampleShadowQueue = {
-  song11: sampleSong,
+  song12: sqSong2,
   song13: sampleSong3
 };
 

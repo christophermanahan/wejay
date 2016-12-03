@@ -43,38 +43,38 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
 
     before('set up parties listener and update party data', done => {
       partiesSpy = spy(fireboss.dispatchers, 'setParties')
-      fireboss.createPartiesListener()
 
-      setTimeout(() => {
-        partiesRef.set(sampleParties)
-          .then(() => setTimeout(done, 500))
-          .catch(done)
-      }, 500)
-
-
+      partiesRef.set(sampleParties)
+        .then(() => {
+          fireboss.createPartiesListener()
+          return new Promise((res, rej) => {
+            setTimeout(res, 500);
+          })
+        })
+        .then(() => { done() })
+        .catch(done)
     });
 
     after('turn off parties listener', done => {
+      // turn off listener
       fireboss.database.ref('parties').off()
+
+      // turn off spy
       partiesSpy.restore()
 
-      // breaks tests?
+      // clear db
       partiesRef.remove()
-        .then(() => done())
+        .then(() => { done() })
         .catch(done)
     });
 
     describe('setParties', () => {
       it('has been called once within 500ms', () => {
-        expect(partiesSpy.calledOnce)
-      });
-
-      it('has been called with a value of null', () => {
-        expect(partiesSpy.firstCall.calledWith(null))
+        expect(partiesSpy.calledOnce).to.be.true
       });
 
       it('has been called with properly formatted data', () => {
-        expect(partiesSpy.secondCall.calledWith(sampleParties))
+        expect(partiesSpy.calledWith(sampleParties)).to.be.true
       });
     })
 
@@ -117,6 +117,29 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
           .then(() => { done() })
           .catch(done)
       })
+
+
+      after('turn off party listeners and clear db', done => {
+        // removing listeners
+        fireboss.removePartyListeners(sampleDjHostId, sampleUser)
+
+        // clearing db
+        const clearingDB = Promise.all([partiesRef.remove(),
+                                    userPartiesRef.remove(),
+                                    partyDjsRef.remove(),
+                                    currentSongRef.remove(),
+                                    topTenRef.remove(),
+                                    shadowQueueRef.remove()])
+        clearingDB
+          .then(() => {
+            // wait for listeners to hear the clearing of the db
+            return new Promise((res, rej) => {
+              setTimeout(res, 500);
+            })
+          })
+          .then(() => { done() })
+          .catch(done)
+      });
 
       describe('setCurrentSong', () => {
         it('has been called once within 500ms', () => {
@@ -169,31 +192,18 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
         });
       });
 
-
-      after('turn off party listeners and clear db', done => {
-        // removing listeners
-        fireboss.removePartyListeners(sampleDjHostId, sampleUser)
-
-        // clearing db
-        const clearingDB = Promise.all([partiesRef.remove(),
-                                    userPartiesRef.remove(),
-                                    partyDjsRef.remove(),
-                                    currentSongRef.remove(),
-                                    topTenRef.remove(),
-                                    shadowQueueRef.remove()])
-        clearingDB
-          .then(() => {
-            // wait for listeners to hear the clearing of the db
-            return new Promise((res, rej) => {
-              setTimeout(res, 500);
-            })
-          })
-          .then(() => { done() })
-          .catch(done)
-      });
     });
 
     describe('testing listener tear down', () => {
+
+      after('turn off spies ', () => {
+        // removing spies
+        currentSongSpy.restore();
+        topTenSpy.restore();
+        partyDjsSpy.restore();
+        shadowQueueSpy.restore();
+        personalQueueSpy.restore();
+      });
 
       describe('setCurrentSong', () => {
         it('did not dispatch after the listeners were removed', () => {
@@ -225,14 +235,6 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
         });
       });
 
-      after('turn off spies ', () => {
-        // removing spies
-        currentSongSpy.restore();
-        topTenSpy.restore();
-        partyDjsSpy.restore();
-        shadowQueueSpy.restore();
-        personalQueueSpy.restore();
-      });
     });
   });
 })

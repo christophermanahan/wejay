@@ -56,12 +56,12 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
     after('turn off parties listener', done => {
       fireboss.database.ref('parties').off()
       partiesSpy.restore()
-      done()
+      // done()
 
       // breaks tests?
-      // partiesRef.remove()
-      //   .then(() => done())
-      //   .catch(done)
+      partiesRef.remove()
+        .then(() => done())
+        .catch(done)
     });
 
     describe('setParties', () => {
@@ -96,30 +96,34 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
       shadowQueueSpy = spy(fireboss.dispatchers, 'setShadowQueue');
       personalQueueSpy = spy(fireboss.dispatchers, 'setPersonalQueue');
 
+
+      const setFakeParties = partiesRef.set(sampleParties);
+
+      setFakeParties
+        .then(() => {
+          fireboss.setUpAllPartyListeners(sampleDjHostId, sampleUser);
+            setTimeout(() => {
+                const setFakeUserParties = userPartiesRef.set({[sampleDjHostId]: sampleDjHostId});
+                const setFakePartyDjs = partyDjsRef.child(sampleDjHostId).set(fbSamplePartyDjs);
+                const setFakeCurrentSong = currentSongRef.child(sampleDjHostId).set(sampleSong);
+                const setFakeTopTen = topTenRef.child(sampleDjHostId).set(sampleTopTenFull);
+                const setFakeShadowQueue = shadowQueueRef.child(sampleDjHostId).set(fbSampleShadowQueue);
+
+                Promise.all([setFakeUserParties, setFakePartyDjs, setFakeCurrentSong, setFakeTopTen, setFakeShadowQueue])
+                  .then(() => {
+                    setTimeout(done, 500)
+                  })
+              })
+            }, 500)
+    })
+
       // activate party listeners
-      fireboss.setUpAllPartyListeners(sampleDjHostId, sampleUser);
+
 
       // wait 100ms for initial responses, then udpate db
-      setTimeout(() => {
-        const setFakeParties = partiesRef.set(sampleParties);
 
-        // complete updates, then wait for data updates
-        setFakeParties
-        .then(() => {
-          const setFakeUserParties = userPartiesRef.set({[sampleDjHostId]: sampleDjHostId});
-          const setFakePartyDjs = partyDjsRef.child(sampleDjHostId).set(fbSamplePartyDjs);
-          const setFakeCurrentSong = currentSongRef.child(sampleDjHostId).set(sampleSong);
-          const setFakeTopTen = topTenRef.child(sampleDjHostId).set(sampleTopTenFull);
-          const setFakeShadowQueue = shadowQueueRef.child(sampleDjHostId).set(fbSampleShadowQueue);
 
-          return Promise.all([setFakeUserParties, setFakePartyDjs, setFakeCurrentSong, setFakeTopTen, setFakeShadowQueue])
-        })
-        .then(() => {
-          setTimeout(done, 100)
-        })
-      }, 100)
 
-    });
 
     after('turn off party listeners and clear db', done => {
       // removing spies
@@ -177,7 +181,8 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
       });
 
       it('has been called with properly formatted data', () => {
-        expect(shadowQueueSpy.secondCall.calledWith({song11: sampleSong}))
+        // console.log({song11: sampleSong})
+        // gitexpect(shadowQueueSpy.secondCall.calledWithMatch())
       });
     });
 
@@ -246,9 +251,9 @@ describe('------ FIREBOSS LISTENER TESTS ------', () => {
           return Promise.all([setFakeUserParties, setFakePartyDjs, setFakeCurrentSong, setFakeTopTen, setFakeShadowQueue])
         })
         .then(() => {
-          setTimeout(done, 100)
+          setTimeout(done, 500)
         })
-      }, 100)
+      }, 500)
 
     });
 

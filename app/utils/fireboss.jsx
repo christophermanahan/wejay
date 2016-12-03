@@ -162,21 +162,18 @@ class Fireboss {
   };
 
   createPartyListener (partyId, type) {
-    switch(type) {
-      case 'current_song':
-        return this.database.ref('current_song').child(partyId).on('value', snapshot => {
-          this.dispatchers.setCurrentSong(snapshot.val());
-        });
-
-      case 'top_ten':
-        return this.database.ref('top_ten').child(partyId).on('value', snapshot => {
-          this.dispatchers.setTopTen(snapshot.val());
-        });
-
-      case 'party_djs':
-        return this.database.ref('party_djs').child(partyId).on('value', snapshot => {
-          this.dispatchers.setDjs(snapshot.val());
-        });
+    if (type === 'current_song') { 
+      return this.database.ref('current_song').child(partyId).on('value', snapshot => {
+        this.dispatchers.setCurrentSong(snapshot.val());
+      });
+    } else if ( type === 'top_ten') {
+      return this.database.ref('top_ten').child(partyId).on('value', snapshot => {
+        this.dispatchers.setTopTen(snapshot.val());
+      }); 
+    } else {
+      return this.database.ref('party_djs').child(partyId).on('value', snapshot => {
+        this.dispatchers.setDjs(snapshot.val());
+      });
     }
   };
 

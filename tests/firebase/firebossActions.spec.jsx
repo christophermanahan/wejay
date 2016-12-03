@@ -4,7 +4,7 @@ import Fireboss from '../../app/utils/fireboss';
 import { expect } from 'chai';
 
 import { dispatchers } from '../utils/firebossTest';
-import { sampleParty, sampleDj, sampleUser, sampleSong, sampleSong2, sampleTopTenFull } from '../utils';
+import { sampleParty, sampleParty2, sampleDj, sampleDjHost, sampleUser, sampleSong, sampleSong2, sampleSong6, sampleTopTenFull } from '../utils';
 
 const browserHistory = [];
 
@@ -259,30 +259,22 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     });
   });
 
-
-  // LOG OUT
-  // -- removes user from user_parties
-  // -- removes user from party_djs
-  // -- if host, destroys entire party and everything to do with it
-  // -- pushes to '/signup'
-
   describe('TESTING LOG OUT METHOD', () => {
-    let hostId = "abc123";
-    let partyId = hostId;
+    let partyId = sampleDjHost.uid;
     let partiesResult, userPartiesResult, partyDjsResult;
 
     describe("TESTING GUEST USER LOGOUT", () => {
+
       before('create the party with a host and add a guest user to it', done => {
         const setUpParty = [
-          partiesRef.set({[hostId]: sampleParty}),
-          userPartiesRef.set({[hostId]: hostId}),
-          partyDjsRef.set({[hostId]: {[hostId]: sampleDj}})
+          partiesRef.set({[sampleDjHost.uid]: sampleParty2}),
+          userPartiesRef.set({[sampleDjHost.uid]: sampleDjHost.uid}),
+          partyDjsRef.set({[sampleDjHost.uid]: {[sampleDjHost.uid]: sampleDjHost}}),
+          userPartiesRef.update({[sampleUser.uid]: sampleDjHost.uid}),
+          partyDjsRef.update({[sampleDjHost.uid]: {[sampleUser.uid]: sampleUser}})
         ]
 
         Promise.all(setUpParty)
-          .then(() => {
-            return fireboss.joinParty(partyId, sampleUser)
-          })
           .then(() => {
             return fireboss.logOut(partyId, sampleUser)
           })
@@ -292,16 +284,14 @@ describe('---------- FIREBOSS TESTS ----------', () => {
           .then(resultsArr => {
             partiesResult = resultsArr[0].val();
             userPartiesResult = resultsArr[1].val();
-            console.log(userPartiesResult)
             partyDjsResult = resultsArr[2].val();
+            console.log(partyDjsResult)
             done()
           })
           .catch(done)
       });
 
       after('destroy everything', done => {
-        browserHistory.pop()
-        browserHistory.pop()
         fireboss.removePartyListeners(partyId, sampleUser)
         Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
         .then(() => {
@@ -310,39 +300,181 @@ describe('---------- FIREBOSS TESTS ----------', () => {
         .catch(done)
       });
 
-      it('pushes the user to /login', () => {
-        expect(browserHistory[0]).to.equal('/app');
-        expect(browserHistory[1]).to.equal('/login');
-        expect(browserHistory[2]).to.equal(undefined);
+      it('the host party remains active', () => {
+        expect(Object.keys(partiesResult)).to.have.length.of(1);
       });
 
-      it('removes the user from user_parties', () => {
+      it('removes the guest user from user_parties', () => {
         expect(Object.keys(userPartiesResult)).to.have.length.of(1);
       });
 
-      it('removes the user from party_djs', () => {
+      it('removes the guest user from party_djs', () => {
         expect(Object.keys(partyDjsResult)).to.have.length.of(1)
         expect(Object.keys(partyDjsResult[partyId])).to.have.length.of(1)
         expect(partyDjsResult[partyId][sampleUser.uid]).to.equal(undefined)
       });
     });
+
+    // describe("TESTING HOST USER LOGOUT", () => {
+    //   before('create the party with a host and add a guest user to it', done => {
+    //     const setUpParty = [
+    //       partiesRef.set({[sampleDjHost.uid]: sampleParty2}),
+    //       userPartiesRef.set({[sampleDjHost.uid]: sampleDjHost.uid}),
+    //       partyDjsRef.set({[sampleDjHost.uid]: {[sampleDjHost.uid]: sampleDjHost}}),
+    //       userPartiesRef.update({[sampleUser.uid]: sampleDjHost.uid}),
+    //       partyDjsRef.update({[sampleDjHost.uid]: {[sampleUser.uid]: sampleUser}})
+    //     ]
+
+    //     Promise.all(setUpParty)
+    //       .then(() => {
+    //         return fireboss.logOut(partyId, sampleDjHost)
+    //       })
+    //       .then(() => {
+    //         return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')])
+    //       })
+    //       .then(resultsArr => {
+    //         partiesResult = resultsArr[0].val();
+    //         userPartiesResult = resultsArr[1].val();
+    //         partyDjsResult = resultsArr[2].val();
+    //         done()
+    //       })
+    //       .catch(done)
+    //   });
+
+    //   after('destroy everything', done => {
+    //     fireboss.removePartyListeners(partyId, sampleUser)
+    //     Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
+    //     .then(() => {
+    //       done();
+    //     })
+    //     .catch(done)
+    //   });
+
+    //   it('removes the party from user_parties', () => {
+    //     expect(userPartiesResult).to.equal(null)
+    //   });
+
+    //   it('removes the party from party_djs', () => {
+    //     expect(partyDjsResult).to.equal(null)
+    //   });
+    // });
   });
+
+//   describe('TESTING INCREMENT SONG VOTE METHOD', () => {
+//     let topTenResult;
+//     let hostId = "abc123";
+//     let songHash = "xyz123"
+//     let partyId = hostId;
+
+//     before('create a new party with only the host and a song in the top ten', done => {
+//       const setUpParty = [
+//         partiesRef.set({[hostId]: sampleParty}),
+//         userPartiesRef.set({[hostId]: hostId}),
+//         partyDjsRef.set({[hostId]: {[hostId]: sampleDj}}),
+//         topTenRef.set({[hostId] : {[songHash] : sampleSong6}})
+//       ]
+
+//       Promise.all(setUpParty)
+//         .then(() => {
+//           return fireboss.incrementVotePriority(partyId, sampleSong6.uid);
+//         })
+//         .then(() => {
+//           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
+//         })
+//         .then(results => {
+//           topTenResult = results[0].val();
+//           partyDjsResult = results[1].val();
+//         })
+//     });
+
+//     after('destroy everything', done => {
+//       fireboss.removePartyListeners(partyId, sampleUser)
+//       const clear1 = partiesRef.set({})
+//       const clear2 = userPartiesRef.set({})
+//       const clear3 = partyDjsRef.set({})
+//       Promise.all([clear1, clear2 , clear3])
+//         .then(() => {
+//           done()
+//         })
+//         .catch(done)
+//     });
+
+//     afterEach('destroy party queues', done => {
+//       fireboss.removePartyListeners(partyId, sampleUser)
+//       topTenRef.set({})
+//         .then(() => {
+//           done()
+//         })
+//         .catch(done)
+//     });
+
+//     it('upvotes the current song in the top ten', done => {
+//       expect(topTenResult.songHash.vote_priority).to.equal(1)
+//     });
+
+//     it('increases the dj points of the user who added the song', done => {
+//       expect(partyDjsResult.hostId.hostId.dj_points).to.equal(1)
+//     });
+//   });
+// describe('TESTING DECREMENT SONG VOTE METHOD', () => {
+//     let topTenResult;
+//     let hostId = "abc123";
+//     let songHash = "xyz123"
+//     let partyId = hostId;
+
+//     before('create a new party with only the host and a song in the top ten', done => {
+//       const setUpParty = [
+//         partiesRef.set({[hostId]: sampleParty}),
+//         userPartiesRef.set({[hostId]: hostId}),
+//         partyDjsRef.set({[hostId]: {[hostId]: sampleDj}}),
+//         topTenRef.set({[hostId] : {[songHash] : sampleSong6}})
+//       ]
+
+//       Promise.all(setUpParty)
+//         .then(() => {
+//           return fireboss.decrementVotePriority(partyId, sampleSong6.uid);
+//         })
+//         .then(() => {
+//           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
+//         })
+//         .then(results => {
+//           topTenResult = results[0].val();
+//           partyDjsResult = results[1].val();
+//         })
+//     });
+
+//     after('destroy everything', done => {
+//       fireboss.removePartyListeners(partyId, sampleUser)
+//       const clear1 = partiesRef.set({})
+//       const clear2 = userPartiesRef.set({})
+//       const clear3 = partyDjsRef.set({})
+//       Promise.all([clear1, clear2 , clear3])
+//         .then(() => {
+//           done()
+//         })
+//         .catch(done)
+//     });
+
+//     afterEach('destroy party queues', done => {
+//       fireboss.removePartyListeners(partyId, sampleUser)
+//       topTenRef.set({})
+//         .then(() => {
+//           done()
+//         })
+//         .catch(done)
+//     });
+
+//     it('upvotes the current song in the top ten', done => {
+//       expect(topTenResult.songHash.vote_priority).to.equal(-1)
+//     });
+
+//     it('increases the dj points of the user who added the song', done => {
+//       expect(partyDjsResult.hostId.hostId.dj_points).to.equal(-1)
+//     });
+//   });
 });
 
 
-  // LEAVE PARTY
-  // -- removes user from user_parties
-  // -- removes user from party_djs
-  // -- if host, destroys entire party and everything to do with it
-  // -- pushes to '/parties'
-
-  // guest logout
-  // before once create party with a host and 1 guest
-  // save state 1
-  // have guest user logout
-  // save state 2
-  // state 1 has two users
-  // state 2 has host user only
 
   //INCREMENT LIKES
     // -- increases dj points

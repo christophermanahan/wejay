@@ -33,6 +33,14 @@ export const sampleParty = {
     needSong: false
 }
 
+export const sampleParty2 = {
+    active: true,
+    id: "dillonsUserIdwhichisalsothepartyid",
+    location: "5 Hanover Sq",
+    name: "Dillon's ppppparty",
+    needSong: false
+}
+
 export const sampleNewParty = {
   "idForNewSampleParty" : {
     active: true,
@@ -83,6 +91,7 @@ export const sampleDj = {
   "photo" : "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
   "uid" : "shanesUserId"
 };
+
 export const sampleDjId = "shanesUserId";
 
 
@@ -149,6 +158,16 @@ export const sampleSong5 = {
   "vote_priority" : 0
 }
 
+export const sampleSong6 = {
+  "artist" : "more puppies",
+  "artwork_url" : "whatever.com/jpg",
+  "dj_name" : "DJ Tom",
+  "song_uri" : "https://soundcloud.com/shaneandfriends/episode-1-rebecca-black",
+  "time_priority" : 0,
+  "title" : "other song tom has",
+  "uid" : "abc123",
+  "vote_priority" : 0
+}
 
 export const sampleSongHighestPri = {
   "artist" : "PUPPIES",

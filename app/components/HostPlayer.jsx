@@ -23,7 +23,6 @@ const DumbCustomPlayer = props => {
   let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase } = props;
 
   let dur = duration && Math.floor(duration)
-  console.log(duration)
   let curTime = Math.floor(currentTime)
   let displayDuration = mapDurationSecsToMins(dur)
 
@@ -139,7 +138,18 @@ class CustomPlayer extends React.Component {
       this.onFire = this.onFire.bind(this);
       this.onWater = this.onWater.bind(this);
       // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
-      const { soundCloudAudio } = this.props;
+      const { soundCloudAudio, currentParty, fireboss } = this.props;
+
+      // soundCloudAudio.audio.addEventListener('pause', () => {
+      //     console.log('PAUSE EVENT!!!');
+      //     // fireboss.togglePausePlayRemoteSong(currentParty.id)
+      // });
+      //
+      // soundCloudAudio.audio.addEventListener('playing', () => {
+      //     console.log('PLAYING EVENT!!!');
+      //     // fireboss.togglePausePlayRemoteSong(currentParty.id)
+      // });
+
       soundCloudAudio.audio.addEventListener('ended', () => {
           console.log('SONG ENDED!!!');
           this.triggerFirebase();
@@ -165,7 +175,8 @@ class CustomPlayer extends React.Component {
 
 
   play() {
-      let { soundCloudAudio, playing } = this.props;
+      let { soundCloudAudio, playing, fireboss, currentParty } = this.props;
+      fireboss.togglePausePlayRemoteSong(currentParty.id)
       if (playing) {
           soundCloudAudio.pause();
       } else {

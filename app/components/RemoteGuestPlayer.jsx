@@ -20,7 +20,7 @@ const clientId = publicKeys.SC_CLIENT_ID;
 
 const DumbCustomPlayer = props => {
   // console.log('props in custom player', this.props)
-  let { currentSong, track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase } = props;
+  let { currentSong, track, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase } = props;
 
   let dur = duration && Math.floor(duration)
   let curTime = Math.floor(currentTime)
@@ -76,35 +76,25 @@ const DumbCustomPlayer = props => {
 
   return (
     <div>
-
       <LinearProgress
         mode="determinate"
         value={(curTime / dur) * 100 || 0 }
         style={progBarStyle}
       />
-
       <Row>
         <Col style={playerIconStyle} xsOffset={1} xs={2}>
           {(track && !track.artwork_url) ? <i className="zmdi zmdi-playlist-audio zmdi-hc-3x mdc-text-grey"></i> : <img id="playerImgStyle" src={track.artwork_url} /> }
         </Col>
         <Col xs={3} style={songInfoColStyle}>
-
           <p style={durationStyle}> {mapDurationSecsToMins(curTime)} / {displayDuration}</p>
           <h2 style={titleStyle}>{track.title}</h2>
           <h3 style={artistStyle}>{track.user.username}</h3>
-
         </Col>
-
         <Col xs={2} style={songDJInfoColStyle}>
-
           <p>Chosen By: {currentSong.dj_name}</p>
-
         </Col>
-
         <Col xs={4} style={playerIconStyle}>
-
           <Row>
-
             <Col xs={0}>
               <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater}/>
             </Col>
@@ -131,6 +121,11 @@ class CustomPlayer extends React.Component {
       this.onWater = this.onWater.bind(this);
       // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
       const { soundCloudAudio } = this.props;
+      console.log("WHAT IS SOUND CLOUD AUDIO?", soundCloudAudio);
+
+
+
+
       soundCloudAudio.audio.addEventListener('ended', () => {
           console.log('SONG ENDED!!!');
           this.triggerFirebase();
@@ -140,6 +135,14 @@ class CustomPlayer extends React.Component {
   componentWillReceiveProps(nextProps) {
       // trigger play only after current song has been updated and the audio object
       // has been received from SoundCloud
+
+      //isPLaying is always false with this below....
+      // if(nextProps.currentParty.isPlaying === true){
+      //   this.play()
+      // }
+
+      //do I need to set state????
+
       if (this.props.song_uri && (nextProps.song_uri !== this.props.song_uri)) {
           console.log('-------- there is a new song -----------')
           this.props.soundCloudAudio.resolve(nextProps.song_uri, () => {
@@ -151,12 +154,9 @@ class CustomPlayer extends React.Component {
   }
 
 
-  //Todo-->FIX: Custom Player renders before track loads
-
-
-
   play() {
       let { soundCloudAudio, playing } = this.props;
+      console.log("playing: ", playing);
       if (playing) {
           soundCloudAudio.pause();
       } else {

@@ -51,7 +51,7 @@ class Fireboss {
   }
 
   createPartyWithListeners (partyId, user, partyObj) {
-    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false});
+    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false, isPlaying: false});
     return this.creatingParty(partyId, party)
             .then(() => {
               const addingHostDJ = this.addingPartyDJ(partyId, user);
@@ -430,6 +430,23 @@ class Fireboss {
   triggerNeedSong (partyId) {
     return this.getParty(partyId).update({needSong: true})
   };
+
+  togglePausePlayRemoteSong (partyId) {
+    console.log("Got inside toggle play pause with partyID: ", partyId);
+    this.getParty(partyId).once('value')
+    .then(snapshot => {
+      const party = snapshot && snapshot.val()
+      if(!party) return
+      console.log("party from fireboss: ", party);
+      const prevState = party.isPlaying
+      console.log("SETTING IS playing to:", !prevState);
+      return this.getParty(partyId).update({isPlaying: !prevState})
+    })
+    .then(() => {
+      console.log("successful update of isPlaying");
+    })
+    .catch()
+  }
 
   //Helper Functions
   promisify (value) {

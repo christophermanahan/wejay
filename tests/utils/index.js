@@ -94,6 +94,13 @@ export const sampleDj = {
   "uid" : "shanesUserId"
 };
 
+export const sampleDjVoter = {
+  "dj_name" : "DJ Chris",
+  "dj_points" : 0,
+  "photo" : "https://image.freepik.com/free-icon/musical-disc-and-dj-hand_318-43527.png",
+  "uid" : "abc123"
+};
+
 export const sampleDjId = "shanesUserId";
 
 

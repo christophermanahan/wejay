@@ -38,7 +38,11 @@ const firechief = new Firechief(db);
 
 
 // listen for when parties are added
-firechief.createPartyAddedListener();
+// set the time value for Incrementing Time Priority
+const ttInterval = 1000 * 60 * 1.5;
+const sqInterval = 1000 * 60 * 1;
+
+firechief.createPartyAddedListener(ttInterval, sqInterval);
 
 // listen for when parties are removed
 firechief.createPartyRemovedListener();

@@ -171,16 +171,17 @@ export const sampleSongHighestPri = {
 
 /*---------- QUEUES ----------*/
 
-export const sampleCurrentSong = sampleSong;
+export const sampleCurrentSong = Object.assign({}, sampleSong);
 
 export const sampleTopTen = {
   song1: sampleSong,
   song2: sampleSong2
 };
 
+
 export const sampleTopTenFull = {
   song1: sampleSongHighestPri,
-  song2: sampleSong3,
+  song2: sampleSong2,
   song3: sampleSong3,
   song4: sampleSong4,
   song5: sampleSong,
@@ -192,7 +193,7 @@ export const sampleTopTenFull = {
 };
 
 export const sampleTopNine = {
-  song2: sampleSong3,
+  song2: sampleSong2,
   song3: sampleSong3,
   song4: sampleSong4,
   song5: sampleSong,
@@ -210,6 +211,42 @@ export const sampleShadowQueue = {
 };
 
 export const sqSong2 = Object.assign({}, sampleSong, {uid: sampleUser.uid})
+
+export const sampleSQBefore = {
+  firstsong: sampleSongHighestPri,
+  secondsong: sampleSong3,
+}
+
+export const sampleSQAfter = {
+  firstsong: Object.assign({}, sampleSongHighestPri, {time_priority: 15}),
+  secondsong: Object.assign({}, sampleSong3, {time_priority: 8})
+}
+
+export const sampleTTBefore = {
+  num1: sampleSong5,
+  num2: sampleSong2,
+  num3: sampleSong3,
+  num4: sampleSong4,
+  num5: sampleSongHighestPri,
+  num6: sampleSong5,
+  num7: sampleSong2,
+  num8: sampleSong3,
+  num9: sampleSong4,
+  num10: sampleSongHighestPri,
+}
+
+export const sampleTTAfter = {  // increment all by 5
+  num1: Object.assign({}, sampleSong5, {time_priority: 5}),
+  num2: Object.assign({}, sampleSong2, {time_priority: 7}),
+  num3: Object.assign({}, sampleSong3, {time_priority: 8}),
+  num4: Object.assign({}, sampleSong4, {time_priority: 5}),
+  num5: Object.assign({}, sampleSongHighestPri, {time_priority: 15}),
+  num6: Object.assign({}, sampleSong5, {time_priority: 5}),
+  num7: Object.assign({}, sampleSong2, {time_priority: 7}),
+  num8: Object.assign({}, sampleSong3, {time_priority: 8}),
+  num9: Object.assign({}, sampleSong4, {time_priority: 5}),
+  num10: Object.assign({}, sampleSongHighestPri, {time_priority: 15})
+}
 
 export const fbSampleShadowQueue = {
   song12: sqSong2,

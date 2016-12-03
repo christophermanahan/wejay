@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import HostPlayer from './HostPlayer';
 import GuestPlayer from './GuestPlayer';
+import RemoteGuestPlayer from './RemoteGuestPlayer';
 import Navbar from './Navbar';
 import MySongs from './MySongs';
 import Search from './Search';
@@ -51,7 +52,7 @@ const App = props => {
 				</Row>
 				<Row className="both-player-container" bottom="xs">
 					<Col xs={12}>
-			      { (uid === party_id) ? <HostPlayer /> : <GuestPlayer /> }
+			      { (uid === party_id) ? <HostPlayer /> : <RemoteGuestPlayer /> }
 		      </Col>
 		    </Row>
 	    </Col>

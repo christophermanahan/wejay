@@ -1,19 +1,102 @@
-DEFINITIONS:
+# DEFINITIONS:
 
 Current Song - the song currently playing in the party.
 
 Top Ten - the ten songs that are able to be voted on by all users. The #1 song will
-          be played next
+          be played next. Priority is determined by time and vote count.
 
-Shadow Queue - the songs that are next in line to enter the top ten. Cannot be removed.
+Shadow Queue - the songs that are next in line to enter the top ten. Songs cannot be removed
+               by users once they reach this stage. Priority is determined by time and
+               the amount of DJ Points the suggestor (sp?) had at the time of submission.
 
-Personal Queue - the songs that a user has suggested, but are not locked in.
-                 can be reordered and removed in 'My Songs'
+Personal Queue - the songs that a user has suggested, but are not yet locked in. Users can
+                 see their personal queue in the 'My Songs' tab, and songs can be reordered
+                 and removed.
+
+Fireboss - manages application state on the client side. When a user adds a song, Fireboss decides
+           what queue it goes into. When a user joins a party, Fireboss binds the application
+           state to that party. When a host leaves, Firebosss kicks everyone out. In the WeJay
+           application, Fireboss is truly the boss.
+
+           To do this, Fireboss connects the Redux store to our Firebase Realtime Database
+           and listens for changes. Any changes are immediately dispatched to the client's
+           Redux store, and all client actions are sent to Firebase directly (using methods
+           on Fireboss). Fireboss can also use React-Router's browser history to update the
+           client's view in realtime.
+
+Firechief - controls Firebase logic on the server side. Listens to requests from parties
+            and manages song flow through our queue system. Any time a party needs a new
+            song, Firechief decides what song plays next. Any time a lame song is voted off the
+            top ten, Firechief picks its replacement.
+
+
+--------------------------- CLIENT SIDE LOGIC (FIREBOSS) ---------------------------------
+
+# ON MAIN ENTER
+
+I. Create new Fireboss instance, and dispatch it to the Redux store.
+
+II. Use Fireboss to create a listener for the 'parties' ref on Firebase.
+  1) The 'createPartiesListener' will always be active. It listens to the global parties list
+     and keeps the 'parties' state up to date with the latest party data.
+
+III. Use Fireboss to create an 'onAuthStateChanged' listener.
+
+  1) The 'onAuthStateChanged' listener checks if a user has been authenticated on Firebase.
+
+      A) If the user is not autheticated, Fireboss dispatches 'clearUser' (which clears the
+         user from Redux store). Fireboss then pushes the client to '/login'.
+
+      B) If the user is authenticated, Fireboss dispatches 'setUser' with the user's data.
+         Fireboss then checks if the user is currently associated with a party.
+          i) If the user is not associated with any parties, the user to pushed
+             to '/parties' where they can create or join a party
+
+          ii) If the user is currently associated with a party, Fireboss then sets up
+              listeners using the partyId and user data (see below for detail). The user
+               is then pushed to '/app' and the Top Ten tab is immediately visible.
+
+# SET UP ALL PARTY LISTENERS
+
+I. 'setUpAllPartyListeners' runs when a user enters a party. Users can enter a party from
+   the '/parties' page by clicking 'createParty' or 'joinParty'. The seven listeners
+   are descibed below:
+
+   1) Current Party Listener - manages 'currentParty' on the Redux store
+      - Current party contains the partyId, so the user can send updates to the
+        appropriate ref in Firebase.
+
+   2) Current Song Listener - manages 'currentSong' on the Redux store
+      - Contains all relevant data about the current song, including the 'song_uri'
+        for the SoundCloud player.
+
+   3) Top Ten Listener - manages 'topTen' on the Redux store
+      - Voting updates and changes to the order of the top ten come are
+        dispatched from here.
+
+   4) Party DJs Listener - manages 'djs' on the Redux store
+      - Lets the user know what DJs are in a party and how many DJ Points they have.
+
+   5) End Party Listener
+      - When the host ends a party, 'alerts' the user, turns off all party specific listeners
+        (including itself), and pushes the user to the '/parties' page.
+
+   6) Personal Queue Listener - manages 'personalQueue' on the Redux store
+      - Listens to updates from the users personal queue.
+
+   7) Shadow Queue Listener - manages 'shadowQueue' on the Redux store.
+      - Listens to the Shadow Queue for the party.
+
+# JOIN PARTY
+
+LEAVE PARTY
+
+LOG OUT
 
 
 --------------------------- SERVER SIDE LOGIC (FIRECHIEF) ---------------------------------
 
-LISTEN FOR PARTIES BEING ADDED AND PARTIES BEING REMOVED
+# LISTEN FOR PARTIES BEING ADDED AND PARTIES BEING REMOVED
 
 I. On 'child_added' for parties, Firechief runs 'createNewPartyListener' & runs
   'createNewTimePriorityIncrementer' for the top ten and for the shadow queue.
@@ -59,7 +142,6 @@ I. On 'child_added' for parties, Firechief runs 'createNewPartyListener' & runs
              of every song by one, and THEN replaces the old queue with the updated queue.
 
 
-
 II. On 'child_removed' for parties, Firechief uses the partyId to run 'removePartyListener' and
     'removeTimePriorityIncrementer' for the party's shadow queue and its top ten.
 
@@ -69,15 +151,4 @@ II. On 'child_removed' for parties, Firechief uses the partyId to run 'removePar
        Firechief[incrementers][partyId][queue] to 'null'
 
 
---------------------------- CLIENT SIDE LOGIC (FIREBOSS) ---------------------------------
-
-ON APP ENTER
-
-CREATE PARTY
-
-JOIN PARTY
-
-LEAVE PARTY
-
-LOG OUT
 

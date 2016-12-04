@@ -63,8 +63,21 @@ I. On 'child_added' for parties, Firechief runs 'createNewPartyListener' & runs
 II. On 'child_removed' for parties, Firechief uses the partyId to run 'removePartyListener' and
     'removeTimePriorityIncrementer' for the party's shadow queue and its top ten.
 
-    1)
+    1) 'removePartyListener' calls '.off()' the firebase database listener for the partyId
+
+    2) 'removeTimePriorityIncrementer' calls 'clearInterval' on the queue and sets
+       Firechief[incrementers][partyId][queue] to 'null'
 
 
+--------------------------- CLIENT SIDE LOGIC (FIREBOSS) ---------------------------------
 
+ON APP ENTER
+
+CREATE PARTY
+
+JOIN PARTY
+
+LEAVE PARTY
+
+LOG OUT
 

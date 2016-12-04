@@ -1,0 +1,70 @@
+DEFINITIONS:
+
+Current Song - the song currently playing in the party.
+
+Top Ten - the ten songs that are able to be voted on by all users. The #1 song will
+          be played next
+
+Shadow Queue - the songs that are next in line to enter the top ten. Cannot be removed.
+
+Personal Queue - the songs that a user has suggested, but are not locked in.
+                 can be reordered and removed in 'My Songs'
+
+
+--------------------------- SERVER SIDE LOGIC (FIRECHIEF) ---------------------------------
+
+LISTEN FOR PARTIES BEING ADDED AND PARTIES BEING REMOVED
+
+I. On 'child_added' for parties, Firechief runs 'createNewPartyListener' & runs
+  'createNewTimePriorityIncrementer' for the top ten and for the shadow queue.
+
+
+   1) Each new party listener listens to ‘needSong’ and ‘songToRemove’ on the party instance.
+
+      A) If 'needSong = true', run 'masterReorder' which:
+          i) FIRST: runs 'setCurrentSong' which:
+              a) Checks if the top ten exists. If not, 'return' / if so:
+              b) Find the song with the highest net priority.
+              c) THEN: set that song to current song, remove it from the top ten, and set
+                 needSong to false.
+
+          ii) THEN: If 'setCurrentSong' was successful, run 'pullFromShadowQueue' which:
+              a) Checks if the shadow queue exists. If not, 'return' / if so:
+              b) Find the song with the highest net priority.
+              c) THEN: Add that song to the top ten, remove it from the shadow queue, and pass
+                 the song submitter's uid to the next stage.
+
+          iii) THEN: If 'pullFromShadowQueue' was successful, run 'pullFromPersonalQueue' which:
+              a) Checks if a personal queue for the given uid exists. If not, 'return' / if so:
+              b) Find the song with the highest net priority.
+              c) THEN: add that song to the shadow queue and remove it from the personal queue.
+
+      B) If 'songToRemove = aTruthyValue', run 'removeWorstSong' which:
+          i)   FIRST: sets 'songToRemove' to an empty string (a falsy value).
+          ii)  THEN: runs 'pullFromShadowQueue' as described above. If successful:
+          iii) THEN: runs 'pullFromPersonalQueue' as described above.
+
+
+  2) If 'createPartyAddedLister' is invoked with a 'topTenInterval' and a 'sqInterval':
+
+      A) Run 'createTimePriorityIncrementer' for each queue.
+        i) See if an incrementers object exists for the party. If object exists, set it equal
+           to itself, if object does not exist create it.
+
+        ii) Set Firechief[incrementers][partyId][queue] equal to a 'setInterval' invoked with
+            incrementerHelper, the given interval, the partyId, and the chosen queue.
+
+        iii) The incrementerHelper function takes the partyId and chosenQueue, and every
+             time it is invoked, it snapshots the entire queue, increments the 'time_priority'
+             of every song by one, and THEN replaces the old queue with the updated queue.
+
+
+
+II. On 'child_removed' for parties, Firechief uses the partyId to run 'removePartyListener' and
+    'removeTimePriorityIncrementer' for the party's shadow queue and its top ten.
+
+    1)
+
+
+
+

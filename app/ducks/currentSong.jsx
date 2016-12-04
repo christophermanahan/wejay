@@ -2,7 +2,7 @@ import { LEAVE_PARTY } from './global';
 
 /* -----------------    ACTIONS     ------------------ */
 
-const SET_CURRENT_SONG = 'SET_CURRENT_SONG';
+export const SET_CURRENT_SONG = 'SET_CURRENT_SONG';
 
 /* ------------   ACTION CREATORS     ------------------ */
 

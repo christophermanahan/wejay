@@ -85,12 +85,12 @@ class Search extends Component {
     tracksearch(query);
   }
 
-  addToQueue(song_uri, title, artist, artwork_url) {
+  addToQueue(song_uri, title, artist, artwork_url, duration) {
     const { user, currentParty, fireboss } = this.props;
     const partyId = currentParty.id;
     const { uid } = user;
     const { dj_name } = this.props.djs[uid];
-    const song = { song_uri, title, artist, artwork_url, dj_name, time_priority: 0, vote_priority: 0};
+    const song = { song_uri, title, artist, artwork_url, dj_name, time_priority: 0, vote_priority: 0, duration};
 
     fireboss.submitUserSong(partyId, user, song, this.openSnackbar)
   }

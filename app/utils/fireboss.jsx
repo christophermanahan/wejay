@@ -21,10 +21,7 @@ class Fireboss {
     this.FacebookAuth = () => {
       return new firebase.auth.FacebookAuthProvider();
     };
-    this.createUserEP = (email, password) => {
-      return this.auth.createUserWithEmailAndPassword(email, password)
-    };
-  };
+  }
 
   /* ---------------------- FIREBASE METHODS ---------------------- */
 
@@ -51,7 +48,7 @@ class Fireboss {
   }
 
   createPartyWithListeners (partyId, user, partyObj) {
-    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false});
+    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false, songToRemove: ''});
     return this.creatingParty(partyId, party)
             .then(() => {
               const addingHostDJ = this.addingPartyDJ(partyId, user);
@@ -159,23 +156,23 @@ class Fireboss {
     this.database.ref('parties').on('value', snapshot => {
       this.dispatchers.setParties(snapshot.val());
     });
-  };
+  }
 
   createPartyListener (partyId, type) {
-    if (type === 'current_song') { 
+    if (type === 'current_song') {
       return this.database.ref('current_song').child(partyId).on('value', snapshot => {
         this.dispatchers.setCurrentSong(snapshot.val());
       });
     } else if ( type === 'top_ten') {
       return this.database.ref('top_ten').child(partyId).on('value', snapshot => {
         this.dispatchers.setTopTen(snapshot.val());
-      }); 
+      });
     } else {
       return this.database.ref('party_djs').child(partyId).on('value', snapshot => {
         this.dispatchers.setDjs(snapshot.val());
       });
     }
-  };
+  }
 
   endPartyListener (partyId, user) {
     this.getParty(partyId).child('active').on('value', snapshot => {
@@ -195,19 +192,19 @@ class Fireboss {
         })
         .catch(console.error);
     });
-  };
+  }
 
   createMessagesListener (onChangeFunc) {
     this.database.ref('messages').on('value', snapshot => {
       onChangeFunc(snapshot.val());
     });
-  };
+  }
 
   createPersonalQueueListener (partyId, user) {
     this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').on('value', snapshot => {
       this.dispatchers.setPersonalQueue(snapshot.val());
     });
-  };
+  }
 
   createShadowQueueListener (partyId, user) {
     this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
@@ -223,7 +220,7 @@ class Fireboss {
       }
       this.dispatchers.setShadowQueue(userSongsInSQ);
     });
-  };
+  }
 
   removePartyListeners (partyId, user) {
     this.database.ref('current_song').child(partyId).off();
@@ -232,25 +229,25 @@ class Fireboss {
     this.getParty(partyId).child('active').off();
     this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').off();
     this.database.ref('shadow_queue').child(partyId).off();
-    this.getParty(partyId).child('active').off()
-  };
+    this.getParty(partyId).child('active').off();
+  }
 
 
   /* ------------------- SNAPSHOTS ------------------- */
 
   gettingPartyItemSnapshot (partyId, item) {
     return this.database.ref(item).child(partyId).once('value');
-  };
+  }
 
   checkingUserParty (user) {
     return this.database.ref('user_parties').child(user.uid).once('value');
-  };
+  }
 
   getCurrentPartySnapshot (partyId) {
-    return this.getParty(partyId).once('value', snapshot => {
+    return this.getParty(partyId).on('value', snapshot => {
       this.dispatchers.setCurrentParty(snapshot.val());
     });
-  };
+  }
 
   /* ------------------- SETTERS RETURNING PROMISES ------------------- */
 
@@ -290,27 +287,27 @@ class Fireboss {
         dj_name: `DJ ${user.displayName || djName}`,
         personal_queue: {}
       })
-  };
+  }
 
   associatingPartyAndUser (partyId, user) {
     return this.database.ref('user_parties').child(user.uid).set(partyId)
-  };
+  }
 
   settingCurrentSong (partyId, song) {
     return this.database.ref('current_song').child(partyId).set(song)
-  };
+  }
 
   creatingParty (partyId, party) {
     return this.getParty(partyId).set(party)
-  };
+  }
 
   removeUserParty (partyId, user) {
     return this.database.ref('user_parties').child(user.uid).remove()
-  };
+  }
 
   removePartyDj (partyId, user) {
     return this.database.ref('party_djs').child(partyId).child(user.uid).remove()
-  };
+  }
 
   endParty (partyId) {
     return this.getParty(partyId).remove()
@@ -323,12 +320,13 @@ class Fireboss {
         return Promise.all([p1, p2, p3, p4])
       })
       .catch(console.error)
-  };
+  }
 
   addToPartyQueue (partyId, type, song) {
     return this.database.ref(type).child(partyId).push(song)
-  };
+  }
 
+<<<<<<< HEAD
   addToPersonalQueue (partyId, user, song) { 
    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
       .then(snapshot => {
@@ -445,85 +443,121 @@ class Fireboss {
       .then(() => {console.log('vote added!')})
       .catch(console.error)
   };
+=======
+  addToPersonalQueue (partyId, user, song) {
+    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
+  }
 
-  decrementVotePriority (partyId, songId) {
-    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
-    // get snapshot of song, then add 1 to vote priority and djPoints
-    return partyTopTenSongRef.once('value')
-      .then(snapshot => {
-        const currentVotes = snapshot && snapshot.val().vote_priority
-        let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = this.promisify(userId);
-        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
-        const updatingTopTenVotes = partyTopTenSongRef.update({vote_priority: (currentVotes - 1)});
-        return Promise.all([gettingPartyDj, promisifiedUserId, updatingTopTenVotes])
-      })
-      .then((results) => {
-        const currentDjPoints = results[0] && results[0].val().dj_points;
-        let userId = results[1];
-        //increase current dj points by 1
-        return this.database.ref('party_djs').child(partyId).child(userId)
-          .update({dj_points: (currentDjPoints - 1)})
-      })
-      .then(() => {console.log('vote added!')})
-      .catch(console.error)
-  };
+  /* ------------------- MACRO VOTING SETTERS ------------------- */
+>>>>>>> dev-branch
 
-  incrementCurrSongDjPoints (userId, partyId) {
-    const currentSongRef = this.database.ref('current_song').child(partyId);
-    // get snapshot of song, then add 1 to vote priority and djPoints
-    return currentSongRef.once('value')
-      .then(snapshot => {
-        const currentVotes = snapshot && snapshot.val().vote_priority
-        let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = this.promisify(userId);
-        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
-        const updatingCurrentSongVotes = currentSongRef.update({vote_priority: (currentVotes + 1)});
-        return Promise.all([gettingPartyDj, promisifiedUserId, updatingCurrentSongVotes])
-      })
-      .then((results) => {
-        const currentDjPoints = results[0] && results[0].val().dj_points;
-        let userId = results[1];
-        //increase current dj points by 1
-        return this.database.ref('party_djs').child(partyId).child(userId)
-          .update({dj_points: (currentDjPoints + 1)})
-      })
-      .then(() => {console.log('vote added!')})
-      .catch(console.error)
-  };
+  // if songId is passed, we know that the ref is for top_ten; else, currSong
+  onDownvote(partyId, song, songId) {
+    const djsRef = this.database.ref('party_djs').child(partyId);
+    this.dispatchers.decrementVotes();    // decement votes available to voter
 
-  decrementCurrSongDjPoints (userId, partyId) {
-    const currentSongRef = this.database.ref('current_song').child(partyId);
-    // get snapshot of song, then add 1 to vote priority and djPoints
-    return currentSongRef.once('value')
+    // 1. get snapshot of party Djs
+    // 2. determine if need to decrement vote_priority or remove song
+    // 3. always promise together with decrementing DJ points
+
+    return djsRef.once('value')
       .then(snapshot => {
-        const currentVotes = snapshot && snapshot.val().vote_priority
-        let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = this.promisify(userId);
-        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
-        const updatingCurrentSongVotes = currentSongRef.update({vote_priority: (currentVotes - 1)});
-        return Promise.all([gettingPartyDj, promisifiedUserId, updatingCurrentSongVotes])
+        const djs = snapshot && snapshot.val();
+        if (!djs) return;
+
+        const { uid, vote_priority, time_priority } = song;
+        const netPriority = vote_priority + time_priority - 1;
+        const numDjs = Object.keys(djs).length;
+
+        // determine if song should be removed or just downvoted
+        let removeOrDownvotePromise;
+        const removeSong = this.meetsWorstSongThreshold(numDjs, netPriority, 2);
+
+        // if need to remove, determine if it's a top_ten or current_song removal
+        if (removeSong) {
+          removeOrDownvotePromise = songId ?
+            this.removeDownvotedSong(partyId, songId) :
+            this.triggerNeedSong(partyId);
+        } else {
+          removeOrDownvotePromise = this.simpleVote(partyId, song, false, songId);
+        }
+
+        return Promise.all([
+          removeOrDownvotePromise,
+          this.updateDjPoints(uid, partyId, false)
+        ]);
       })
-      .then((results) => {
-        const currentDjPoints = results[0] && results[0].val().dj_points;
-        let userId = results[1];
-        //increase current dj points by 1
-        return this.database.ref('party_djs').child(partyId).child(userId)
-          .update({dj_points: (currentDjPoints - 1)})
+      .catch(console.error);
+  }
+
+  // here, if songId is passed, we know it is for the top_ten; else, currSong
+  onUpvote(partyId, song, songId) {
+    this.dispatchers.decrementVotes();        // decrement votes available to voter;
+    // 1. update song's vote priority
+    // 2. increment dj_points of song's DJ
+
+    const { uid } = song;
+
+    return Promise.all([
+      this.updateDjPoints(uid, partyId, true),
+      this.simpleVote(partyId, song, true, songId)
+    ])
+    .then(() => console.log('WE OUT HERE'))
+    .catch(console.error);
+  }
+
+
+    /* ------------------- VOTING HELPER SETTERS ------------------- */
+
+
+  // here, if addBool is passed, add a point, else, subtract a point
+  updateDjPoints(uid, partyId, addBool) {
+    const djRef = this.database.ref('party_djs').child(partyId).child(uid);
+    return djRef.once('value')
+      .then(snapshot => {
+        const partyDj = snapshot && snapshot.val();
+        if (!partyDj) return;
+
+        // either increment or decement
+        const newDjPoints = addBool ? partyDj.dj_points + 1 : partyDj.dj_points - 1;
+        return djRef.update({ dj_points: newDjPoints });
       })
-      .then(() => {console.log('vote added!')})
-      .catch(console.error)
-  };
+      .catch(console.error);
+  }
+
+
+  // if songId is passed, we know it is for top_ten because current_song has no songId
+  // addBool is true, add one; else, subract one
+  simpleVote(partyId, song, addBool, songId) {
+    const newVotePriority = addBool ? song.vote_priority + 1 : song.vote_priority - 1;
+    const songWithVote = Object.assign({}, song, {vote_priority: newVotePriority});
+
+    const ref = songId ?
+      this.database.ref('top_ten').child(partyId).child(songId) :
+      this.database.ref('current_song').child(partyId);
+
+    return ref.set(songWithVote);
+  }
+
 
   triggerNeedSong (partyId) {
-    return this.getParty(partyId).update({needSong: true})
-  };
+    return this.getParty(partyId).update({needSong: true});
+  }
 
-  //Helper Functions
-  promisify (value) {
+  removeDownvotedSong(partyId, songId) {
+    return this.getParty(partyId).update({songToRemove: songId});
+  }
+
+  /* ------------------- HELPER FUNCTIONS ------------------- */
+
+  promisify(value) {
     return new Promise(resolve => {
       return resolve(value);
     });
+  }
+
+  meetsWorstSongThreshold(numDjs, priority, magnitude) {
+    return (magnitude * numDjs) <= (priority * -1);
   }
 
   getParty (partyId) {

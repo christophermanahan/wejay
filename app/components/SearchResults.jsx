@@ -11,40 +11,54 @@ import {cyan500} from 'material-ui/styles/colors';
 /* -----------------    DUMB COMPONENTS     ------------------ */
 
 const SingleSong = props => {
-  const { title, permalink_url, artist, addToQueue, artwork_url } = props;
+  const { title, permalink_url, artist, addToQueue, artwork_url, duration } = props;
   return (
     <div>
 			<ListItem
 				primaryText={title}
-				secondaryText={artist}
+				secondaryText={`${artist} - ${duration}`}
 				leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
 				rightIcon={<PlaylistAdd style={{height: '40px', width: '40px'}} color='#363836' />}
-				onTouchTap={ () => addToQueue(permalink_url, title, artist, artwork_url) }
+				onTouchTap={ () => addToQueue(permalink_url, title, artist, artwork_url, duration) }
 			/>
     </div>
   );
 };
 
 
-const SearchResults = props => {
-	const { searchResults, addToQueue } = props;
-  return (
-    <div>
-			<List>
-      { searchResults && searchResults.map(song => (
+class SearchResults extends Component {
+	constructor(props) {
+		super(props);
+	}
 
-        <SingleSong
-					addToQueue={addToQueue}
-					title={song.title}
-					key={song.id}
-					artwork_url={song.artwork_url}
-					permalink_url={song.permalink_url}
-					artist={song.user.username}
-        />
-      ))}
-      </List>
-    </div>
-  );
-};
+  mapDurationToMinSecs(milliseconds) {
+    let mins = Math.floor(milliseconds / 60000);
+    let secs = Math.floor(milliseconds % 60000).toString().slice(0, 2);
+
+    return `${mins}:${secs}`;
+  }
+
+	render() {
+		const { searchResults, addToQueue } = this.props;
+	  return (
+	    <div>
+				<List>
+	      { searchResults && searchResults.map(song => (
+
+	        <SingleSong
+						addToQueue={addToQueue}
+						title={song.title}
+						key={song.id}
+						artwork_url={song.artwork_url}
+						permalink_url={song.permalink_url}
+						artist={song.user.username}
+						duration={this.mapDurationToMinSecs(song.duration)}
+	        />
+	      ))}
+	      </List>
+	    </div>
+		);
+  }
+}
 
 export default SearchResults;

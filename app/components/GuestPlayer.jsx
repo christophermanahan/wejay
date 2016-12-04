@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
@@ -10,7 +11,8 @@ import LinearProgress from 'material-ui/LinearProgress';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbGuestPlayer = props => {
-  const { currentSong, onFire, onWater } = props;
+  const { currentSong, onFire, onWater, uid, hasVotes} = props;
+  const ownSong = (uid === (currentSong && currentSong.uid));
 
   let progBarStyle = {
     backgroundColor: "#EC4616",
@@ -52,6 +54,7 @@ const DumbGuestPlayer = props => {
   const iconStyle = {fontSize: '30px'};
   let artwork_url = currentSong && currentSong.artwork_url;
   let vote_priority = currentSong && currentSong.vote_priority;
+
   return (
     <div>
       <LinearProgress
@@ -65,8 +68,8 @@ const DumbGuestPlayer = props => {
 
         <Col xs={5} style={songInfoColStyle}>
           <h2 style={titleStyle}>{currentSong && currentSong.title}</h2>
-          <h3 style={artistStyle}>by: {currentSong && currentSong.artist }</h3>
-          <h4 style={artistStyle}>Chosen by: {currentSong && currentSong.dj_name} </h4>
+          <h3 style={artistStyle}>by: {currentSong && currentSong.artist } - {currentSong && currentSong.duration}</h3>
+          <h4 style={artistStyle}>Chosen by: {ownSong ? 'YOU' : (currentSong && currentSong.dj_name)} </h4>
         </Col>
 
         <Col xs={5} style={playerIconStyle}>
@@ -76,11 +79,11 @@ const DumbGuestPlayer = props => {
             </Col>
 
             <Col xsOffset={2} xs={2}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater} />
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater} />
             </Col>
 
             <Col xsOffset={1} xs={1}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
             </Col>
           </Row>
         </Col>
@@ -95,8 +98,16 @@ class GuestPlayer extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+          snackbarOpen: false
+        }
+
         this.onFire = this.onFire.bind(this);
         this.onWater = this.onWater.bind(this);
+
+        this.openSnackbar = this.openSnackbar.bind(this);
+        this.closeSnackbar = this.closeSnackbar.bind(this);
+
         // this.triggerFirebase = this.triggerFirebase.bind(this);
         // this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
 
@@ -110,44 +121,52 @@ class GuestPlayer extends React.Component {
 
     onFire() {
       const { fireboss, currentSong, currentParty } = this.props;
-      fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+      fireboss.onUpvote(currentParty.id, currentSong);
+      this.openSnackbar();
     }
 
     onWater() {
       const { fireboss, currentSong, currentParty } = this.props;
-      fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+      fireboss.onDownvote(currentParty.id, currentSong);
+      this.openSnackbar();
+    }
+
+    openSnackbar() {
+      this.setState({snackbarOpen: true});
+    }
+
+    closeSnackbar() {
+      this.setState({snackbarOpen: false});
     }
 
     render() {
-        console.log('props in GUEST player', this.props)
-        let { currentSong } = this.props
-        console.log("CURRENT SONG: ", currentSong);
-        // let { track, playing, currentTime, } = this.props;
-        //
-        // duration = Math.floor(duration)
-        // currentTime = Math.floor(currentTime)
-        // // console.log("BEFORE: ", duration);
-        // duration = this.mapDurationSecsToMins(duration)
-        // // console.log("After: ", duration);
+      let { currentSong, user, votes } = this.props;
 
-
-        // if (!track) {
-        //     return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
-        // }
-
-        return (
+      return (
+        <div>
           <DumbGuestPlayer
+            hasVotes={(votes > 0)}
+            uid={user && user.uid}
             currentSong={ currentSong }
             onFire={ this.onFire }
             onWater={ this.onWater }
-          />
-        );
+            />
+          <Snackbar
+            open={this.state.snackbarOpen}
+            message={`You have ${votes} more votes before the next song`}
+            autoHideDuration={1500}
+            onRequestClose={this.closeSnackbar}
+            contentStyle={{ fontSize: '0.7em' }}
+            bodyStyle={{ height: '4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            />
+        </div>
+      );
     }
 }
 
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentParty, currentSong, fireboss }) => ({ currentParty, currentSong, fireboss });
+const mapStateToProps = ({ currentParty, currentSong, fireboss, user, votes }) => ({ currentParty, currentSong, fireboss, user, votes });
 
 export default connect(mapStateToProps)(GuestPlayer);

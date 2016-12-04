@@ -14,14 +14,18 @@ export const sampleParties = {
     "id" : "dillonsUserIdwhichisalsothepartyid",
     "location" : "5 Hanover Sq",
     "name" : "Dillon's ppppparty",
-    "needSong" : false
+    "needSong" : false,
+    songToRemove: ''
+
   },
   "RUOtMwp3qkWF7tZDjclrLOBT32s1" : {
     "active" : true,
     "id" : "RUOtMwp3qkWF7tZDjclrLOBT32s1",
     "location" : "weJay Demo Table",
     "name" : "OFFICIAL weJay Party!",
-    "needSong" : false
+    "needSong" : false,
+    songToRemove: ''
+
   }
 }
 
@@ -32,7 +36,8 @@ export const sampleParty = {
     id: "dillonsUserIdwhichisalsothepartyid",
     location: "5 Hanover Sq",
     name: "Dillon's ppppparty",
-    needSong: false
+    needSong: false,
+    songToRemove: ''
 }
 
 export const sampleParty2 = {
@@ -40,7 +45,9 @@ export const sampleParty2 = {
     id: "dillonsUserIdwhichisalsothepartyid",
     location: "5 Hanover Sq",
     name: "Dillon's ppppparty",
-    needSong: false
+    needSong: false,
+    songToRemove: ''
+
 }
 
 export const sampleNewParty = {
@@ -48,7 +55,9 @@ export const sampleNewParty = {
   id : "idForNewSampleParty",
   location: "newly added spacetime",
   name: "New Party!",
-  needSong: false
+  needSong: false,
+  songToRemove: ''
+
 }
 
 export const idForNewSampleParty = "idForNewSampleParty";
@@ -241,12 +250,12 @@ export const sqSong2 = Object.assign({}, sampleSong, {uid: sampleUser.uid})
 export const sampleSQBefore = {
   firstsong: sampleSongHighestPri,
   secondsong: sampleSong3,
-}
+};
 
 export const sampleSQAfter = {
   firstsong: Object.assign({}, sampleSongHighestPri, {time_priority: 15}),
   secondsong: Object.assign({}, sampleSong3, {time_priority: 8})
-}
+};
 
 export const sampleTTBefore = {
   num1: sampleSong5,
@@ -273,6 +282,70 @@ export const sampleTTAfter = {  // increment all by 5
   num9: Object.assign({}, sampleSong4, {time_priority: 5}),
   num10: Object.assign({}, sampleSongHighestPri, {time_priority: 15})
 }
+
+export const sampleTopTenBeforeWorst = {
+  s1: Object.assign({}, sampleSong5),
+  s2: Object.assign({}, sampleSong2),
+  s3: Object.assign({}, sampleSong3),
+  s4: Object.assign({}, sampleSong4),
+  s5: Object.assign({}, sampleSong2),
+  s6: Object.assign({}, sampleSong5),
+  s7: Object.assign({}, sampleSong2),
+  s8: Object.assign({}, sampleSong3),
+  s9: Object.assign({}, sampleSong4),
+  s10: Object.assign({}, sampleSong5)
+};
+
+
+export const sampleTopTenAfterWorst = {
+  s2: Object.assign({}, sampleSong2),
+  s3: Object.assign({}, sampleSong3),
+  s4: Object.assign({}, sampleSong4),
+  s5: Object.assign({}, sampleSong2),
+  s6: Object.assign({}, sampleSong5),
+  s7: Object.assign({}, sampleSong2),
+  s8: Object.assign({}, sampleSong3),
+  s9: Object.assign({}, sampleSong4),
+  s10: Object.assign({}, sampleSong5),
+  s12: Object.assign({}, sampleSongHighestPri)
+}
+
+
+export const sampleShadowQueueBeforeWorst = {
+  s11: Object.assign({}, sampleSong2),
+  s12: Object.assign({}, sampleSongHighestPri),    // HIGHEST PRIORITY
+  s13: Object.assign({}, sampleSong3)
+};
+
+export const sampleShadowQueueAfterWorst = {
+  s11: Object.assign({}, sampleSong2),
+  s13: Object.assign({}, sampleSong3),
+  tomsong1: Object.assign({}, sampleSong2)
+}
+
+// will belong to DJ Tom
+export const samplePersonalQueueBeforeWorst = {
+  tomsong1: Object.assign({}, sampleSong2), // HIGHER PRIORITY
+  tomsong2: Object.assign({}, sampleSong5)
+};
+
+export const samplePersonalQueueAfterWorst = {
+  tomsong2: Object.assign({}, sampleSong5)
+};
+
+export const sampleDownvoteTTBefore = {
+  x1: Object.assign({}, sampleSong5, {vote_priority: -5}), // 0 time_priority
+  x2: Object.assign({}, sampleSong2),
+  x3: Object.assign({}, sampleSong3),
+  x4: Object.assign({}, sampleSong4),
+  x5: Object.assign({}, sampleSong2),
+  x6: Object.assign({}, sampleSong5),
+  x7: Object.assign({}, sampleSong2),
+  x8: Object.assign({}, sampleSong3),
+  x9: Object.assign({}, sampleSong4),
+  x10: Object.assign({}, sampleSong5)
+}
+
 
 export const fbSampleShadowQueue = {
   song12: sqSong2,
@@ -317,3 +390,30 @@ export const fbSamplePartyDjs = {
   [sampleDjGuestId]: fbSampleDjGuest,
   [sampleDjId]: sampleDj
 };
+
+export const whateverPartyDJs = {
+  foo: { uid: 'foo', dj_points: -2 },
+  bar: { uid: 'bar', dj_points: 0 },
+  baz: { uid: 'baz', dj_points: 10 },
+  buzz: { uid: 'buzz', dj_points: 2 }
+};
+
+export const randoHostId = 'foo';
+
+export const randoParty = {
+  "active" : true,
+  "id" : "foo",
+  "location" : "Harlem",
+  "name" : "R Kelly only plz",
+  "needSong" : false,
+  songToRemove: ''
+};
+
+export const terribleSong = Object.assign({}, sampleSong5, {uid: 'foo', vote_priority: -7})
+
+export const randoTopTen = {
+  y1: terribleSong,
+  y2: Object.assign({}, sampleSong2, {uid: 'foo' })
+};
+
+

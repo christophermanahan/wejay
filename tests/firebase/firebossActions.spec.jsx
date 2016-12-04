@@ -4,7 +4,24 @@ import Fireboss from '../../app/utils/fireboss';
 import { expect } from 'chai';
 
 import { dispatchers } from '../utils/firebossTest';
-import { sampleParty, sampleParty2, sampleDj, sampleDjHost, sampleUser, sampleSong, sampleSong2, sampleSong6, sampleDjVoter, sampleTopTenFull } from '../utils';
+import {
+  sampleParty,
+  sampleParty2,
+  sampleDj,
+  sampleDjHost,
+  sampleUser,
+  sampleSong,
+  sampleSong2,
+  sampleSong6,
+  sampleDjVoter,
+  sampleTopTenFull,
+  randoHostId,
+  randoParty,
+  randoTopTen,
+  whateverPartyDJs,
+  terribleSong
+
+} from '../utils';
 
 const browserHistory = [];
 
@@ -272,35 +289,43 @@ describe('---------- FIREBOSS TESTS ----------', () => {
         const setUpParty = [
           partiesRef.set({[sampleDjHostCopy.uid]: samplePartyCopy}),
           userPartiesRef.set({[sampleDjHostCopy.uid]: sampleDjHostCopy.uid}),
-          partyDjsRef.set({[sampleDjHostCopy.uid]: {[sampleDjHostCopy.uid]: sampleDjHostCopy}}),
+          partyDjsRef.set({[sampleDjHostCopy.uid]: {[sampleDjHostCopy.uid]: sampleDjHostCopy}})
+        ];
+
+        const updateParty = [
           userPartiesRef.update({[sampleUserCopy.uid]: sampleDjHostCopy.uid}),
           partyDjsRef.update({[sampleDjHostCopy.uid]: {[sampleUserCopy.uid]: sampleUserCopy}})
-        ]
+        ];
 
         Promise.all(setUpParty)
           .then(() => {
-            return fireboss.logOut(partyId, sampleUserCopy)
+            return Promise.all(updateParty);
           })
           .then(() => {
-            return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')])
+            return fireboss.logOut(partyId, sampleUserCopy);
+          })
+          .then(() => {
+            return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')]);
           })
           .then(resultsArr => {
             partiesResult = resultsArr[0].val();
             userPartiesResult = resultsArr[1].val();
             partyDjsResult = resultsArr[2].val();
-            done()
+            console.log('----------PARTIES DJ RESULT', partyDjsResult);
+            done();
           })
-          .catch(done)
+          .catch(done);
       });
 
       after('destroy everything', done => {
-        fireboss.removePartyListeners(partyId, sampleUserCopy)
+        fireboss.removePartyListeners(partyId, sampleUserCopy);
         Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
           .then(() => {
             done();
           })
-          .catch(done)
+          .catch(done);
       });
+
 
       it('the host party remains active', () => {
         expect(Object.keys(partiesResult)).to.have.length.of(1);
@@ -311,9 +336,9 @@ describe('---------- FIREBOSS TESTS ----------', () => {
       });
 
       it('removes the guest user from party_djs', () => {
-        expect(Object.keys(partyDjsResult)).to.have.length.of(1)
-        expect(Object.keys(partyDjsResult[partyId])).to.have.length.of(1)
-        expect(partyDjsResult[partyId][sampleUserCopy.uid]).to.equal(undefined)
+        expect(Object.keys(partyDjsResult)).to.have.length.of(1);
+        expect(Object.keys(partyDjsResult[partyId])).to.have.length.of(1);
+        expect(partyDjsResult[partyId][sampleUserCopy.uid]).to.equal(undefined);
       });
     });
 
@@ -367,7 +392,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     });
   });
 
-  describe('TESTING INCREMENT SONG VOTE METHOD', () => {
+  describe('TESTING ONUPVOTE METHOD', () => {
     let topTenResult, partyDjsResult;
     let hostId = "abc123";
     let songHash = hostId;
@@ -384,19 +409,17 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
       Promise.all(setUpParty)
         .then(() => {
-          console.log('first then')
-          return fireboss.incrementVotePriority(partyId, sampleSong6Copy.uid);
+          return fireboss.onUpvote(partyId, sampleSong6Copy, songHash);
         })
         .then(() => {
-          console.log('second then')
           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
         })
         .then(results => {
           topTenResult = results[0].val();
           partyDjsResult = results[1].val();
-          done()
+          done();
         })
-        .catch(done)
+        .catch(done);
     });
 
     after('destroy everything', done => {
@@ -421,7 +444,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     });
   });
 
-  describe('TESTING DECREMENT SONG VOTE METHOD', () => {
+  describe('TESTING ONDOWNVOTE METHOD', () => {
     let topTenResult, partyDjsResult;
     let hostId = "abc123";
     let songHash = hostId;
@@ -433,37 +456,35 @@ describe('---------- FIREBOSS TESTS ----------', () => {
         partiesRef.set({[hostId]: sampleParty}),
         userPartiesRef.set({[hostId]: hostId}),
         partyDjsRef.set({[hostId]: {[hostId]: sampleDjVoter}}),
-        topTenRef.set({[hostId] : {[songHash] : sampleSong6Copy2}})
-      ]
+        topTenRef.set({[hostId]: {[songHash]: sampleSong6Copy2}})
+      ];
 
       Promise.all(setUpParty)
         .then(() => {
-          console.log('first then')
-          return fireboss.decrementVotePriority(partyId, sampleSong6Copy2.uid);
+          return fireboss.onDownvote(partyId, sampleSong6Copy2, songHash);
         })
         .then(() => {
-          console.log('second then')
           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
         })
         .then(results => {
           topTenResult = results[0].val();
           partyDjsResult = results[1].val();
-          done()
+          done();
         })
-        .catch(done)
+        .catch(done);
     });
 
     after('destroy everything', done => {
-      fireboss.removePartyListeners(partyId, sampleUser)
-      const clear1 = partiesRef.set({})
-      const clear2 = userPartiesRef.set({})
-      const clear3 = partyDjsRef.set({})
-      const clear4 = topTenRef.set({})
+      fireboss.removePartyListeners(partyId, sampleUser);
+      const clear1 = partiesRef.set({});
+      const clear2 = userPartiesRef.set({});
+      const clear3 = partyDjsRef.set({});
+      const clear4 = topTenRef.set({});
       Promise.all([clear1, clear2 , clear3, clear4])
         .then(() => {
-          done()
+          done();
         })
-        .catch(done)
+        .catch(done);
     });
 
     it('downvotes the current song in the top ten', () => {
@@ -474,4 +495,55 @@ describe('---------- FIREBOSS TESTS ----------', () => {
       expect(partyDjsResult[hostId][hostId].dj_points).to.equal(-1)
     });
   });
+
+  describe('TESTING SONG REMOVAL VIA DECREMENT VOTE PRIORITY FN', () => {
+
+    let partyResult, partyDjsResult;
+
+    before('create a party with four DJs and a Top Ten', done => {
+      const setUpParty = [
+        partiesRef.set({[randoHostId]: randoParty}),
+        partyDjsRef.set({[randoHostId]: whateverPartyDJs}),
+        topTenRef.set({[randoHostId]: randoTopTen})
+      ];
+
+      Promise.all(setUpParty)
+      .then(() => {
+        return fireboss.onDownvote(randoHostId, terribleSong, 'y1');
+      })
+      .then(() => {
+        return Promise.all([
+          partiesRef.child(randoHostId).once('value'),
+          partyDjsRef.child(randoHostId).once('value'),
+        ]);
+      })
+      .then(resultsArr => {
+        partyResult = resultsArr[0].val();
+        partyDjsResult = resultsArr[1].val();
+        done();
+      })
+      .catch(done);
+
+    })
+
+    after('cleaning up', done => {
+      Promise.all([
+        partiesRef.set({}),
+        partyDjsRef.set({}),
+        topTenRef.set({})
+      ])
+        .then(() => done())
+        .catch(done);
+    });
+
+    it('sets songToRemove to the songId of the worst song if it meets the threshold', () => {
+      expect(partyResult.songToRemove).to.equal('y1');
+    });
+
+    it('still decrements the DJ points of the terrible DJ', () => {
+      expect(partyDjsResult.foo.dj_points).to.equal(-3);
+    });
+
+  });
+
 });

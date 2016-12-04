@@ -19,7 +19,13 @@ import {
   sampleSQBefore,
   sampleSQAfter,
   sampleTTBefore,
-  sampleTTAfter
+  sampleTTAfter,
+  sampleTopTenBeforeWorst,
+  sampleTopTenAfterWorst,
+  sampleShadowQueueBeforeWorst,
+  sampleShadowQueueAfterWorst,
+  samplePersonalQueueBeforeWorst,
+  samplePersonalQueueAfterWorst
 
 
 } from '../utils';
@@ -40,7 +46,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 	let shadowQueueRef = db.ref('shadow_queue');
 	let personalQueueRef = db.ref('party_djs').child(partyId).child(tomsUserId).child('personal_queue');
 
-  let sampleCurrentSong = sampleSong;
+  let sampleCurrentSong = Object.assign({}, sampleSong);
   let samplePartyWithNeedSong = Object.assign(sampleParty, { needSong: true });
 
   describe('setCurrentSong function', () => {
@@ -393,5 +399,71 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 
 	});
 
+	describe('removeWorstSong function', () => {
+
+		let topTenResult, sqResult, pqResult, partiesResult;
+
+		before('Set up party with Top Ten and SQ', done => {
+
+			const setUpParty = [
+				partiesRef.set({[partyId]: sampleParty}),
+				topTenRef.set({[partyId]: sampleTopTenBeforeWorst}),
+				shadowQueueRef.set({[partyId]: sampleShadowQueueBeforeWorst}),
+				personalQueueRef.set(samplePersonalQueueBeforeWorst),
+			];
+
+			Promise.all(setUpParty)
+				.then(() => {
+					return firechief.removeWorstSong(partyId, 's1');
+				})
+				.then(() => {
+					return Promise.all([
+						partiesRef.child(partyId).once('value'),
+						topTenRef.child(partyId).once('value'),
+						shadowQueueRef.child(partyId).once('value'),
+						personalQueueRef.once('value')
+					]);
+				})
+				.then(resultsArr => {
+					partiesResult = resultsArr[0].val();
+					topTenResult = resultsArr[1].val();
+					sqResult = resultsArr[2].val();
+					pqResult = resultsArr[3].val();
+					done();
+				})
+				.catch(done);
+		});
+
+		after('destroy everything', done => {
+
+			const clearingParty = [
+				partiesRef.set({}),
+				topTenRef.set({}),
+				shadowQueueRef.set({}),
+				personalQueueRef.set({})
+			];
+			Promise.all(clearingParty)
+				.then(() => done())
+				.catch(done);
+		});
+
+		it('Removes sets songToRemove to an empty string ', () => {
+			expect(partiesResult.songToRemove).to.equal('');
+		});
+
+		it('Moves next highest priority song onto top ten', () => {
+			expect(topTenResult).to.deep.equal(sampleTopTenAfterWorst);
+		});
+
+		it('Moves next highest priority song onto shadow queue', () => {
+			expect(sqResult).to.deep.equal(sampleShadowQueueAfterWorst);
+		});
+
+		it('Moves song from correct personal queue onto shadow queue', () => {
+			expect(pqResult).to.deep.equal(samplePersonalQueueAfterWorst);
+		});
+
+	});
 
 });
+

@@ -326,7 +326,6 @@ class Fireboss {
     return this.database.ref(type).child(partyId).push(song)
   }
 
-<<<<<<< HEAD
   addToPersonalQueue (partyId, user, song) { 
    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
       .then(snapshot => {
@@ -443,13 +442,8 @@ class Fireboss {
       .then(() => {console.log('vote added!')})
       .catch(console.error)
   };
-=======
-  addToPersonalQueue (partyId, user, song) {
-    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
-  }
 
   /* ------------------- MACRO VOTING SETTERS ------------------- */
->>>>>>> dev-branch
 
   // if songId is passed, we know that the ref is for top_ten; else, currSong
   onDownvote(partyId, song, songId) {

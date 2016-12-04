@@ -7,6 +7,7 @@ import PauseCircleOutline from 'material-ui/svg-icons/av/pause-circle-outline';
 import NextSongButton from 'material-ui/svg-icons/av/skip-next';
 // import PlaylistAudioImg from 'material-ui/svg-icons/av/playlist-audio';
 
+import Snackbar from 'material-ui/Snackbar';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
@@ -20,14 +21,12 @@ const clientId = publicKeys.SC_CLIENT_ID;
 
 const DumbCustomPlayer = props => {
   // console.log('props in custom player', this.props)
-  let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase } = props;
+  let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase, uid, currentSong, hasVotes } = props;
 
   let dur = duration && Math.floor(duration)
-  console.log(duration)
   let curTime = Math.floor(currentTime)
   let displayDuration = mapDurationSecsToMins(dur)
-
-
+  const ownSong = (uid === currentSong.uid)
 
   if (!track) {
       return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
@@ -115,11 +114,11 @@ const DumbCustomPlayer = props => {
             </Col>
 
             <Col xs={1}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater}/>
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater}/>
             </Col>
 
             <Col xs={1}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
             </Col>
           </Row>
         </Col>
@@ -133,11 +132,20 @@ const DumbCustomPlayer = props => {
 class CustomPlayer extends React.Component {
   constructor(props) {
       super(props);
+
+      this.state = {
+        snackbarOpen: false
+      }
+
       this.play = this.play.bind(this);
       this.triggerFirebase = this.triggerFirebase.bind(this);
       this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this);
       this.onFire = this.onFire.bind(this);
       this.onWater = this.onWater.bind(this);
+
+      this.openSnackbar = this.openSnackbar.bind(this);
+      this.closeSnackbar = this.closeSnackbar.bind(this);
+
       // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
       const { soundCloudAudio } = this.props;
       soundCloudAudio.audio.addEventListener('ended', () => {
@@ -194,29 +202,51 @@ class CustomPlayer extends React.Component {
   onFire() {
     const { fireboss, currentSong, currentParty } = this.props;
     fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+    this.openSnackbar();
   }
 
   onWater() {
     const { fireboss, currentSong, currentParty } = this.props;
-    console.log(fireboss)
     fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+    this.openSnackbar();
+  }
+
+  openSnackbar() {
+    this.setState({snackbarOpen: true});
+  }
+
+  closeSnackbar() {
+    this.setState({snackbarOpen: false})
   }
 
   render() {
-    const { track, playing, soundCloudAudio, currentTime, duration } = this.props;
+    const { track, playing, soundCloudAudio, currentTime, duration, uid, currentSong, hasVotes, votes } = this.props;
     return (
-      <DumbCustomPlayer
-        track={track}
-        playing={playing}
-        soundCloudAudio={soundCloudAudio}
-        currentTime={currentTime}
-        duration={duration}
-        onFire={this.onFire}
-        onWater={this.onWater}
-        mapDurationSecsToMins={this.mapDurationSecsToMins}
-        play={this.play}
-        triggerFirebase={this.triggerFirebase}
-      />
+      <div>
+        <DumbCustomPlayer
+          hasVotes={hasVotes}
+          currentSong={currentSong}
+          uid={uid}
+          track={track}
+          playing={playing}
+          soundCloudAudio={soundCloudAudio}
+          currentTime={currentTime}
+          duration={duration}
+          onFire={this.onFire}
+          onWater={this.onWater}
+          mapDurationSecsToMins={this.mapDurationSecsToMins}
+          play={this.play}
+          triggerFirebase={this.triggerFirebase}
+          />
+        <Snackbar
+          open={this.state.snackbarOpen}
+          message={`You have ${votes} more votes before the next song`}
+          autoHideDuration={1500}
+          onRequestClose={this.closeSnackbar}
+          contentStyle={{ fontSize: '0.7em' }}
+          bodyStyle={{ height: '4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          />
+      </div>
     );
   }
 }
@@ -231,12 +261,16 @@ class CustomPlayerWrapper extends React.Component {
     render() {
         let song_uri
         if (this.props.currentSong) { song_uri = this.props.currentSong.song_uri}
+        const { user, votes} = this.props
 
         return (
             <SoundPlayerContainer
                 resolveUrl={song_uri}
                 clientId={clientId}>
                 <CustomPlayer
+                  votes={votes}
+                  hasVotes={(votes > 0)}
+                  uid={user.uid}
                   fireboss={this.props.fireboss}
                   song_uri={song_uri}
                   partyId={this.props.currentParty.id}
@@ -250,7 +284,7 @@ class CustomPlayerWrapper extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, currentParty, fireboss }) => ({ currentSong, currentParty, fireboss })
+const mapStateToProps = ({ currentSong, currentParty, fireboss, user, votes }) => ({ currentSong, currentParty, fireboss, user, votes })
 
 const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 

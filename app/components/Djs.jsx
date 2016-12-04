@@ -54,7 +54,6 @@ export class DjsComponent extends Component {
 
   render() {
     const { djs, user } = this.props;
-    console.log('photo', user.photoURL)
     let djArr = []
     for (let dj in djs) { djArr.push(djs[dj]) }
     djArr.sort((a, b) => (b.dj_points - a.dj_points))
@@ -115,4 +114,3 @@ export class DjsComponent extends Component {
 const mapStateToProps = ({ firebase, user, djs, currentParty }) => ({ firebase, user, djs, currentParty });
 
 export default connect(mapStateToProps)(DjsComponent);
-

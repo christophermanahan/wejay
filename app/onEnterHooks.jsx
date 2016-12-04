@@ -14,6 +14,7 @@ import { setDjs } from './ducks/djs';
 import { setPersonalQueue } from './ducks/personalQueue';
 import { setCurrentParty } from './ducks/currentParty';
 import { setShadowQueue } from './ducks/shadowQueue';
+import { decrementVotes } from './ducks/votes';
 
 
 const config = {
@@ -39,7 +40,8 @@ const dispatchers = {
   setDjs: dispatch(setDjs),
   setPersonalQueue: dispatch(setPersonalQueue),
   setCurrentParty: dispatch(setCurrentParty),
-  setShadowQueue: dispatch(setShadowQueue)
+  setShadowQueue: dispatch(setShadowQueue),
+  decrementVotes: dispatch(decrementVotes)
 }
 
 firebase.initializeApp(config);
@@ -78,4 +80,3 @@ export const onMainEnter = () => {
     }
   });
 };
-

@@ -294,7 +294,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
             partiesResult = resultsArr[0].val();
             userPartiesResult = resultsArr[1].val();
             partyDjsResult = resultsArr[2].val();
-            console.log('----------PARTIES DJ RESULT', partyDjsResult)
+            console.log('----------PARTIES DJ RESULT', partyDjsResult);
             done();
           })
           .catch(done);
@@ -306,7 +306,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
           .then(() => {
             done();
           })
-          .catch(done)
+          .catch(done);
       });
 
 
@@ -319,8 +319,8 @@ describe('---------- FIREBOSS TESTS ----------', () => {
       });
 
       it('removes the guest user from party_djs', () => {
-        expect(Object.keys(partyDjsResult).length).to.equal(1);
-        expect(Object.keys(partyDjsResult[partyId]).length).to.equal(1);
+        expect(Object.keys(partyDjsResult)).to.have.length.of(1);
+        expect(Object.keys(partyDjsResult[partyId])).to.have.length.of(1);
         expect(partyDjsResult[partyId][sampleUserCopy.uid]).to.equal(undefined);
       });
     });
@@ -441,37 +441,35 @@ describe('---------- FIREBOSS TESTS ----------', () => {
         partiesRef.set({[hostId]: sampleParty}),
         userPartiesRef.set({[hostId]: hostId}),
         partyDjsRef.set({[hostId]: {[hostId]: sampleDjVoter}}),
-        topTenRef.set({[hostId] : {[songHash] : sampleSong6Copy2}})
-      ]
+        topTenRef.set({[hostId]: {[songHash]: sampleSong6Copy2}})
+      ];
 
       Promise.all(setUpParty)
         .then(() => {
-          console.log('first then')
           return fireboss.decrementVotePriority(partyId, sampleSong6Copy2.uid);
         })
         .then(() => {
-          console.log('second then')
           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
         })
         .then(results => {
           topTenResult = results[0].val();
           partyDjsResult = results[1].val();
-          done()
+          done();
         })
-        .catch(done)
+        .catch(done);
     });
 
     after('destroy everything', done => {
-      fireboss.removePartyListeners(partyId, sampleUser)
-      const clear1 = partiesRef.set({})
-      const clear2 = userPartiesRef.set({})
-      const clear3 = partyDjsRef.set({})
-      const clear4 = topTenRef.set({})
+      fireboss.removePartyListeners(partyId, sampleUser);
+      const clear1 = partiesRef.set({});
+      const clear2 = userPartiesRef.set({});
+      const clear3 = partyDjsRef.set({});
+      const clear4 = topTenRef.set({});
       Promise.all([clear1, clear2 , clear3, clear4])
         .then(() => {
-          done()
+          done();
         })
-        .catch(done)
+        .catch(done);
     });
 
     it('downvotes the current song in the top ten', () => {

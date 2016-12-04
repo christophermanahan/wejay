@@ -14,14 +14,18 @@ export const sampleParties = {
     "id" : "dillonsUserIdwhichisalsothepartyid",
     "location" : "5 Hanover Sq",
     "name" : "Dillon's ppppparty",
-    "needSong" : false
+    "needSong" : false,
+    removeWorstSong: false
+
   },
   "RUOtMwp3qkWF7tZDjclrLOBT32s1" : {
     "active" : true,
     "id" : "RUOtMwp3qkWF7tZDjclrLOBT32s1",
     "location" : "weJay Demo Table",
     "name" : "OFFICIAL weJay Party!",
-    "needSong" : false
+    "needSong" : false,
+    removeWorstSong: false
+
   }
 }
 
@@ -32,7 +36,8 @@ export const sampleParty = {
     id: "dillonsUserIdwhichisalsothepartyid",
     location: "5 Hanover Sq",
     name: "Dillon's ppppparty",
-    needSong: false
+    needSong: false,
+    removeWorstSong: false
 }
 
 export const sampleParty2 = {
@@ -40,7 +45,9 @@ export const sampleParty2 = {
     id: "dillonsUserIdwhichisalsothepartyid",
     location: "5 Hanover Sq",
     name: "Dillon's ppppparty",
-    needSong: false
+    needSong: false,
+    removeWorstSong: false
+
 }
 
 export const sampleNewParty = {
@@ -48,7 +55,9 @@ export const sampleNewParty = {
   id : "idForNewSampleParty",
   location: "newly added spacetime",
   name: "New Party!",
-  needSong: false
+  needSong: false,
+  removeWorstSong: false
+
 }
 
 export const idForNewSampleParty = "idForNewSampleParty";

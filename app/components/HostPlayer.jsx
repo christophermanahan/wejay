@@ -7,6 +7,7 @@ import PauseCircleOutline from 'material-ui/svg-icons/av/pause-circle-outline';
 import NextSongButton from 'material-ui/svg-icons/av/skip-next';
 // import PlaylistAudioImg from 'material-ui/svg-icons/av/playlist-audio';
 
+import Snackbar from 'material-ui/Snackbar';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
@@ -131,11 +132,20 @@ const DumbCustomPlayer = props => {
 class CustomPlayer extends React.Component {
   constructor(props) {
       super(props);
+
+      this.state = {
+        snackbarOpen: false
+      }
+
       this.play = this.play.bind(this);
       this.triggerFirebase = this.triggerFirebase.bind(this);
       this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this);
       this.onFire = this.onFire.bind(this);
       this.onWater = this.onWater.bind(this);
+
+      this.openSnackbar = this.openSnackbar.bind(this);
+      this.closeSnackbar = this.closeSnackbar.bind(this);
+
       // soundCloudAudio prop is automagically given to us by SoundPlayerContainer
       const { soundCloudAudio } = this.props;
       soundCloudAudio.audio.addEventListener('ended', () => {
@@ -192,32 +202,51 @@ class CustomPlayer extends React.Component {
   onFire() {
     const { fireboss, currentSong, currentParty } = this.props;
     fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+    this.openSnackbar();
   }
 
   onWater() {
     const { fireboss, currentSong, currentParty } = this.props;
-    console.log(fireboss)
     fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+    this.openSnackbar();
+  }
+
+  openSnackbar() {
+    this.setState({snackbarOpen: true});
+  }
+
+  closeSnackbar() {
+    this.setState({snackbarOpen: false})
   }
 
   render() {
-    const { track, playing, soundCloudAudio, currentTime, duration, uid, currentSong, hasVotes } = this.props;
+    const { track, playing, soundCloudAudio, currentTime, duration, uid, currentSong, hasVotes, votes } = this.props;
     return (
-      <DumbCustomPlayer
-        hasVotes={hasVotes}
-        currentSong={currentSong}
-        uid={uid}
-        track={track}
-        playing={playing}
-        soundCloudAudio={soundCloudAudio}
-        currentTime={currentTime}
-        duration={duration}
-        onFire={this.onFire}
-        onWater={this.onWater}
-        mapDurationSecsToMins={this.mapDurationSecsToMins}
-        play={this.play}
-        triggerFirebase={this.triggerFirebase}
-      />
+      <div>
+        <DumbCustomPlayer
+          hasVotes={hasVotes}
+          currentSong={currentSong}
+          uid={uid}
+          track={track}
+          playing={playing}
+          soundCloudAudio={soundCloudAudio}
+          currentTime={currentTime}
+          duration={duration}
+          onFire={this.onFire}
+          onWater={this.onWater}
+          mapDurationSecsToMins={this.mapDurationSecsToMins}
+          play={this.play}
+          triggerFirebase={this.triggerFirebase}
+          />
+        <Snackbar
+          open={this.state.snackbarOpen}
+          message={`You have ${votes} more votes before the next song`}
+          autoHideDuration={1500}
+          onRequestClose={this.closeSnackbar}
+          contentStyle={{ fontSize: '0.7em' }}
+          bodyStyle={{ height: '4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          />
+      </div>
     );
   }
 }
@@ -239,6 +268,7 @@ class CustomPlayerWrapper extends React.Component {
                 resolveUrl={song_uri}
                 clientId={clientId}>
                 <CustomPlayer
+                  votes={votes}
                   hasVotes={(votes > 0)}
                   uid={user.uid}
                   fireboss={this.props.fireboss}

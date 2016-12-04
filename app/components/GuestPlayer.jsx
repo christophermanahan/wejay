@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
@@ -96,9 +97,17 @@ const DumbGuestPlayer = props => {
 class GuestPlayer extends React.Component {
     constructor(props) {
         super(props);
-        console.log();
+
+        this.state = {
+          snackbarOpen: false
+        }
+
         this.onFire = this.onFire.bind(this);
         this.onWater = this.onWater.bind(this);
+
+        this.openSnackbar = this.openSnackbar.bind(this);
+        this.closeSnackbar = this.closeSnackbar.bind(this);
+
         // this.triggerFirebase = this.triggerFirebase.bind(this);
         // this.mapDurationSecsToMins = this.mapDurationSecsToMins.bind(this)
 
@@ -113,11 +122,21 @@ class GuestPlayer extends React.Component {
     onFire() {
       const { fireboss, currentSong, currentParty } = this.props;
       fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+      this.openSnackbar();
     }
 
     onWater() {
       const { fireboss, currentSong, currentParty } = this.props;
       fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+      this.openSnackbar();
+    }
+
+    openSnackbar() {
+      this.setState({snackbarOpen: true});
+    }
+
+    closeSnackbar() {
+      this.setState({snackbarOpen: false})
     }
 
     render() {
@@ -138,13 +157,23 @@ class GuestPlayer extends React.Component {
         // }
 
         return (
-          <DumbGuestPlayer
-            hasVotes={(votes > 0)}
-            uid={user.uid}
-            currentSong={ currentSong }
-            onFire={ this.onFire }
-            onWater={ this.onWater }
-          />
+          <div>
+            <DumbGuestPlayer
+              hasVotes={(votes > 0)}
+              uid={user.uid}
+              currentSong={ currentSong }
+              onFire={ this.onFire }
+              onWater={ this.onWater }
+              />
+            <Snackbar
+              open={this.state.snackbarOpen}
+              message={`You have ${votes} more votes before the next song`}
+              autoHideDuration={1500}
+              onRequestClose={this.closeSnackbar}
+              contentStyle={{ fontSize: '0.7em' }}
+              bodyStyle={{ height: '4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              />
+          </div>
         );
     }
 }

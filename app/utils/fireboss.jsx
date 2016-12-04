@@ -159,7 +159,7 @@ class Fireboss {
     this.database.ref('parties').on('value', snapshot => {
       this.dispatchers.setParties(snapshot.val());
     });
-  };
+  }
 
   createPartyListener (partyId, type) {
     if (type === 'current_song') {
@@ -175,7 +175,7 @@ class Fireboss {
         this.dispatchers.setDjs(snapshot.val());
       });
     }
-  };
+  }
 
   endPartyListener (partyId, user) {
     this.getParty(partyId).child('active').on('value', snapshot => {
@@ -195,19 +195,19 @@ class Fireboss {
         })
         .catch(console.error);
     });
-  };
+  }
 
   createMessagesListener (onChangeFunc) {
     this.database.ref('messages').on('value', snapshot => {
       onChangeFunc(snapshot.val());
     });
-  };
+  }
 
   createPersonalQueueListener (partyId, user) {
     this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').on('value', snapshot => {
       this.dispatchers.setPersonalQueue(snapshot.val());
     });
-  };
+  }
 
   createShadowQueueListener (partyId, user) {
     this.database.ref('shadow_queue').child(partyId).on('value', snapshot => {
@@ -223,7 +223,7 @@ class Fireboss {
       }
       this.dispatchers.setShadowQueue(userSongsInSQ);
     });
-  };
+  }
 
   removePartyListeners (partyId, user) {
     this.database.ref('current_song').child(partyId).off();
@@ -232,25 +232,25 @@ class Fireboss {
     this.getParty(partyId).child('active').off();
     this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').off();
     this.database.ref('shadow_queue').child(partyId).off();
-    this.getParty(partyId).child('active').off()
-  };
+    this.getParty(partyId).child('active').off();
+  }
 
 
   /* ------------------- SNAPSHOTS ------------------- */
 
   gettingPartyItemSnapshot (partyId, item) {
     return this.database.ref(item).child(partyId).once('value');
-  };
+  }
 
   checkingUserParty (user) {
     return this.database.ref('user_parties').child(user.uid).once('value');
-  };
+  }
 
   getCurrentPartySnapshot (partyId) {
     return this.getParty(partyId).on('value', snapshot => {
       this.dispatchers.setCurrentParty(snapshot.val());
     });
-  };
+  }
 
   /* ------------------- SETTERS RETURNING PROMISES ------------------- */
 
@@ -290,27 +290,27 @@ class Fireboss {
         dj_name: `DJ ${user.displayName || djName}`,
         personal_queue: {}
       })
-  };
+  }
 
   associatingPartyAndUser (partyId, user) {
     return this.database.ref('user_parties').child(user.uid).set(partyId)
-  };
+  }
 
   settingCurrentSong (partyId, song) {
     return this.database.ref('current_song').child(partyId).set(song)
-  };
+  }
 
   creatingParty (partyId, party) {
     return this.getParty(partyId).set(party)
-  };
+  }
 
   removeUserParty (partyId, user) {
     return this.database.ref('user_parties').child(user.uid).remove()
-  };
+  }
 
   removePartyDj (partyId, user) {
     return this.database.ref('party_djs').child(partyId).child(user.uid).remove()
-  };
+  }
 
   endParty (partyId) {
     return this.getParty(partyId).remove()
@@ -355,31 +355,62 @@ class Fireboss {
       })
       .then(() => {console.log('vote added!')})
       .catch(console.error)
-  };
+  }
 
   decrementVotePriority (partyId, songId) {
-    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId);
+    const songRef = this.database.ref('top_ten').child(partyId).child(songId);
+    const djsRef = this.database.ref('party_djs').child(partyId);
     this.dispatchers.decrementVotes();
-    // get snapshot of song, then add 1 to vote priority and djPoints
-    return partyTopTenSongRef.once('value')
+
+    // 1. get snapshot of song
+    // 2. determine if need to decrement vote_priority or remove song
+    // 3. always promise together with decrementing DJ points
+
+    return Promise.all([ songRef.once('value'), djsRef.once('value') ])
+      .then(valsArr => {
+        const song = valsArr[0].val();
+        const djs = valsArr[1].val();
+        if (!song && !djs) return;
+
+        const { uid, vote_priority, time_priority } = song;
+        const netPriority = vote_priority + time_priority - 1;
+        const numDjs = Object.keys(djs).length;
+
+        let removeOrDownvotePromise =
+        this.meetsWorstSongThreshold(numDjs, netPriority, 2) ?
+          this.removeDownvotedSong(partyId, songId) :
+          this.simpleDownvote(partyId, songId, song);
+
+        return Promise.all([
+          removeOrDownvotePromise,
+          this.decrementTopTenDjPoints(uid, partyId)
+        ]);
+      })
+      .catch(console.error);
+  }
+
+  decrementTopTenDjPoints(uid, partyId) {
+    const djRef = this.database.ref('party_djs').child(partyId).child(uid);
+    return djRef.once('value')
       .then(snapshot => {
-        const currentVotes = snapshot && snapshot.val().vote_priority
-        let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = this.promisify(userId);
-        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
-        const updatingTopTenVotes = partyTopTenSongRef.update({vote_priority: (currentVotes - 1)});
-        return Promise.all([gettingPartyDj, promisifiedUserId, updatingTopTenVotes])
+        const partyDj = snapshot && snapshot.val();
+        if (!partyDj) return;
+
+        const newDjPoints = partyDj.dj_points - 1;
+        return djRef.update({ dj_points: newDjPoints });
       })
-      .then((results) => {
-        const currentDjPoints = results[0] && results[0].val().dj_points;
-        let userId = results[1];
-        //increase current dj points by 1
-        return this.database.ref('party_djs').child(partyId).child(userId)
-          .update({dj_points: (currentDjPoints - 1)})
-      })
-      .then(() => {console.log('vote added!')})
-      .catch(console.error)
-  };
+      .catch(console.error);
+  }
+
+  removeDownvotedSong(partyId, songId) {
+    return this.getParty(partyId).update({songToRemove: songId});
+  }
+
+  simpleDownvote(partyId, id, song) {
+    const newVotePriority = song.vote_priority - 1;
+    const songWithDownvote = Object.assign({}, song, {vote_priority: newVotePriority});
+    return this.database.ref('top_ten').child(partyId).child(id).set(songWithDownvote);
+  }
 
   incrementCurrSongDjPoints (userId, partyId) {
     const currentSongRef = this.database.ref('current_song').child(partyId);
@@ -403,7 +434,7 @@ class Fireboss {
       })
       .then(() => {console.log('vote added!')})
       .catch(console.error)
-  };
+  }
 
   decrementCurrSongDjPoints (userId, partyId) {
     const currentSongRef = this.database.ref('current_song').child(partyId);
@@ -427,17 +458,21 @@ class Fireboss {
       })
       .then(() => {console.log('vote added!')})
       .catch(console.error)
-  };
+  }
 
   triggerNeedSong (partyId) {
     return this.getParty(partyId).update({needSong: true})
-  };
+  }
 
   //Helper Functions
   promisify (value) {
     return new Promise(resolve => {
       return resolve(value);
     });
+  }
+
+  meetsWorstSongThreshold(numDjs, priority, magnitude) {
+    return (magnitude * numDjs) <= (priority * -1);
   }
 
   getParty (partyId) {

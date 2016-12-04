@@ -390,3 +390,28 @@ export const fbSamplePartyDjs = {
   [sampleDjGuestId]: fbSampleDjGuest,
   [sampleDjId]: sampleDj
 };
+
+export const whateverPartyDJs = {
+  foo: { uid: 'foo', dj_points: -2 },
+  bar: { uid: 'bar', dj_points: 0 },
+  baz: { uid: 'baz', dj_points: 10 },
+  buzz: { uid: 'buzz', dj_points: 2 }
+};
+
+export const randoHostId = 'foo';
+
+export const randoParty = {
+  "active" : true,
+  "id" : "foo",
+  "location" : "Harlem",
+  "name" : "R Kelly only plz",
+  "needSong" : false,
+  songToRemove: ''
+};
+
+export const randoTopTen = {
+  y1: Object.assign({}, sampleSong5, {uid: 'foo', vote_priority: -7}),
+  y2: Object.assign({}, sampleSong2, {uid: 'foo' })
+};
+
+

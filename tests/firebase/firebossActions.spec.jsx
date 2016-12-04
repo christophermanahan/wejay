@@ -4,7 +4,23 @@ import Fireboss from '../../app/utils/fireboss';
 import { expect } from 'chai';
 
 import { dispatchers } from '../utils/firebossTest';
-import { sampleParty, sampleParty2, sampleDj, sampleDjHost, sampleUser, sampleSong, sampleSong2, sampleSong6, sampleDjVoter, sampleTopTenFull } from '../utils';
+import {
+  sampleParty,
+  sampleParty2,
+  sampleDj,
+  sampleDjHost,
+  sampleUser,
+  sampleSong,
+  sampleSong2,
+  sampleSong6,
+  sampleDjVoter,
+  sampleTopTenFull,
+  randoHostId,
+  randoParty,
+  randoTopTen,
+  whateverPartyDJs
+
+} from '../utils';
 
 const browserHistory = [];
 
@@ -392,19 +408,17 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
       Promise.all(setUpParty)
         .then(() => {
-          console.log('first then')
           return fireboss.incrementVotePriority(partyId, sampleSong6Copy.uid);
         })
         .then(() => {
-          console.log('second then')
           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
         })
         .then(results => {
           topTenResult = results[0].val();
           partyDjsResult = results[1].val();
-          done()
+          done();
         })
-        .catch(done)
+        .catch(done);
     });
 
     after('destroy everything', done => {
@@ -480,4 +494,55 @@ describe('---------- FIREBOSS TESTS ----------', () => {
       expect(partyDjsResult[hostId][hostId].dj_points).to.equal(-1)
     });
   });
+
+  describe('TESTING SONG REMOVAL VIA DECREMENT VOTE PRIORITY FN', () => {
+
+    let partyResult, partyDjsResult;
+
+    before('create a party with four DJs and a Top Ten', done => {
+      const setUpParty = [
+        partiesRef.set({[randoHostId]: randoParty}),
+        partyDjsRef.set({[randoHostId]: whateverPartyDJs}),
+        topTenRef.set({[randoHostId]: randoTopTen})
+      ];
+
+      Promise.all(setUpParty)
+      .then(() => {
+        return fireboss.decrementVotePriority(randoHostId, 'y1');
+      })
+      .then(() => {
+        return Promise.all([
+          partiesRef.child(randoHostId).once('value'),
+          partyDjsRef.child(randoHostId).once('value'),
+        ]);
+      })
+      .then(resultsArr => {
+        partyResult = resultsArr[0].val();
+        partyDjsResult = resultsArr[1].val();
+        done();
+      })
+      .catch(done);
+
+    })
+
+    after('cleaning up', done => {
+      Promise.all([
+        partiesRef.set({}),
+        partyDjsRef.set({}),
+        topTenRef.set({})
+      ])
+        .then(() => done())
+        .catch(done);
+    });
+
+    it('sets songToRemove to the songId of the worst song if it meets the threshold', () => {
+      expect(partyResult.songToRemove).to.equal('y1');
+    });
+
+    it('still decrements the DJ points of the terrible DJ', () => {
+      expect(partyDjsResult.foo.dj_points).to.equal(-3);
+    });
+
+  });
+
 });

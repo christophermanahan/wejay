@@ -128,7 +128,6 @@ describe('---------- FIRECHIEF LISTENER TESTS ----------', () => {
 
       partiesRef.set(sampleParties)
       .then(() => {
-        console.log("MARK 1")
         return partiesRef.child(dillonsUserIdwhichisalsothepartyid).update({ needSong: true });
       })
       .then(() => {
@@ -137,7 +136,6 @@ describe('---------- FIRECHIEF LISTENER TESTS ----------', () => {
         });
       })
       .then(() => {
-        console.log("MARK 2")
         return partiesRef.child(dillonsUserIdwhichisalsothepartyid).update({ songToRemove: 'badsong' });
       })
       .then(() => {

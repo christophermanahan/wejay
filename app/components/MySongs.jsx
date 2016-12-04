@@ -45,7 +45,7 @@ const DumbPqSong = props => {
             <Col xs={6}>
               <IconButton 
                 iconStyle={iconStyle} 
-                iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x"
+                iconClassName="zmdi zmdi-chevron-down"
                 disabled={index + 1 === length ? true : false}
                 onTouchTap={() => {fireboss.moveDownPersonalQueue(currentParty.id, user, song)}} 
               />
@@ -54,7 +54,7 @@ const DumbPqSong = props => {
             <Col xs={6}>
               <IconButton 
                 iconStyle={iconStyle} 
-                iconClassName="keyboard-arrow-up"
+                iconClassName="zmdi zmdi-chevron-up"
                 disabled={index === 0 ? true : false}
                 onTouchTap={() => {fireboss.moveUpPersonalQueue(currentParty.id, user, song)}} 
               />

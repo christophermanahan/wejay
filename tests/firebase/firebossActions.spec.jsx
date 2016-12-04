@@ -272,35 +272,43 @@ describe('---------- FIREBOSS TESTS ----------', () => {
         const setUpParty = [
           partiesRef.set({[sampleDjHostCopy.uid]: samplePartyCopy}),
           userPartiesRef.set({[sampleDjHostCopy.uid]: sampleDjHostCopy.uid}),
-          partyDjsRef.set({[sampleDjHostCopy.uid]: {[sampleDjHostCopy.uid]: sampleDjHostCopy}}),
+          partyDjsRef.set({[sampleDjHostCopy.uid]: {[sampleDjHostCopy.uid]: sampleDjHostCopy}})
+        ];
+
+        const updateParty = [
           userPartiesRef.update({[sampleUserCopy.uid]: sampleDjHostCopy.uid}),
           partyDjsRef.update({[sampleDjHostCopy.uid]: {[sampleUserCopy.uid]: sampleUserCopy}})
-        ]
+        ];
 
         Promise.all(setUpParty)
           .then(() => {
-            return fireboss.logOut(partyId, sampleUserCopy)
+            return Promise.all(updateParty);
           })
           .then(() => {
-            return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')])
+            return fireboss.logOut(partyId, sampleUserCopy);
+          })
+          .then(() => {
+            return Promise.all([partiesRef.once('value'), userPartiesRef.once('value'), partyDjsRef.once('value')]);
           })
           .then(resultsArr => {
             partiesResult = resultsArr[0].val();
             userPartiesResult = resultsArr[1].val();
             partyDjsResult = resultsArr[2].val();
-            done()
+            console.log('----------PARTIES DJ RESULT', partyDjsResult)
+            done();
           })
-          .catch(done)
+          .catch(done);
       });
 
       after('destroy everything', done => {
-        fireboss.removePartyListeners(partyId, sampleUserCopy)
+        fireboss.removePartyListeners(partyId, sampleUserCopy);
         Promise.all([partiesRef.set({}), userPartiesRef.set({}), partyDjsRef.set({})])
           .then(() => {
             done();
           })
           .catch(done)
       });
+
 
       it('the host party remains active', () => {
         expect(Object.keys(partiesResult)).to.have.length.of(1);
@@ -311,9 +319,9 @@ describe('---------- FIREBOSS TESTS ----------', () => {
       });
 
       it('removes the guest user from party_djs', () => {
-        expect(Object.keys(partyDjsResult)).to.have.length.of(1)
-        expect(Object.keys(partyDjsResult[partyId])).to.have.length.of(1)
-        expect(partyDjsResult[partyId][sampleUserCopy.uid]).to.equal(undefined)
+        expect(Object.keys(partyDjsResult).length).to.equal(1);
+        expect(Object.keys(partyDjsResult[partyId]).length).to.equal(1);
+        expect(partyDjsResult[partyId][sampleUserCopy.uid]).to.equal(undefined);
       });
     });
 

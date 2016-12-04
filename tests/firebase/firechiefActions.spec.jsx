@@ -19,7 +19,13 @@ import {
   sampleSQBefore,
   sampleSQAfter,
   sampleTTBefore,
-  sampleTTAfter
+  sampleTTAfter,
+  sampleTopTenBeforeWorst,
+  sampleTopTenAfterWorst,
+  sampleShadowQueueBeforeWorst,
+  sampleShadowQueueAfterWorst,
+  samplePersonalQueueBeforeWorst,
+  samplePersonalQueueAfterWorst
 
 
 } from '../utils';
@@ -393,5 +399,43 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 
 	});
 
+	describe('onRemoveWorstSong function', () => {
+
+		let topTenResult;
+
+		before('Set up party with Top Ten and SQ', done => {
+
+			const setUpParty = [
+				partiesRef.set({[partyId]: sampleParty}),
+				topTenRef.set({[partyId]: topTenWithWorst}),
+				shadowQueueRef.set({[partyId]: sampleShadowQueueBeforeWorst}),
+				partyDjsRef.set({[partyId]: samplePartyDjs})
+			];
+
+			Promise.all(setUpParty)
+				.then(() => {
+					topTenRef.child('SOMETHING').update({vote_priority: })
+				})
+
+
+
+		});
+
+		after('destroy everything', done => {
+
+			const clearingParty = [
+				partiesRef.set({}),
+				topTenRef.set({}),
+				shadowQueueRef.set({}),
+				partyDjsRef.set({})
+			];
+			Promise.all(clearingParty)
+				.then(() => done())
+				.catch(done);
+		});
+
+
+
+	});
 
 });

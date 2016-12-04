@@ -51,7 +51,7 @@ class Fireboss {
   }
 
   createPartyWithListeners (partyId, user, partyObj) {
-    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false});
+    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false, removeWorstSong: false});
     return this.creatingParty(partyId, party)
             .then(() => {
               const addingHostDJ = this.addingPartyDJ(partyId, user);

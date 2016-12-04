@@ -241,12 +241,12 @@ export const sqSong2 = Object.assign({}, sampleSong, {uid: sampleUser.uid})
 export const sampleSQBefore = {
   firstsong: sampleSongHighestPri,
   secondsong: sampleSong3,
-}
+};
 
 export const sampleSQAfter = {
   firstsong: Object.assign({}, sampleSongHighestPri, {time_priority: 15}),
   secondsong: Object.assign({}, sampleSong3, {time_priority: 8})
-}
+};
 
 export const sampleTTBefore = {
   num1: sampleSong5,
@@ -273,6 +273,57 @@ export const sampleTTAfter = {  // increment all by 5
   num9: Object.assign({}, sampleSong4, {time_priority: 5}),
   num10: Object.assign({}, sampleSongHighestPri, {time_priority: 15})
 }
+
+export const sampleTopTenBeforeWorst = {
+  s1: Object.assign({}, sampleSong5),
+  s2: Object.assign({}, sampleSong2),
+  s3: Object.assign({}, sampleSong3),
+  s4: Object.assign({}, sampleSong4),
+  s5: Object.assign({}, sampleSong2),
+  s6: Object.assign({}, sampleSong5),
+  s7: Object.assign({}, sampleSong2),
+  s8: Object.assign({}, sampleSong3),
+  s9: Object.assign({}, sampleSong4),
+  s10: Object.assign({}, sampleSong5)
+};
+
+
+export const sampleTopTenAfterWorst = {
+  s2: Object.assign({}, sampleSong2),
+  s3: Object.assign({}, sampleSong3),
+  s4: Object.assign({}, sampleSong4),
+  s5: Object.assign({}, sampleSong2),
+  s6: Object.assign({}, sampleSong5),
+  s7: Object.assign({}, sampleSong2),
+  s8: Object.assign({}, sampleSong3),
+  s9: Object.assign({}, sampleSong4),
+  s10: Object.assign({}, sampleSong5),
+  s12: Object.assign({}, sampleSongHighestPri)
+}
+
+
+export const sampleShadowQueueBeforeWorst = {
+  s11: Object.assign({}, sampleSong2),
+  s12: Object.assign({}, sampleSongHighestPri),    // HIGHEST PRIORITY
+  s13: Object.assign({}, sampleSong3)
+};
+
+export const sampleShadowQueueAfterWorst = {
+  s11: Object.assign({}, sampleSong2),
+  s13: Object.assign({}, sampleSong3),
+  tomsong1: Object.assign({}, sampleSong2)
+}
+
+// will belong to DJ Tom
+export const samplePersonalQueueBeforeWorst = {
+  tomsong1: Object.assign({}, sampleSong2), // HIGHER PRIORITY
+  tomsong2: Object.assign({}, sampleSong5)
+};
+
+export const samplePersonalQueueAfterWorst = {
+  tomsong2: Object.assign({}, sampleSong5)
+};
+
 
 export const fbSampleShadowQueue = {
   song12: sqSong2,

@@ -326,6 +326,8 @@ class Fireboss {
     return this.database.ref(type).child(partyId).push(song)
   }
 
+   /* ------------------- REORDERING PERSONAL QUEUE ------------------- */
+
   addToPersonalQueue (partyId, user, song) { 
    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
       .then(snapshot => {
@@ -419,29 +421,6 @@ class Fireboss {
         this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').update(update);
       })
   }
-
-  incrementVotePriority (partyId, songId) {
-    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
-    // get snapshot of song, then add 1 to vote priority and djPoints
-    return partyTopTenSongRef.once('value')
-      .then(snapshot => {
-        const currentVotes = snapshot && snapshot.val().vote_priority
-        let userId = snapshot && snapshot.val().uid;
-        const promisifiedUserId = this.promisify(userId);
-        const gettingPartyDj = this.database.ref('party_djs').child(partyId).child(userId).once('value');
-        const updatingTopTenVotes = partyTopTenSongRef.update({vote_priority: (currentVotes + 1)});
-        return Promise.all([gettingPartyDj, promisifiedUserId, updatingTopTenVotes])
-      })
-      .then((results) => {
-        const currentDjPoints = results[0] && results[0].val().dj_points;
-        let userId = results[1];
-        //increase current dj points by 1
-        return this.database.ref('party_djs').child(partyId).child(userId)
-          .update({dj_points: (currentDjPoints + 1)})
-      })
-      .then(() => {console.log('vote added!')})
-      .catch(console.error)
-  };
 
   /* ------------------- MACRO VOTING SETTERS ------------------- */
 

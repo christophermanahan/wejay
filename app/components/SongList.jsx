@@ -15,7 +15,7 @@ import FontIcon from 'material-ui/FontIcon';
 
 const DumbSongList = props => {
 
-  const { topTenArr, calcNetHeat, calcHeatIndex, onFire, onWater } = props;
+  const { topTenArr, calcNetHeat, calcHeatIndex, onFire, onWater, uid } = props;
   const netHeat = calcNetHeat(topTenArr);
   return (
     <Row className="app-no-margin song-list-container">
@@ -31,6 +31,7 @@ const DumbSongList = props => {
                         id={song.id}
                         key={song.id}
                         heatIndex={calcHeatIndex(song, netHeat)}
+                        ownSong={(uid === song.uid)}
                   />
           ))
         :
@@ -92,7 +93,7 @@ class SongList extends Component {
   }
 
   render() {
-    const { topTen } = this.props;
+    const { topTen, user } = this.props;
 
     let topTenArr = [];
     for (let song in topTen) {
@@ -103,6 +104,7 @@ class SongList extends Component {
 
     return (
       <DumbSongList
+        uid={user.uid}
         topTenArr={ topTenArr }
         calcHeatIndex={ this.calcHeatIndex }
         calcNetHeat={ this.calcNetHeat }
@@ -115,7 +117,7 @@ class SongList extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ fireboss, currentParty, topTen }) => ({ fireboss, currentParty, topTen });
+const mapStateToProps = ({ user, fireboss, currentParty, topTen }) => ({ user, fireboss, currentParty, topTen });
 const SongContainer = connect(mapStateToProps)(SongList);
 
 export default SongContainer;

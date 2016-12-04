@@ -329,8 +329,21 @@ class Fireboss {
     return this.database.ref(type).child(partyId).push(song)
   };
 
-  addToPersonalQueue (partyId, user, song) {
-    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
+  addToPersonalQueue (partyId, user, song) { 
+   return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
+      .then(snapshot => {
+        let vote_priority = 0;
+        const currentPq = snapshot.val();
+        console.log("pushing to firebase", currentPq)
+        for (let track in currentPq) {
+          vote_priority = Math.min(vote_priority, currentPq[track].vote_priority - 1);
+        }
+        song.vote_priority = vote_priority;
+      })
+      .then(() => {
+        this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
+      })
+      .catch(console.error)
   };
 
   incrementVotePriority (partyId, songId) {

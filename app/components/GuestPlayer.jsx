@@ -12,7 +12,7 @@ import LinearProgress from 'material-ui/LinearProgress';
 
 const DumbGuestPlayer = props => {
   const { currentSong, onFire, onWater, uid, hasVotes} = props;
-  const ownSong = (uid === currentSong.uid)
+  const ownSong = (uid === (currentSong && currentSong.uid));
 
   let progBarStyle = {
     backgroundColor: "#EC4616",
@@ -121,13 +121,13 @@ class GuestPlayer extends React.Component {
 
     onFire() {
       const { fireboss, currentSong, currentParty } = this.props;
-      fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+      fireboss.onUpvote(currentParty.id, currentSong);
       this.openSnackbar();
     }
 
     onWater() {
       const { fireboss, currentSong, currentParty } = this.props;
-      fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+      fireboss.onDownvote(currentParty.id, currentSong);
       this.openSnackbar();
     }
 
@@ -136,45 +136,31 @@ class GuestPlayer extends React.Component {
     }
 
     closeSnackbar() {
-      this.setState({snackbarOpen: false})
+      this.setState({snackbarOpen: false});
     }
 
     render() {
-        // console.log('props in GUEST player', this.props)
-        let { currentSong, user, votes } = this.props
-        // console.log("CURRENT SONG: ", currentSong);
-        // let { track, playing, currentTime, } = this.props;
-        //
-        // duration = Math.floor(duration)
-        // currentTime = Math.floor(currentTime)
-        // // console.log("BEFORE: ", duration);
-        // duration = this.mapDurationSecsToMins(duration)
-        // // console.log("After: ", duration);
+      let { currentSong, user, votes } = this.props;
 
-
-        // if (!track) {
-        //     return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
-        // }
-
-        return (
-          <div>
-            <DumbGuestPlayer
-              hasVotes={(votes > 0)}
-              uid={user.uid}
-              currentSong={ currentSong }
-              onFire={ this.onFire }
-              onWater={ this.onWater }
-              />
-            <Snackbar
-              open={this.state.snackbarOpen}
-              message={`You have ${votes} more votes before the next song`}
-              autoHideDuration={1500}
-              onRequestClose={this.closeSnackbar}
-              contentStyle={{ fontSize: '0.7em' }}
-              bodyStyle={{ height: '4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              />
-          </div>
-        );
+      return (
+        <div>
+          <DumbGuestPlayer
+            hasVotes={(votes > 0)}
+            uid={user && user.uid}
+            currentSong={ currentSong }
+            onFire={ this.onFire }
+            onWater={ this.onWater }
+            />
+          <Snackbar
+            open={this.state.snackbarOpen}
+            message={`You have ${votes} more votes before the next song`}
+            autoHideDuration={1500}
+            onRequestClose={this.closeSnackbar}
+            contentStyle={{ fontSize: '0.7em' }}
+            bodyStyle={{ height: '4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            />
+        </div>
+      );
     }
 }
 

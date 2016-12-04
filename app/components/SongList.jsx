@@ -81,14 +81,16 @@ class SongList extends Component {
 
 
   onFire(songId) {
-    const { fireboss, currentParty } = this.props;
-    fireboss.incrementVotePriority(currentParty.id, songId);
+    const { fireboss, currentParty, topTen } = this.props;
+    const song = topTen[songId];
+    fireboss.onUpvote(currentParty.id, song, songId);
     this.openSnackbar();
   }
 
   onWater(songId) {
-    const { fireboss, currentParty } = this.props;
-    fireboss.decrementVotePriority(currentParty.id, songId);
+    const { fireboss, currentParty, topTen } = this.props;
+    const song = topTen[songId];
+    fireboss.onDownvote(currentParty.id, song, songId);
     this.openSnackbar();
   }
 

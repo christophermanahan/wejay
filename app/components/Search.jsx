@@ -75,7 +75,7 @@ class Search extends Component {
 
   onClear(){
     console.log("CLICKED");
-    this.setState({ clearedVal: '' })   
+    this.setState({ clearedVal: '' })
   }
 
   onType(evt) {
@@ -112,12 +112,13 @@ class Search extends Component {
   }
 
   render() {
-    const { searchResults } = this.props;
+    const { searchResults, clearedVal } = this.props;
     return (
         <div>
           <Row>
             <Col xs={10} xsOffset={1}>
               <DumbSearch
+                clearedVal={clearedVal}
                 onClear= { this.onClear }
                 onType={ this.onType }
                 trackSearch={ this.trackSearch }

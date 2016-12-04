@@ -345,6 +345,42 @@ class Fireboss {
       .catch(console.error)
   };
 
+  moveUpPersonalQueue (partyId, user, song) {
+    const { vote_priority } = song;
+    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
+      .then(snapshot => {
+        const currentPq = snapshot.val();
+        let songToMoveUp,
+            songToMoveUpKey,
+            songToMoveDownKey,
+            songToMoveDown = {vote_priority: 0};
+        for (let track in currentPq) {
+          if (currentPq[track].vote_priority === vote_priority) {
+            songToMoveUp = currentPq[track];
+            songToMoveUpKey = track
+          } 
+        }
+
+        for (let track in currentPq) {
+          if(currentPq[track].vote_priority > songToMoveUp.vote_priority && currentPq[track].vote_priority < songToMoveDown.vote_priority) {
+            songToMoveDown = currentPq[track];
+            songToMoveDownKey = track;
+          }
+        }
+
+        songToMoveUp.vote_priority += 1;
+        songToMoveDown.vote_priority -= 1;
+
+        const update = {
+          [songToMoveUpKey]: songToMoveUp,
+          [songToMoveDownKey]: songToMoveDown
+        } 
+      })
+      .then(() => {
+        this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').update(update);
+      })
+  } 
+
   incrementVotePriority (partyId, songId) {
     const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
     // get snapshot of song, then add 1 to vote priority and djPoints

@@ -2,62 +2,76 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import Song from './Song';
 
+import FlipMove from 'react-flip-move';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
-import {List, ListItem} from 'material-ui/List';
 import {cyan500} from 'material-ui/styles/colors';
 import FontIcon from 'material-ui/FontIcon';
-
 import Snackbar from 'material-ui/Snackbar';
-
-
 
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
-const DumbSongList = props => {
 
-  const { topTenArr, calcNetHeat, calcHeatIndex, onFire, onWater, uid, hasVotes } = props;
-  const netHeat = calcNetHeat(topTenArr);
-  return (
-    <Row className="app-no-margin song-list-container">
-      {
-        topTenArr && topTenArr.length ?
-          topTenArr && topTenArr.map((song, index) => (
-          song && <Song title={song.title}
-                        rank={index + 1}
-                        artist={song.artist}
-                        dj_name={song.dj_name}
-                        onFire={onFire}
-                        onWater={onWater}
-                        id={song.id}
-                        key={song.id}
-                        heatIndex={calcHeatIndex(song, netHeat)}
-                        ownSong={(uid === song.uid)}
-                        hasVotes={hasVotes}
-                  />
-          ))
-        :
-        <Col xs={12}>
-          <Row>
-            <Col xs={6} xsOffset={3}>
-              <h4 className="songlist-fail">Add some songs!</h4>
-              <h4 className="songlist-fail">Vote for songs you like!</h4>
-              <h4 className="songlist-fail">Earn DJ points!</h4>
+class DumbSongList extends Component {
 
-            </Col>
-            <Col xs={12} className="mysongs-col">
-              <FontIcon style={{ fontSize: '120px' }}
-                        className="zmdi zmdi-mood zmdi-hc-4x"
-                        color={cyan500}
-              />
-            </Col>
-          </Row>
-        </Col>
-      }
-    </Row>
-  );
-};
+  constructor(props) {
+    super(props);
+  }
+
+  renderSongsArr() {
+    const { topTenArr, calcNetHeat, calcHeatIndex, onFire, onWater, uid, hasVotes } = this.props;
+    const netHeat = calcNetHeat(topTenArr);
+
+    return topTenArr.map((song, index) => song &&
+          <div key={song.id}>
+            <Song
+              title={song.title}
+              rank={index + 1}
+              artist={song.artist}
+              dj_name={song.dj_name}
+              onFire={onFire}
+              onWater={onWater}
+              id={song.id}
+              heatIndex={calcHeatIndex(song, netHeat)}
+              ownSong={(uid === song.uid)}
+              hasVotes={hasVotes}
+            />
+          </div>
+    );
+  }
+
+  render() {
+    const { topTenArr } = this.props;
+    return (
+      <Row className="app-no-margin song-list-container">
+        {
+          topTenArr && topTenArr.length ?
+          <FlipMove easing="ease">
+            { this.renderSongsArr() }
+          </FlipMove>
+          :
+          <Col xs={12}>
+            <Row>
+              <Col xs={6} xsOffset={3}>
+                <h4 className="songlist-fail">Add some songs!</h4>
+                <h4 className="songlist-fail">Vote for songs you like!</h4>
+                <h4 className="songlist-fail">Earn DJ points!</h4>
+
+              </Col>
+              <Col xs={12} className="mysongs-col">
+                <FontIcon style={{ fontSize: '120px' }}
+                          className="zmdi zmdi-mood zmdi-hc-4x"
+                          color={cyan500}
+                />
+              </Col>
+            </Row>
+          </Col>
+        }
+      </Row>
+    );
+  }
+}
 
 
 /* -----------------    STATEFUL REACT COMPONENT     ------------------ */

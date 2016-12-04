@@ -54,7 +54,7 @@ const DumbGuestPlayer = props => {
   const iconStyle = {fontSize: '30px'};
   let artwork_url = currentSong && currentSong.artwork_url;
   let vote_priority = currentSong && currentSong.vote_priority;
-  console.log("HAS VOTES IS: ", hasVotes);
+
   return (
     <div>
       <LinearProgress
@@ -68,8 +68,8 @@ const DumbGuestPlayer = props => {
 
         <Col xs={5} style={songInfoColStyle}>
           <h2 style={titleStyle}>{currentSong && currentSong.title}</h2>
-          <h3 style={artistStyle}>by: {currentSong && currentSong.artist }</h3>
-          <h4 style={artistStyle}>Chosen by: {currentSong && currentSong.dj_name} </h4>
+          <h3 style={artistStyle}>by: {currentSong && currentSong.artist } - {currentSong && currentSong.duration}</h3>
+          <h4 style={artistStyle}>Chosen by: {ownSong ? 'YOU' : (currentSong && currentSong.dj_name)} </h4>
         </Col>
 
         <Col xs={5} style={playerIconStyle}>

@@ -21,9 +21,6 @@ class Fireboss {
     this.FacebookAuth = () => {
       return new firebase.auth.FacebookAuthProvider();
     };
-    this.createUserEP = (email, password) => {
-      return this.auth.createUserWithEmailAndPassword(email, password);
-    };
   }
 
   /* ---------------------- FIREBASE METHODS ---------------------- */

@@ -10,6 +10,7 @@ import Audiotrack from 'material-ui/svg-icons/image/audiotrack';
 
 import {cyan500} from 'material-ui/styles/colors';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
+import IconButton from 'material-ui/IconButton';
 
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
@@ -22,6 +23,33 @@ const DumbSong = props => {
         secondaryText={artist}
         leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
       />
+    </div>
+  );
+};
+
+const DumbPqSong = props => {
+  const { title, artist, artwork_url, heat } = props;
+  const iconStyle = {fontSize: '30px'};
+  return (
+    <div>
+      <Row>
+        <Col xs={7}>
+          <ListItem
+            primaryText={title}
+            secondaryText={artist}
+            leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
+          />
+        </Col>
+        <Col xs={5}>
+            <Col xsOffset={2} xs={2}>
+              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => {}} />
+            </Col>
+
+            <Col xsOffset={1} xs={1}>
+              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => {}} />
+            </Col>
+        </Col>
+      </Row>
     </div>
   );
 };
@@ -95,7 +123,7 @@ const DumbMySongs = props => {
           }
           {
               pQArr.map((song, i) => (
-                <DumbSong
+                <DumbPqSong
                   title={song.title}
                   artist={song.artist}
                   artwork_url={song.artwork_url}

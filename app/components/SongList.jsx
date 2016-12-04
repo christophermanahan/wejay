@@ -24,7 +24,7 @@ class DumbSongList extends Component {
     const netHeat = calcNetHeat(topTenArr);
 
     return topTenArr.map((song, index) => song &&
-          <div key={song.id}>
+          <div key={song.id} style={{width: "100%"}}>
             <Song
               title={song.title}
               rank={index + 1}
@@ -47,7 +47,7 @@ class DumbSongList extends Component {
       <Row className="app-no-margin song-list-container">
         {
           topTenArr && topTenArr.length ?
-          <FlipMove easing="ease">
+          <FlipMove easing="ease" style={{width: "100%"}}>
             { this.renderSongsArr() }
           </FlipMove>
           :

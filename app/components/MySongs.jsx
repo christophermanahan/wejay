@@ -28,26 +28,38 @@ const DumbSong = props => {
 };
 
 const DumbPqSong = props => {
-  const { title, artist, artwork_url, heat, user, currentParty, song, fireboss } = props;
+  const { title, artist, artwork_url, heat, user, currentParty, song, index, length, fireboss } = props;
   const iconStyle = {fontSize: '30px'};
   return (
     <div>
       <Row>
-        <Col xs={7}>
+        <Col xs={9}>
           <ListItem
             primaryText={title}
             secondaryText={artist}
             leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
           />
         </Col>
-        <Col xs={5}>
-            <Col xsOffset={2} xs={2}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => {fireboss.moveDownPersonalQueue(currentParty.id, user, song)}} />
+        <Col xs={2}>
+          <Row>
+            <Col xs={6}>
+              <IconButton 
+                iconStyle={iconStyle} 
+                iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x"
+                disabled={index + 1 === length ? true : false}
+                onTouchTap={() => {fireboss.moveDownPersonalQueue(currentParty.id, user, song)}} 
+              />
             </Col>
 
-            <Col xsOffset={1} xs={1}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => {fireboss.moveUpPersonalQueue(currentParty.id, user, song)}} />
+            <Col xs={6}>
+              <IconButton 
+                iconStyle={iconStyle} 
+                iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x"
+                disabled={index === 0 ? true : false}
+                onTouchTap={() => {fireboss.moveUpPersonalQueue(currentParty.id, user, song)}} 
+              />
             </Col>
+          </Row>
         </Col>
       </Row>
     </div>
@@ -133,6 +145,8 @@ const DumbMySongs = props => {
                   currentParty={currentParty}
                   fireboss={fireboss}
                   song={song}
+                  length={pQArr.length}
+                  index={i}
                   key={i}
                 />
               ))

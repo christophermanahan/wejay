@@ -401,7 +401,7 @@ class Fireboss {
         }
 
         for (let track in currentPq) {
-          if(currentPq[track].vote_priority < songToMoveDown.vote_priority && currentPq[track].vote_priority > songToMoveDown.vote_priority) {
+          if(currentPq[track].vote_priority < songToMoveDown.vote_priority && currentPq[track].vote_priority > songToMoveUp.vote_priority) {
             songToMoveUp = currentPq[track];
             songToMoveUpKey = track;
           }

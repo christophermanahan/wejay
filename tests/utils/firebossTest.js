@@ -18,5 +18,7 @@ export const dispatchers = {
   setDjs: () => {},
   setPersonalQueue: () => {},
   setCurrentParty: () => {},
-  setShadowQueue: () => {}
+  setShadowQueue: () => {},
+  decrementVotes: () => {}
+
 };

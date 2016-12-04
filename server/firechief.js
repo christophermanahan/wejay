@@ -23,6 +23,7 @@ class Firechief {
 		partiesRef.on('child_added', snapshot => {
 			const partyId = snapshot.val() && snapshot.val().id;
 			if (!partyId) return;
+
 			this.createNewPartyListener(partyId);
 			if (topTenInterval) {
 				this.createTimePriorityIncrementer(partyId, topTenInterval, 'top_ten');
@@ -50,9 +51,15 @@ class Firechief {
 	createNewPartyListener(partyId) {
 		const newPartyRef = this.db.ref('parties').child(partyId);
 		newPartyRef.on('value', snapshot => {
-			const needSong = this.checkIfNeedSong(snapshot);
+			const party = snapshot && snapshot.val();
+			if (!party) return;
+			const { needSong, songToRemove } = party;
+	
 			if (needSong) {
 				this.masterReorder(partyId);
+			} else if (songToRemove) {
+				console.log('-------------------GONNA RUN THE THING!!!!!!', songToRemove)
+				this.removeWorstSong(partyId, songToRemove);
 			}
 		});
 	}
@@ -89,6 +96,25 @@ class Firechief {
 		})
 		.then(() => {
 			console.log('finished a full re-order, including PQ!');
+		})
+		.catch(console.error);
+	}
+
+	removeWorstSong(partyId, songId) {
+		return this.clearSongToRemove(partyId)
+		.then(() => {
+			return this.removeSong(partyId, 'top_ten', songId);
+		})
+		.then(() => {
+			return this.pullFromShadowQueue(partyId);
+		})
+		.then(resultsArr => {
+			if (!resultsArr) return;
+			const uid = resultsArr[0];
+			return this.pullFromPersonalQueue(partyId, uid);
+		})
+		.then(() => {
+			console.log('finished a re-order post-worst song!')
 		})
 		.catch(console.error);
 	}
@@ -131,8 +157,8 @@ class Firechief {
 
 	/*----------------------  HELPER SETTERS  -------------------------*/
 
-	// below is a more heavy-handed version that may over-write changes in the queue
-	// we have the .transaction solution (less reliable) commented out below
+	// below is a heavy-handed version that may over-write changes in the queue
+	// we stored a .transaction solution in an earlier commit but it proved unreliable
 
 	incrementerHelper(pid, queue) {
 
@@ -157,43 +183,12 @@ class Firechief {
 		.catch(console.error);
 	}
 
-	// incrementerHelper(partyId, queue) {
-
-	// 	const plusOne = timePriority => {
-	// 		return (timePriority || 0) + 1;
-	// 	};
-
-	// 	const onSuccess = success => {};
-
-	// 	const onFailure = failure => {
-	// 		console.error('FAILED TO UPDATE!');
-	// 	};
-
-	// 	this.db.ref(queue).child(partyId).once('value')
-	// 	.then(snapshot => {
-	// 		const fullQueue = snapshot && snapshot.val();
-	// 		if (!fullQueue) return;
-	// 		return Object.keys(fullQueue);
-	// 	})
-	// 	.then(songKeys => {
-	// 		if (!songKeys) return;
-	// 		const transactionPromises = songKeys.map(key => {
-	// 			return this.db.ref(queue).child(partyId).child(key).child('time_priority')
-	// 								 .transaction(plusOne).then(onSuccess, onFailure);
-	// 		});
-
-	// 		return Promise.all(transactionPromises);
-
-	// 	})
-	// 	.then(data => {
-	// 		// console.log('finished incrementing!');
-	// 	})
-	// 	.catch(console.error);
-
-	// }
-
 	setNeedSongToFalse(partyId) {
 		return this.db.ref('parties').child(partyId).update({ needSong: false });
+	}
+
+	clearSongToRemove(partyId) {
+		return this.db.ref('parties').child(partyId).update({ songToRemove: '' });
 	}
 
 	setCurrentSong(partyId) {
@@ -265,6 +260,8 @@ class Firechief {
 					nextSongId = song;
 				}
 			}
+			if (uid) { nextSong = Object.assign({}, nextSong, { vote_priority: 0 }) }
+
 			return {[nextSongId]: nextSong};
 		})
 		.catch(console.error);
@@ -277,10 +274,6 @@ class Firechief {
 		return new Promise((resolve, reject) => {
 			resolve(uid);
 		});
-	}
-
-	checkIfNeedSong(snapshot) {
-		return snapshot.val() ? snapshot.val().needSong : false;
 	}
 
 	deconstructSongObject(song, option) {						// Our Firebase often has unique hash vals that point to song objects

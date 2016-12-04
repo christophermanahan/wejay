@@ -28,7 +28,7 @@ const DumbSong = props => {
 };
 
 const DumbPqSong = props => {
-  const { title, artist, artwork_url, heat } = props;
+  const { title, artist, artwork_url, heat, user, currentParty, song, fireboss } = props;
   const iconStyle = {fontSize: '30px'};
   return (
     <div>
@@ -46,7 +46,7 @@ const DumbPqSong = props => {
             </Col>
 
             <Col xsOffset={1} xs={1}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => {}} />
+              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => {fireboss.moveUpPersonalQueue(currentParty.id, user, song)}} />
             </Col>
         </Col>
       </Row>
@@ -55,7 +55,7 @@ const DumbPqSong = props => {
 };
 
 const DumbMySongs = props => {
-  const { personalQueue, shadowQueue, topTen, uid } = props;
+  const { personalQueue, shadowQueue, topTen, uid, user, currentParty, fireboss } = props;
   let pQArr = [];
   for (let song in personalQueue) { pQArr.push(personalQueue[song]) }
 
@@ -122,11 +122,17 @@ const DumbMySongs = props => {
               ''
           }
           {
-              pQArr.map((song, i) => (
+              pQArr.sort((a, b) => b.vote_priority - a.vote_priority)
+              .map((song, i) => (
                 <DumbPqSong
                   title={song.title}
                   artist={song.artist}
                   artwork_url={song.artwork_url}
+                  uid={uid}
+                  user={user}
+                  currentParty={currentParty}
+                  fireboss={fireboss}
+                  song={song}
                   key={i}
                 />
               ))
@@ -159,13 +165,16 @@ class MySongs extends Component {
   }
 
   render() {
-    let { personalQueue, shadowQueue, topTen, uid } = this.props;
+    let { personalQueue, shadowQueue, topTen, uid, user, currentParty, fireboss } = this.props;
     return (
       <DumbMySongs
         personalQueue={personalQueue}
         shadowQueue={shadowQueue}
         topTen={topTen}
+        currentParty={currentParty}
         uid={uid}
+        user={user}
+        fireboss={fireboss}
       />
     );
   }
@@ -174,7 +183,7 @@ class MySongs extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ personalQueue, shadowQueue, topTen, user }) => ({ personalQueue, shadowQueue, topTen, uid: user.uid });
+const mapStateToProps = ({ personalQueue, shadowQueue, topTen, currentParty, user, fireboss }) => ({ personalQueue, shadowQueue, topTen, currentParty, user, uid: user.uid, fireboss });
 
 
 export default connect(mapStateToProps)(MySongs);

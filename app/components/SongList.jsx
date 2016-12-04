@@ -8,6 +8,8 @@ import {List, ListItem} from 'material-ui/List';
 import {cyan500} from 'material-ui/styles/colors';
 import FontIcon from 'material-ui/FontIcon';
 
+import Snackbar from 'material-ui/Snackbar';
+
 
 
 
@@ -15,7 +17,7 @@ import FontIcon from 'material-ui/FontIcon';
 
 const DumbSongList = props => {
 
-  const { topTenArr, calcNetHeat, calcHeatIndex, onFire, onWater } = props;
+  const { topTenArr, calcNetHeat, calcHeatIndex, onFire, onWater, uid, hasVotes } = props;
   const netHeat = calcNetHeat(topTenArr);
   return (
     <Row className="app-no-margin song-list-container">
@@ -31,6 +33,8 @@ const DumbSongList = props => {
                         id={song.id}
                         key={song.id}
                         heatIndex={calcHeatIndex(song, netHeat)}
+                        ownSong={(uid === song.uid)}
+                        hasVotes={hasVotes}
                   />
           ))
         :
@@ -61,10 +65,17 @@ class SongList extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      snackbarOpen: false
+    }
+
     this.onFire = this.onFire.bind(this);
     this.onWater = this.onWater.bind(this);
     this.calcHeatIndex = this.calcHeatIndex.bind(this);
     this.calcNetHeat = this.calcNetHeat.bind(this);
+
+    this.openSnackbar = this.openSnackbar.bind(this);
+    this.closeSnackbar = this.closeSnackbar.bind(this);
 
   }
 
@@ -72,12 +83,23 @@ class SongList extends Component {
   onFire(songId) {
     const { fireboss, currentParty } = this.props;
     fireboss.incrementVotePriority(currentParty.id, songId);
+    this.openSnackbar();
   }
 
   onWater(songId) {
     const { fireboss, currentParty } = this.props;
     fireboss.decrementVotePriority(currentParty.id, songId);
+    this.openSnackbar();
   }
+
+  openSnackbar() {
+    this.setState({snackbarOpen: true});
+  }
+
+  closeSnackbar() {
+    this.setState({snackbarOpen: false})
+  }
+
 
   calcNetHeat(songsArr) {
     return songsArr.map(song => song.vote_priority + song.time_priority)
@@ -92,7 +114,7 @@ class SongList extends Component {
   }
 
   render() {
-    const { topTen } = this.props;
+    const { topTen, user, votes } = this.props;
 
     let topTenArr = [];
     for (let song in topTen) {
@@ -102,20 +124,34 @@ class SongList extends Component {
     topTenArr.sort((a, b) => ((+b.vote_priority + +b.time_priority) - (+a.vote_priority + +a.time_priority)));
 
     return (
-      <DumbSongList
-        topTenArr={ topTenArr }
-        calcHeatIndex={ this.calcHeatIndex }
-        calcNetHeat={ this.calcNetHeat }
-        onFire={ this.onFire }
-        onWater={ this.onWater }
-      />
+      <div>
+        <DumbSongList
+          hasVotes={(votes > 0)}
+          uid={user.uid}
+          topTenArr={ topTenArr }
+          calcHeatIndex={ this.calcHeatIndex }
+          calcNetHeat={ this.calcNetHeat }
+          onFire={ this.onFire }
+          onWater={ this.onWater }
+          />
+        <Snackbar
+          open={this.state.snackbarOpen}
+          message={`You have ${votes} more votes before the next song`}
+          autoHideDuration={1500}
+          onRequestClose={this.closeSnackbar}
+          contentStyle={{ fontSize: '0.7em' }}
+          bodyStyle={{ height: '4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          />
+      </div>
     );
   }
 }
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ fireboss, currentParty, topTen }) => ({ fireboss, currentParty, topTen });
+const mapStateToProps = ({ user, fireboss, currentParty, topTen, votes }) => ({ user, fireboss, currentParty, topTen, votes });
+
+
 const SongContainer = connect(mapStateToProps)(SongList);
 
 export default SongContainer;

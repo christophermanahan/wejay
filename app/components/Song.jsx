@@ -9,13 +9,16 @@ import Avatar from 'material-ui/Avatar';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const Song = props => {
-	const {title, artist, dj_name, onFire, onWater, id, rank, heatIndex} = props;
+	const {title, artist, dj_name, onFire, onWater, id, rank, heatIndex, ownSong, hasVotes} = props;
 	const iconStyle = {fontSize: '30px'};
 	const buttonStyle = {paddingTop: '20px'}
 
 	const heatColor = (heatIndex > 0) ?
              `rgba(236, 70, 22, ${heatIndex})` :
              `rgba(0, 188, 212, ${Math.abs(heatIndex)})`;
+
+	//if songId is same as uid
+	//disable buttons
 
 	return (
 		<Col xs={12}
@@ -38,10 +41,10 @@ const Song = props => {
 				<Col xs={3} className="top-ten-col">
 					<Row>
 						<Col xs={6}>
-				      <IconButton style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => onWater(id)}/>
+				      <IconButton disabled={(ownSong || !hasVotes)} style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => onWater(id)}/>
 						</Col>
 						<Col xs={6}>
-				      <IconButton style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => onFire(id)} />
+				      <IconButton disabled={(ownSong || !hasVotes)} style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => onFire(id)} />
 						</Col>
 					</Row>
 				</Col>

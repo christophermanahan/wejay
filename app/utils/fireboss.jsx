@@ -162,14 +162,14 @@ class Fireboss {
   };
 
   createPartyListener (partyId, type) {
-    if (type === 'current_song') { 
+    if (type === 'current_song') {
       return this.database.ref('current_song').child(partyId).on('value', snapshot => {
         this.dispatchers.setCurrentSong(snapshot.val());
       });
     } else if ( type === 'top_ten') {
       return this.database.ref('top_ten').child(partyId).on('value', snapshot => {
         this.dispatchers.setTopTen(snapshot.val());
-      }); 
+      });
     } else {
       return this.database.ref('party_djs').child(partyId).on('value', snapshot => {
         this.dispatchers.setDjs(snapshot.val());
@@ -247,7 +247,7 @@ class Fireboss {
   };
 
   getCurrentPartySnapshot (partyId) {
-    return this.getParty(partyId).once('value', snapshot => {
+    return this.getParty(partyId).on('value', snapshot => {
       this.dispatchers.setCurrentParty(snapshot.val());
     });
   };
@@ -334,7 +334,8 @@ class Fireboss {
   };
 
   incrementVotePriority (partyId, songId) {
-    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
+    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId);
+    this.dispatchers.decrementVotes();
     // get snapshot of song, then add 1 to vote priority and djPoints
     return partyTopTenSongRef.once('value')
       .then(snapshot => {
@@ -357,7 +358,8 @@ class Fireboss {
   };
 
   decrementVotePriority (partyId, songId) {
-    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId)
+    const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId);
+    this.dispatchers.decrementVotes();
     // get snapshot of song, then add 1 to vote priority and djPoints
     return partyTopTenSongRef.once('value')
       .then(snapshot => {
@@ -381,6 +383,7 @@ class Fireboss {
 
   incrementCurrSongDjPoints (userId, partyId) {
     const currentSongRef = this.database.ref('current_song').child(partyId);
+    this.dispatchers.decrementVotes();
     // get snapshot of song, then add 1 to vote priority and djPoints
     return currentSongRef.once('value')
       .then(snapshot => {
@@ -404,6 +407,7 @@ class Fireboss {
 
   decrementCurrSongDjPoints (userId, partyId) {
     const currentSongRef = this.database.ref('current_song').child(partyId);
+    this.dispatchers.decrementVotes();
     // get snapshot of song, then add 1 to vote priority and djPoints
     return currentSongRef.once('value')
       .then(snapshot => {

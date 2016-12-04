@@ -358,7 +358,7 @@ class Fireboss {
           if (currentPq[track].vote_priority === vote_priority) {
             songToMoveUp = currentPq[track];
             songToMoveUpKey = track;
-          } 
+          }
         }
 
         for (let track in currentPq) {
@@ -389,21 +389,21 @@ class Fireboss {
     return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
       .then(snapshot => {
         const currentPq = snapshot.val();
-        let songToMoveUp,
-            songToMoveUpKey,
+        let songToMoveDown,
             songToMoveDownKey,
-            songToMoveDown = {vote_priority: 0};
+            songToMoveUpKey,
+            songToMoveUp = {vote_priority: -1000};
         for (let track in currentPq) {
           if (currentPq[track].vote_priority === vote_priority) {
-            songToMoveUp = currentPq[track];
-            songToMoveUpKey = track;
+            songToMoveDown = currentPq[track];
+            songToMoveDownKey = track;
           } 
         }
 
         for (let track in currentPq) {
-          if(currentPq[track].vote_priority > songToMoveUp.vote_priority && currentPq[track].vote_priority <= songToMoveDown.vote_priority) {
-            songToMoveDown = currentPq[track];
-            songToMoveDownKey = track;
+          if(currentPq[track].vote_priority < songToMoveDown.vote_priority && currentPq[track].vote_priority > songToMoveDown.vote_priority) {
+            songToMoveUp = currentPq[track];
+            songToMoveUpKey = track;
           }
         }
 

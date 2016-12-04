@@ -42,7 +42,7 @@ const DumbPqSong = props => {
         </Col>
         <Col xs={5}>
             <Col xsOffset={2} xs={2}>
-              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => {}} />
+              <IconButton iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => {fireboss.moveDownPersonalQueue(currentParty.id, user, song)}} />
             </Col>
 
             <Col xsOffset={1} xs={1}>

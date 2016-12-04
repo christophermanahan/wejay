@@ -334,7 +334,6 @@ class Fireboss {
       .then(snapshot => {
         let vote_priority = 0;
         const currentPq = snapshot.val();
-        console.log("pushing to firebase", currentPq)
         for (let track in currentPq) {
           vote_priority = Math.min(vote_priority, currentPq[track].vote_priority - 1);
         }

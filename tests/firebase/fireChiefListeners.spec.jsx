@@ -118,23 +118,42 @@ describe('---------- FIRECHIEF LISTENER TESTS ----------', () => {
 
   describe('createNewPartyListener function', () => {
 
-    let spyMasterReorder;
+    let spyMasterReorder, spyRemoveWorstSong;
 
-    before('Create spy that wraps masterReorder', done => {
-      spyMasterReorder = spy(firechief, "masterReorder");
+    before('Create spies that wrap masterReorder and removeWorstSong', done => {
+      spyMasterReorder = spy(firechief, 'masterReorder');
+      spyRemoveWorstSong = spy(firechief, 'removeWorstSong');
 
       firechief.createPartyAddedListener();
 
       partiesRef.set(sampleParties)
       .then(() => {
-        return partiesRef.child(dillonsUserIdwhichisalsothepartyid).update({ needSong: true })
+        console.log("MARK 1")
+        return partiesRef.child(dillonsUserIdwhichisalsothepartyid).update({ needSong: true });
       })
-      .then(() => setTimeout( () => done(), 500 ) )
+      .then(() => {
+        return new Promise((res, rej) => {
+          setTimeout(res, 500);  // leave time to register listen
+        });
+      })
+      .then(() => {
+        console.log("MARK 2")
+        return partiesRef.child(dillonsUserIdwhichisalsothepartyid).update({ songToRemove: 'badsong' });
+      })
+      .then(() => {
+        return new Promise((res, rej) => {
+          setTimeout(res, 500);  // leave time to register listen
+        });
+      })
+      .then(() => {
+        done();
+      })
       .catch(done);
     });
 
     after('clear spy and reset firebase', done => {
       spyMasterReorder.restore();
+      spyRemoveWorstSong.restore();
       partiesRef.off();
       partiesRef.set({})
         .then(() => done())
@@ -147,8 +166,18 @@ describe('---------- FIRECHIEF LISTENER TESTS ----------', () => {
     });
 
     it('should call masterReorder with the ID of the party that needs a song', () => {
-      expect(spyMasterReorder.calledWith(dillonsUserIdwhichisalsothepartyid)).to.equal(true);
+      expect(spyMasterReorder.calledWith(dillonsUserIdwhichisalsothepartyid)).to.be.true;
     });
+
+    it('should call removeWorstSong when a song is too terrible', () => {
+      expect(spyRemoveWorstSong.called).to.be.true;
+      expect(spyRemoveWorstSong.callCount).to.equal(1);
+    });
+
+    it('should call removeWorstSong with the ID of the party and the bad song\'s id', () => {
+      expect(spyRemoveWorstSong.calledWith(dillonsUserIdwhichisalsothepartyid, 'badsong')).to.be.true;
+    });
+
   });
 
 });

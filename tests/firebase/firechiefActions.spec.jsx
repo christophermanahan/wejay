@@ -399,7 +399,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 
 	});
 
-	describe('onRemoveWorstSong function', () => {
+	describe('removeWorstSong function', () => {
 
 		let topTenResult, sqResult, pqResult, partiesResult;
 
@@ -407,7 +407,6 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 
 			const setUpParty = [
 				partiesRef.set({[partyId]: sampleParty}),
-				partyDjsRef.set({[partyId]: samplePartyDjs}),
 				topTenRef.set({[partyId]: sampleTopTenBeforeWorst}),
 				shadowQueueRef.set({[partyId]: sampleShadowQueueBeforeWorst}),
 				personalQueueRef.set(samplePersonalQueueBeforeWorst),
@@ -415,10 +414,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 
 			Promise.all(setUpParty)
 				.then(() => {
-					topTenRef.child('s1').update({vote_priority: -6}) // has 0 time priority
-				})
-				.then(() => {
-					// return firechief.onRemoveWorstSong(partyId, 2); // threshold magnitude of 2
+					return firechief.removeWorstSong(partyId, 's1');
 				})
 				.then(() => {
 					return Promise.all([
@@ -426,7 +422,7 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 						topTenRef.child(partyId).once('value'),
 						shadowQueueRef.child(partyId).once('value'),
 						personalQueueRef.once('value')
-					]);		
+					]);
 				})
 				.then(resultsArr => {
 					partiesResult = resultsArr[0].val();
@@ -435,14 +431,13 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 					pqResult = resultsArr[3].val();
 					done();
 				})
-				.catch(done)
+				.catch(done);
 		});
 
 		after('destroy everything', done => {
 
 			const clearingParty = [
 				partiesRef.set({}),
-				partyDjsRef.set({}),
 				topTenRef.set({}),
 				shadowQueueRef.set({}),
 				personalQueueRef.set({})
@@ -452,8 +447,8 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 				.catch(done);
 		});
 
-		it('Removes sets removeWorstSong to false ', () => {
-			expect(partiesResult.removeWorstSong).to.be.false;
+		it('Removes sets songToRemove to an empty string ', () => {
+			expect(partiesResult.songToRemove).to.equal('');
 		});
 
 		it('Moves next highest priority song onto top ten', () => {
@@ -471,3 +466,4 @@ describe('---------- FIRECHIEF ACTION TESTS ----------', () => {
 	});
 
 });
+

@@ -15,7 +15,7 @@ export const sampleParties = {
     "location" : "5 Hanover Sq",
     "name" : "Dillon's ppppparty",
     "needSong" : false,
-    removeWorstSong: false
+    songToRemove: ''
 
   },
   "RUOtMwp3qkWF7tZDjclrLOBT32s1" : {
@@ -24,7 +24,7 @@ export const sampleParties = {
     "location" : "weJay Demo Table",
     "name" : "OFFICIAL weJay Party!",
     "needSong" : false,
-    removeWorstSong: false
+    songToRemove: ''
 
   }
 }
@@ -37,7 +37,7 @@ export const sampleParty = {
     location: "5 Hanover Sq",
     name: "Dillon's ppppparty",
     needSong: false,
-    removeWorstSong: false
+    songToRemove: ''
 }
 
 export const sampleParty2 = {
@@ -46,7 +46,7 @@ export const sampleParty2 = {
     location: "5 Hanover Sq",
     name: "Dillon's ppppparty",
     needSong: false,
-    removeWorstSong: false
+    songToRemove: ''
 
 }
 
@@ -56,7 +56,7 @@ export const sampleNewParty = {
   location: "newly added spacetime",
   name: "New Party!",
   needSong: false,
-  removeWorstSong: false
+  songToRemove: ''
 
 }
 
@@ -332,6 +332,19 @@ export const samplePersonalQueueBeforeWorst = {
 export const samplePersonalQueueAfterWorst = {
   tomsong2: Object.assign({}, sampleSong5)
 };
+
+export const sampleDownvoteTTBefore = {
+  x1: Object.assign({}, sampleSong5, {vote_priority: -5}), // 0 time_priority
+  x2: Object.assign({}, sampleSong2),
+  x3: Object.assign({}, sampleSong3),
+  x4: Object.assign({}, sampleSong4),
+  x5: Object.assign({}, sampleSong2),
+  x6: Object.assign({}, sampleSong5),
+  x7: Object.assign({}, sampleSong2),
+  x8: Object.assign({}, sampleSong3),
+  x9: Object.assign({}, sampleSong4),
+  x10: Object.assign({}, sampleSong5)
+}
 
 
 export const fbSampleShadowQueue = {

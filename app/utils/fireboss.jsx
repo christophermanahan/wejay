@@ -22,9 +22,9 @@ class Fireboss {
       return new firebase.auth.FacebookAuthProvider();
     };
     this.createUserEP = (email, password) => {
-      return this.auth.createUserWithEmailAndPassword(email, password)
+      return this.auth.createUserWithEmailAndPassword(email, password);
     };
-  };
+  }
 
   /* ---------------------- FIREBASE METHODS ---------------------- */
 
@@ -51,7 +51,7 @@ class Fireboss {
   }
 
   createPartyWithListeners (partyId, user, partyObj) {
-    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false, removeWorstSong: false});
+    let party = Object.assign(partyObj, {active: true, id: partyId, needSong: false, songToRemove: ''});
     return this.creatingParty(partyId, party)
             .then(() => {
               const addingHostDJ = this.addingPartyDJ(partyId, user);
@@ -323,15 +323,15 @@ class Fireboss {
         return Promise.all([p1, p2, p3, p4])
       })
       .catch(console.error)
-  };
+  }
 
   addToPartyQueue (partyId, type, song) {
     return this.database.ref(type).child(partyId).push(song)
-  };
+  }
 
   addToPersonalQueue (partyId, user, song) {
     return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
-  };
+  }
 
   incrementVotePriority (partyId, songId) {
     const partyTopTenSongRef = this.database.ref('top_ten').child(partyId).child(songId);

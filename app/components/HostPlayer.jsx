@@ -20,10 +20,9 @@ const clientId = publicKeys.SC_CLIENT_ID;
 
 const DumbCustomPlayer = props => {
   // console.log('props in custom player', this.props)
-  let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase, uid, currentSong } = props;
+  let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase, uid, currentSong, hasVotes } = props;
 
   let dur = duration && Math.floor(duration)
-  console.log(duration)
   let curTime = Math.floor(currentTime)
   let displayDuration = mapDurationSecsToMins(dur)
   const ownSong = (uid === currentSong.uid)
@@ -114,11 +113,11 @@ const DumbCustomPlayer = props => {
             </Col>
 
             <Col xs={1}>
-              <IconButton disabled={ownSong} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater}/>
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater}/>
             </Col>
 
             <Col xs={1}>
-              <IconButton disabled={ownSong} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
             </Col>
           </Row>
         </Col>
@@ -202,9 +201,10 @@ class CustomPlayer extends React.Component {
   }
 
   render() {
-    const { track, playing, soundCloudAudio, currentTime, duration, uid, currentSong } = this.props;
+    const { track, playing, soundCloudAudio, currentTime, duration, uid, currentSong, hasVotes } = this.props;
     return (
       <DumbCustomPlayer
+        hasVotes={hasVotes}
         currentSong={currentSong}
         uid={uid}
         track={track}
@@ -232,13 +232,14 @@ class CustomPlayerWrapper extends React.Component {
     render() {
         let song_uri
         if (this.props.currentSong) { song_uri = this.props.currentSong.song_uri}
-        const { user } = this.props
+        const { user, votes} = this.props
 
         return (
             <SoundPlayerContainer
                 resolveUrl={song_uri}
                 clientId={clientId}>
                 <CustomPlayer
+                  hasVotes={(votes > 0)}
                   uid={user.uid}
                   fireboss={this.props.fireboss}
                   song_uri={song_uri}
@@ -253,7 +254,7 @@ class CustomPlayerWrapper extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentSong, currentParty, fireboss, user }) => ({ currentSong, currentParty, fireboss, user })
+const mapStateToProps = ({ currentSong, currentParty, fireboss, user, votes }) => ({ currentSong, currentParty, fireboss, user, votes })
 
 const CustomPlayerContainer = connect(mapStateToProps)(CustomPlayerWrapper)
 

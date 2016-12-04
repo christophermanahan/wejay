@@ -10,7 +10,7 @@ import LinearProgress from 'material-ui/LinearProgress';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbGuestPlayer = props => {
-  const { currentSong, onFire, onWater, uid } = props;
+  const { currentSong, onFire, onWater, uid, hasVotes} = props;
   const ownSong = (uid === currentSong.uid)
 
   let progBarStyle = {
@@ -53,6 +53,7 @@ const DumbGuestPlayer = props => {
   const iconStyle = {fontSize: '30px'};
   let artwork_url = currentSong && currentSong.artwork_url;
   let vote_priority = currentSong && currentSong.vote_priority;
+  console.log("HAS VOTES IS: ", hasVotes);
   return (
     <div>
       <LinearProgress
@@ -77,11 +78,11 @@ const DumbGuestPlayer = props => {
             </Col>
 
             <Col xsOffset={2} xs={2}>
-              <IconButton disabled={ownSong} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater} />
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={onWater} />
             </Col>
 
             <Col xsOffset={1} xs={1}>
-              <IconButton disabled={ownSong} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
+              <IconButton disabled={(ownSong || !hasVotes)} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={onFire} />
             </Col>
           </Row>
         </Col>
@@ -121,7 +122,7 @@ class GuestPlayer extends React.Component {
 
     render() {
         // console.log('props in GUEST player', this.props)
-        let { currentSong, user } = this.props
+        let { currentSong, user, votes } = this.props
         // console.log("CURRENT SONG: ", currentSong);
         // let { track, playing, currentTime, } = this.props;
         //
@@ -138,6 +139,7 @@ class GuestPlayer extends React.Component {
 
         return (
           <DumbGuestPlayer
+            hasVotes={(votes > 0)}
             uid={user.uid}
             currentSong={ currentSong }
             onFire={ this.onFire }
@@ -150,6 +152,6 @@ class GuestPlayer extends React.Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ currentParty, currentSong, fireboss, user }) => ({ currentParty, currentSong, fireboss, user });
+const mapStateToProps = ({ currentParty, currentSong, fireboss, user, votes }) => ({ currentParty, currentSong, fireboss, user, votes });
 
 export default connect(mapStateToProps)(GuestPlayer);

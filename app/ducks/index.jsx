@@ -10,6 +10,7 @@ import personalQueue from './personalQueue';
 import djs from './djs';
 import fireboss from './fireboss';
 import shadowQueue from './shadowQueue';
+import votes from './votes';
 
 const rootReducer = combineReducers({
   fireboss,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   personalQueue,
   djs,
   currentParty,
-  shadowQueue
+  shadowQueue,
+  votes
 });
 
 export default rootReducer;

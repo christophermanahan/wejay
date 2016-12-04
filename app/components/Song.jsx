@@ -9,8 +9,7 @@ import Avatar from 'material-ui/Avatar';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const Song = props => {
-	const {title, artist, dj_name, onFire, onWater, id, rank, heatIndex, ownSong} = props;
-	console.log("props in song: ", props);
+	const {title, artist, dj_name, onFire, onWater, id, rank, heatIndex, ownSong, hasVotes} = props;
 	const iconStyle = {fontSize: '30px'};
 	const buttonStyle = {paddingTop: '20px'}
 
@@ -42,10 +41,10 @@ const Song = props => {
 				<Col xs={3} className="top-ten-col">
 					<Row>
 						<Col xs={6}>
-				      <IconButton disabled={ownSong} style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => onWater(id)}/>
+				      <IconButton disabled={(ownSong || !hasVotes)} style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-down zmdi-hc-3x" onTouchTap={() => onWater(id)}/>
 						</Col>
 						<Col xs={6}>
-				      <IconButton disabled={ownSong} style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => onFire(id)} />
+				      <IconButton disabled={(ownSong || !hasVotes)} style={buttonStyle} iconStyle={iconStyle} iconClassName="zmdi zmdi-thumb-up zmdi-hc-3x" onTouchTap={() => onFire(id)} />
 						</Col>
 					</Row>
 				</Col>

@@ -2,7 +2,7 @@ import { LEAVE_PARTY } from './global';
 
 /* -----------------    ACTIONS     ------------------ */
 
-const SET_CURRENT_PARTY = 'SET_CURRENT_PARTY';
+export const SET_CURRENT_PARTY = 'SET_CURRENT_PARTY';
 
 /* ------------   ACTION CREATORS     ------------------ */
 
@@ -17,6 +17,7 @@ export const setCurrentParty = currentParty => ({
 const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_CURRENT_PARTY:
+      console.log("IN CURRENT PARTY REDUCER");
       return action.currentParty
 
     case LEAVE_PARTY:

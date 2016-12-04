@@ -64,6 +64,7 @@
     "react-soundplayer": "^0.3.6",
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",
+    "redux-localstorage": "^0.4.1",
     "redux-logger": "^2.7.0",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^4.0.2",

@@ -10,6 +10,7 @@ import Audiotrack from 'material-ui/svg-icons/image/audiotrack';
 
 import {cyan500} from 'material-ui/styles/colors';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
+import IconButton from 'material-ui/IconButton';
 
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
@@ -26,8 +27,47 @@ const DumbSong = props => {
   );
 };
 
+const DumbPqSong = props => {
+  const { title, artist, artwork_url, heat, user, currentParty, song, index, length, fireboss } = props;
+  const iconStyle = {fontSize: '30px'};
+  return (
+    <div>
+      <Row>
+        <Col xs={9}>
+          <ListItem
+            primaryText={title}
+            secondaryText={artist}
+            leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
+          />
+        </Col>
+        <Col xs={2}>
+          <Row>
+            <Col xs={6}>
+              <IconButton 
+                iconStyle={iconStyle} 
+                iconClassName="zmdi zmdi-chevron-down"
+                disabled={index + 1 === length ? true : false}
+                onTouchTap={() => {fireboss.moveDownPersonalQueue(currentParty.id, user, song)}} 
+              />
+            </Col>
+
+            <Col xs={6}>
+              <IconButton 
+                iconStyle={iconStyle} 
+                iconClassName="zmdi zmdi-chevron-up"
+                disabled={index === 0 ? true : false}
+                onTouchTap={() => {fireboss.moveUpPersonalQueue(currentParty.id, user, song)}} 
+              />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
 const DumbMySongs = props => {
-  const { personalQueue, shadowQueue, topTen, uid } = props;
+  const { personalQueue, shadowQueue, topTen, uid, user, currentParty, fireboss } = props;
   let pQArr = [];
   for (let song in personalQueue) { pQArr.push(personalQueue[song]) }
 
@@ -94,11 +134,19 @@ const DumbMySongs = props => {
               ''
           }
           {
-              pQArr.map((song, i) => (
-                <DumbSong
+              pQArr.sort((a, b) => b.vote_priority - a.vote_priority)
+              .map((song, i) => (
+                <DumbPqSong
                   title={song.title}
                   artist={song.artist}
                   artwork_url={song.artwork_url}
+                  uid={uid}
+                  user={user}
+                  currentParty={currentParty}
+                  fireboss={fireboss}
+                  song={song}
+                  length={pQArr.length}
+                  index={i}
                   key={i}
                 />
               ))
@@ -131,13 +179,16 @@ class MySongs extends Component {
   }
 
   render() {
-    let { personalQueue, shadowQueue, topTen, uid } = this.props;
+    let { personalQueue, shadowQueue, topTen, uid, user, currentParty, fireboss } = this.props;
     return (
       <DumbMySongs
         personalQueue={personalQueue}
         shadowQueue={shadowQueue}
         topTen={topTen}
+        currentParty={currentParty}
         uid={uid}
+        user={user}
+        fireboss={fireboss}
       />
     );
   }
@@ -146,7 +197,7 @@ class MySongs extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ personalQueue, shadowQueue, topTen, user }) => ({ personalQueue, shadowQueue, topTen, uid: user.uid });
+const mapStateToProps = ({ personalQueue, shadowQueue, topTen, currentParty, user, fireboss }) => ({ personalQueue, shadowQueue, topTen, currentParty, user, uid: user.uid, fireboss });
 
 
 export default connect(mapStateToProps)(MySongs);

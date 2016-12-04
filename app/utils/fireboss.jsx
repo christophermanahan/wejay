@@ -326,8 +326,100 @@ class Fireboss {
     return this.database.ref(type).child(partyId).push(song)
   }
 
-  addToPersonalQueue (partyId, user, song) {
-    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
+   /* ------------------- REORDERING PERSONAL QUEUE ------------------- */
+
+  addToPersonalQueue (partyId, user, song) { 
+   return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
+      .then(snapshot => {
+        let vote_priority = 0;
+        const currentPq = snapshot.val();
+        for (let track in currentPq) {
+          vote_priority = Math.min(vote_priority, currentPq[track].vote_priority - 1);
+        }
+        song.vote_priority = vote_priority;
+      })
+      .then(() => {
+        this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').push(song);
+      })
+      .catch(console.error)
+  };
+
+  moveUpPersonalQueue (partyId, user, song) {
+    const { vote_priority } = song;
+    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
+      .then(snapshot => {
+        const currentPq = snapshot.val();
+        let songToMoveUp,
+            songToMoveUpKey,
+            songToMoveDownKey,
+            songToMoveDown = {vote_priority: 0};
+        for (let track in currentPq) {
+          if (currentPq[track].vote_priority === vote_priority) {
+            songToMoveUp = currentPq[track];
+            songToMoveUpKey = track;
+          }
+        }
+
+        for (let track in currentPq) {
+          if(currentPq[track].vote_priority > songToMoveUp.vote_priority && currentPq[track].vote_priority <= songToMoveDown.vote_priority) {
+            songToMoveDown = currentPq[track];
+            songToMoveDownKey = track;
+          }
+        }
+
+        let temp = songToMoveUp.vote_priority;
+        songToMoveUp.vote_priority = songToMoveDown.vote_priority;
+        songToMoveDown.vote_priority = temp;
+
+        const update = {
+          [songToMoveUpKey]: songToMoveUp,
+          [songToMoveDownKey]: songToMoveDown
+        }
+        console.log("up", update[songToMoveUpKey].title, "down", update[songToMoveDownKey].title)
+        return update
+      })
+      .then(update => {
+        this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').update(update);
+      })
+  }
+
+  moveDownPersonalQueue (partyId, user, song) {
+    const { vote_priority } = song;
+    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
+      .then(snapshot => {
+        const currentPq = snapshot.val();
+        let songToMoveDown,
+            songToMoveDownKey,
+            songToMoveUpKey,
+            songToMoveUp = {vote_priority: -1000};
+        for (let track in currentPq) {
+          if (currentPq[track].vote_priority === vote_priority) {
+            songToMoveDown = currentPq[track];
+            songToMoveDownKey = track;
+          } 
+        }
+
+        for (let track in currentPq) {
+          if(currentPq[track].vote_priority < songToMoveDown.vote_priority && currentPq[track].vote_priority > songToMoveUp.vote_priority) {
+            songToMoveUp = currentPq[track];
+            songToMoveUpKey = track;
+          }
+        }
+
+        let temp = songToMoveUp.vote_priority;
+        songToMoveUp.vote_priority = songToMoveDown.vote_priority;
+        songToMoveDown.vote_priority = temp;
+
+        const update = {
+          [songToMoveUpKey]: songToMoveUp,
+          [songToMoveDownKey]: songToMoveDown
+        }
+        console.log("up", update[songToMoveUpKey].title, "down", update[songToMoveDownKey].title)
+        return update
+      })
+      .then(update => {
+        this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').update(update);
+      })
   }
 
   /* ------------------- MACRO VOTING SETTERS ------------------- */

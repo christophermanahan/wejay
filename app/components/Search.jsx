@@ -9,6 +9,9 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import Snackbar from 'material-ui/Snackbar';
 
+import IconButton from 'material-ui/IconButton';
+
+
 
 const TextFieldStyle = {width: '60%'};
 const RaisedButtonStyle = {width: '20%', marginLeft: '20px'};
@@ -16,7 +19,7 @@ const RaisedButtonStyle = {width: '20%', marginLeft: '20px'};
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbSearch = props => {
-  const { onType, trackSearch } = props;
+  const { onType, trackSearch, onClear, clearedVal } = props;
   return (
       <Row>
         <Col xs={12}>
@@ -27,7 +30,13 @@ const DumbSearch = props => {
                   style={TextFieldStyle}
                   onChange={ onType }
                   floatingLabelText="Search By Track"
+                  value={clearedVal}
                 />
+
+                <IconButton onTouchTap={onClear}>
+                  <i className="material-icons">highlight_off</i>
+                </IconButton>
+
                 <RaisedButton
                   label="Search"
                   onTouchTap={ trackSearch }
@@ -51,15 +60,22 @@ class Search extends Component {
     this.state = {
       query: '',
       snackbarOpen: false,
-      songDestination: ''
+      songDestination: '',
+      clearedVal: ''
     };
 
     this.onType = this.onType.bind(this);
+    this.onClear = this.onClear.bind(this);
     this.trackSearch = this.trackSearch.bind(this);
     this.addToQueue = this.addToQueue.bind(this);
     this.openSnackbar = this.openSnackbar.bind(this);
     this.closeSnackbar = this.closeSnackbar.bind(this);
 
+  }
+
+  onClear(){
+    console.log("CLICKED");
+    this.setState({ clearedVal: '' })   
   }
 
   onType(evt) {
@@ -102,6 +118,7 @@ class Search extends Component {
           <Row>
             <Col xs={10} xsOffset={1}>
               <DumbSearch
+                onClear= { this.onClear }
                 onType={ this.onType }
                 trackSearch={ this.trackSearch }
               />

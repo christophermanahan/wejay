@@ -221,4 +221,5 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
     1) 'removePartyListener' calls '.off()' the firebase database listener for the partyId
 
-    2) 'removeTimePriorityIncrementer' calls 'clearInterval' on the queue and sets Firechief[incrementers][partyId][queue] to 'null'
+    2) 'removeTimePriorityIncrementer' calls 'clearInterval' on the queue and sets 
+       Firechief[incrementers][partyId][queue] to 'null'

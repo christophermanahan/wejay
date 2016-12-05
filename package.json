@@ -10,6 +10,7 @@
     "build": "check-node-version --node '>= 6.7.0' && bin/setup && webpack",
     "build-watch": "check-node-version --node '>= 6.7.0' && bin/setup && webpack -w",
     "start": "check-node-version --node '>= 6.7.0' && bin/setup && webpack && node-sass  app/assets/main/ -o public/stylesheets && nodemon server/start.js",
+    "start-dev": "bin/setup && nodemon server/start.js",
     "test-server": "node tests/firebase/firebaseTestServer.js"
   },
   "repository": {

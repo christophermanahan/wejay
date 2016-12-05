@@ -19,7 +19,7 @@ const RaisedButtonStyle = {width: '20%', marginLeft: '20px'};
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbSearch = props => {
-  const { onType, trackSearch, onClear, query } = props;
+  const { onType, trackSearch, onClear, query, timeStamp } = props;
   return (
       <Row>
         <Col xs={12}>
@@ -27,6 +27,7 @@ const DumbSearch = props => {
             <Row>
               <Col xs={12}>
                   <TextField
+                    key={timeStamp}
                     style={TextFieldStyle}
                     onChange={ onType }
                     value={ query }
@@ -60,6 +61,7 @@ const DumbSearch = props => {
 
       this.state = {
         query: '',
+        timeStamp: '0',
         snackbarOpen: false,
         songDestination: ''
       };
@@ -75,16 +77,14 @@ const DumbSearch = props => {
 
     onClear(evt) {
       evt.preventDefault();
-      this.setState({ query: '' })
-      console.log('STATE AFTER CLEAR:', this.state.query)
+      this.setState({ query: '',
+                      timeStamp: Date.now() })
     }
 
     onType(evt) {
       evt.preventDefault();
       let query = evt.target.value;
-      console.log('QUERY IS', query)
       this.setState({ query });
-      console.log('STATE is now:', this.state.query)
     }
 
     openSnackbar(songDestination) {
@@ -121,6 +121,7 @@ const DumbSearch = props => {
               <Col xs={10} xsOffset={1}>
                 <DumbSearch
                   clearedVal={clearedVal}
+                  timeStamp={this.state.timeStamp}
                   onClear= { this.onClear }
                   onType={ this.onType }
                   trackSearch={ this.trackSearch }

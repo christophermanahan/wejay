@@ -54,7 +54,7 @@ class Firechief {
 			const party = snapshot && snapshot.val();
 			if (!party) return;
 			const { needSong, songToRemove } = party;
-	
+
 			if (needSong) {
 				this.masterReorder(partyId);
 			} else if (songToRemove) {
@@ -94,7 +94,7 @@ class Firechief {
 			return this.pullFromPersonalQueue(partyId, uid);
 		})
 		.then(() => {
-			console.log('finished a full re-order, including PQ!');
+			// console.log('finished a full re-order, including PQ!');
 		})
 		.catch(console.error);
 	}
@@ -113,7 +113,7 @@ class Firechief {
 			return this.pullFromPersonalQueue(partyId, uid);
 		})
 		.then(() => {
-			console.log('finished a re-order post-worst song!')
+			// console.log('finished a re-order post-worst song!')
 		})
 		.catch(console.error);
 	}

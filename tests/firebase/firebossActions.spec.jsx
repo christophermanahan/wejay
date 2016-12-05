@@ -311,7 +311,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
             partiesResult = resultsArr[0].val();
             userPartiesResult = resultsArr[1].val();
             partyDjsResult = resultsArr[2].val();
-            console.log('----------PARTIES DJ RESULT', partyDjsResult);
+            // console.log('----------PARTIES DJ RESULT', partyDjsResult);
             done();
           })
           .catch(done);

@@ -328,7 +328,7 @@ class Fireboss {
 
    /* ------------------- REORDERING PERSONAL QUEUE ------------------- */
 
-  addToPersonalQueue (partyId, user, song) { 
+  addToPersonalQueue (partyId, user, song) {
    return this.database.ref('party_djs').child(partyId).child(user.uid).child('personal_queue').once('value')
       .then(snapshot => {
         let vote_priority = 0;
@@ -375,7 +375,7 @@ class Fireboss {
           [songToMoveUpKey]: songToMoveUp,
           [songToMoveDownKey]: songToMoveDown
         }
-        console.log("up", update[songToMoveUpKey].title, "down", update[songToMoveDownKey].title)
+        // console.log("up", update[songToMoveUpKey].title, "down", update[songToMoveDownKey].title)
         return update
       })
       .then(update => {
@@ -396,7 +396,7 @@ class Fireboss {
           if (currentPq[track].vote_priority === vote_priority) {
             songToMoveDown = currentPq[track];
             songToMoveDownKey = track;
-          } 
+          }
         }
 
         for (let track in currentPq) {
@@ -414,7 +414,7 @@ class Fireboss {
           [songToMoveUpKey]: songToMoveUp,
           [songToMoveDownKey]: songToMoveDown
         }
-        console.log("up", update[songToMoveUpKey].title, "down", update[songToMoveDownKey].title)
+        // console.log("up", update[songToMoveUpKey].title, "down", update[songToMoveDownKey].title)
         return update
       })
       .then(update => {
@@ -475,7 +475,7 @@ class Fireboss {
       this.updateDjPoints(uid, partyId, true),
       this.simpleVote(partyId, song, true, songId)
     ])
-    .then(() => console.log('WE OUT HERE'))
+    .then(() => {/*console.log('WE OUT HERE')*/})
     .catch(console.error);
   }
 

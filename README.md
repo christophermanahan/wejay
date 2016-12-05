@@ -13,7 +13,7 @@ weJay uses Firebase to namespace different parties and provide real-time updates
 
 **Top Ten** - the ten songs that are able to be voted on by all users. The #1 song will be played next. Priority is determined by time and vote count.
 
-**Shadow Queue** - the songs that are next in line to enter the top ten. Songs cannot be removed by users once they reach this stage. Priority is determined by time and the amount of DJ Points the suggestor (sp?) had at the time of submission.
+**Shadow Queue** - the songs that are next in line to enter the top ten. Songs cannot be removed by users once they reach this stage. Priority is determined by time and the amount of DJ Points the suggester had at the time of submission.
 
 **Personal Queue** - the songs that a user has suggested, but are not yet locked in. Users can see their personal queue in the 'My Songs' tab, and songs can be reordered and removed.
 

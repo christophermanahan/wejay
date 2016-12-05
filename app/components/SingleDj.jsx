@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
-
-export const SingleDj = props => {
+const SingleDj = props => {
   const { user, dj } = props;
 
   return (
@@ -39,13 +38,4 @@ export const SingleDj = props => {
 };
 
 
-const DjsList = props => {
-  const { djs, user } = props
-  return (
-    <Row>
-      {djs && djs.map(dj => <SingleDj key={dj.uid} user={user} dj={dj} />)}
-    </Row>
-  );
-};
-
-export default DjsList;
+export default SingleDj;

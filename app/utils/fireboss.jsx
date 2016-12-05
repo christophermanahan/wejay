@@ -117,6 +117,11 @@ class Fireboss {
     }
   }
 
+  userRemoveSong(partyId, uid, songId) {
+    return this.database.ref('party_djs').child(partyId).child(uid).child('personal_queue').child(songId).remove()
+           .catch(console.error)
+  }
+
   submitUserSong (partyId, user, song, openSnackbar) {
     const gettingCurrentSong = this.gettingPartyItemSnapshot(partyId, 'current_song');
     const gettingTopTen = this.gettingPartyItemSnapshot(partyId, 'top_ten')

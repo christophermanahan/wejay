@@ -21,11 +21,11 @@ describe('<SingleDj /> dumb component', () => {
 	}); // TODO: this needs to alternate for guest and host
 
 	it('should render one way for guests', () => {
-		console.log('RAN THIS TEST!!!!!!!');
+		// console.log('RAN THIS TEST!!!!!!!');
 	});
-	
+
 	it('should do more stuff', () => {
-		console.log('ran test')
+		// console.log('ran test')
 	});
 
 

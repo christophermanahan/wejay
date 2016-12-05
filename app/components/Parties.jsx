@@ -67,10 +67,11 @@ const DumbParties = props => {
           </Col>
         </Row>
         <Row>
-          <Col xsOffset={1} xs={10}>
+          <Col xs={12}>
             <AutoComplete
               floatingLabelText="Find your party..."
               filter={AutoComplete.fuzzyFilter}
+              fullWidth={true}
               openOnFocus={true}
               dataSource={autofillArr}
               dataSourceConfig={autofillConfig}

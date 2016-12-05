@@ -173,6 +173,7 @@ class Navbar extends Component {
 
   render() {
     const { user, currentParty } = this.props
+    let partyName = currentParty && currentParty.name
     return (
       <DumbNavbar
         user={user}
@@ -182,7 +183,7 @@ class Navbar extends Component {
         handleLogoutCancel={this.handleLogoutCancel}
         handleLeaveParty={this.handleLeaveParty}
         handleLogout={this.handleLogout}
-        partyName={currentParty.name}
+        partyName={partyName}
         dialogOpenLogout={this.state.dialogOpenLogout}
         dialogOpenLeave={this.state.dialogOpenLeave}
       />

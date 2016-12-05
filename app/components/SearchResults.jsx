@@ -34,8 +34,8 @@ class SearchResults extends Component {
   mapDurationToMinSecs(milliseconds) {
     let mins = Math.floor(milliseconds / 60000);
     let secs = Math.floor(milliseconds % 60000).toString().slice(0, 2);
-
-    return `${mins}:${secs}`;
+    console.log('SECS IS', secs, typeof secs)
+    return (+secs > 9) ? `${mins}:${secs}` : `${mins}:0${secs}`;
   }
 
 	render() {

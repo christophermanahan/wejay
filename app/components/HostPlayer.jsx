@@ -28,8 +28,8 @@ const DumbCustomPlayer = props => {
   let displayDuration = mapDurationSecsToMins(dur);
   const ownSong = (uid === (currentSong && currentSong.uid));
 
-  if (!track) {
-      return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
+  if (!track || !currentSong) {
+    return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
   }
 
   let progBarStyle = {

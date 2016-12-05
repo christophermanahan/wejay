@@ -196,7 +196,10 @@ class Firechief {
 		return this.getHighestPriority(partyId, 'top_ten')
 		.then(song => {		//song ==> {nextSongId: nextSong}
 			if (!song) {
-				return this.setNeedSongToFalse(partyId);
+				return Promise.all([
+					currentSongRef.set({}),
+					this.setNeedSongToFalse(partyId)
+				]);
 			}
 			const newSong = this.deconstructSongObject(song);
 			const newSongId = this.deconstructSongObject(song, 'hash');

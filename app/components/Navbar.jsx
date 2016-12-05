@@ -149,7 +149,7 @@ class Navbar extends Component {
 
   handleLogout() {
     const { user, currentParty, fireboss } = this.props
-    const partyId = currentParty.id
+    const partyId = currentParty && currentParty.id
 
     fireboss.logOut(partyId, user)
   }

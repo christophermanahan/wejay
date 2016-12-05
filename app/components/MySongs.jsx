@@ -18,25 +18,26 @@ import IconButton from 'material-ui/IconButton';
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
 const DumbSong = props => {
-  const { title, artist, artwork_url, heat, song } = props;
+  const { title, artist, artwork_url, heat, song, duration, index } = props;
+  console.log(duration)
   return (
     <Row>
       <Col xs={10}>
         <ListItem
           primaryText={title}
-          secondaryText={`${artist} - ${song.duration}`}
+          secondaryText={`${artist} - ${duration}`}
           leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
         />
       </Col>
       <Col xs={2}>
-        <h3 style={{fontFamily: "Roboto"}}>#{song.index + 1}</h3>
+        <h3 style={{fontFamily: "Roboto"}}>{song && index ? '#' : ''}{song && index + 1}</h3>
       </Col>
     </Row>
   );
 };
 
 const DumbPqSong = props => {
-  const { title, artist, artwork_url, heat, user, currentParty, song, index, length, fireboss } = props;
+  const { title, artist, artwork_url, heat, user, currentParty, song, index, duration, length, fireboss } = props;
   const iconStyle = {fontSize: '30px'};
   return (
     <div>
@@ -44,7 +45,7 @@ const DumbPqSong = props => {
         <Col xs={8}>
           <ListItem
             primaryText={title}
-            secondaryText={`${artist} - ${song.duration}`}
+            secondaryText={`${artist} - ${duration}`}
             leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
           />
         </Col>
@@ -116,14 +117,15 @@ const DumbMySongs = props => {
           <FlipMove easing="ease" style={{width: "100%"}}>
             {
                 topTenArr.sort((a, b) => (b.vote_priority + b.time_priority) - (a.vote_priority + a.time_priority))
-                .map(song => (
+                .map((song, i) => (
                   <div key={song.id}>
                     <DumbSong
                       title={song.title}
                       artist={song.artist}
                       artwork_url={song.artwork_url}
                       heat={song.vote_priority}
-                      index={song.index}
+                      duration={song.duration}
+                      index={i}
                       song={song}
                     />
                   </div>
@@ -172,6 +174,7 @@ const DumbMySongs = props => {
                       currentParty={currentParty}
                       fireboss={fireboss}
                       song={song}
+                      duration={song.duration}
                       length={pQArr.length}
                       index={i}
                     />

@@ -19,7 +19,7 @@ const SingleSong = props => {
 				secondaryText={`${artist} - ${duration}`}
 				leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
 				rightIcon={<PlaylistAdd style={{height: '40px', width: '40px'}} color='#363836' />}
-				onTouchTap={ () => addToQueue(permalink_url, title, artist, artwork_url, duration) }
+				onTouchTap={ evt => addToQueue(evt, permalink_url, title, artist, artwork_url, duration) }
 			/>
     </div>
   );
@@ -41,11 +41,10 @@ class SearchResults extends Component {
 	render() {
 		const { searchResults, addToQueue } = this.props;
 	  return (
-	    <div>
-				<List>
-	      { searchResults && searchResults.map(song => (
-
-	        <SingleSong
+	    <div className="search-container">
+			<List>
+		      	{ searchResults && searchResults.map(song => (
+			        <SingleSong
 						addToQueue={addToQueue}
 						title={song.title}
 						key={song.id}
@@ -53,8 +52,8 @@ class SearchResults extends Component {
 						permalink_url={song.permalink_url}
 						artist={song.user.username}
 						duration={this.mapDurationToMinSecs(song.duration)}
-	        />
-	      ))}
+			        />
+		      	))}
 	      </List>
 	    </div>
 		);

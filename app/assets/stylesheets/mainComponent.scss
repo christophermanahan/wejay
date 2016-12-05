@@ -1,3 +1,7 @@
+body {
+	margin: 0;
+}
+
 #main-grid {
   width: 100vw;
 }
@@ -6,4 +10,8 @@
 	max-width: 100%;
 	margin: 0;
 	padding: 0;
+}
+
+.tabs-container > Tabs {
+	font-size: 100px;
 }

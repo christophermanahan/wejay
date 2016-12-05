@@ -29,3 +29,8 @@
 		font-style: italic;
 	}
 }
+
+.top-ten-container {
+  max-height: calc(100vh - 220px);
+  overflow: scroll;
+}

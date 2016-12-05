@@ -45,7 +45,7 @@ class DumbSongList extends Component {
   render() {
     const { topTenArr } = this.props;
     return (
-      <Row className="app-no-margin song-list-container">
+      <Row className="app-no-margin top-ten-container">
         {
           topTenArr && topTenArr.length ?
           <FlipMove easing="ease" style={{width: "100%"}}>

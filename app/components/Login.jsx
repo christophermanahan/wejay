@@ -6,37 +6,19 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import Divider from 'material-ui/Divider';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
-import Signup from './Signup';
-
 
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const DumbLogin = props => {
-  const { anonymousSignIn, signUp, logIn, clearError, showDialog, msg, showSignup, fireboss, renderError } = props;
+  const { anonymousSignIn, signUp, logIn, clearError, showDialog, msg } = props;
   const dialogActions = [
     <FlatButton
       label="OK"
       primary={true}
       onTouchTap={clearError}
-    />]
-
-
-
-  let signupBtnStyle = {
-    color: 'white'
-  }
-  let googleBtnStyle = {
-    color: 'white'
-  }
-  let facebookBtnStyle = {
-    color: 'white'
-  }
-  let guestBtnStyle = {
-    color: 'white'
-  }
+    />];
 
   return (
     <div id="login-grad">
@@ -52,21 +34,48 @@ const DumbLogin = props => {
           </Dialog>
         </Col>
       </Row>
-      <Row className="login-btn-container">
+
+
+      <Row className="login-btn-container login-btn-container-top">
         <Col xs={8} xsOffset={2}>
           <RaisedButton
-            secondary={true}
-            label="Sign Up"
-            onTouchTap={signUp}
+            primary={true}
+            label="Log In with Google"
+            onTouchTap={() => {logIn('google')}}
+            icon={<FontIcon className="zmdi zmdi-google" style={{fontSize: '2.5em'}}/>}
             labelStyle={{
-              fontSize: '1.3em',
-              verticalAlign: 'middle',
-              color: '#363836'
+              fontSize: '1em',
+              verticalAlign: 'middle'
+
             }}
             buttonStyle={{
               height: '8vh',
-              backgroundColor: 'white',
-              color: 'black'
+              color: 'white'
+            }}
+            overlayStyle={{
+              height: '100%'
+            }}
+            fullWidth={true}
+          />
+        </Col>
+      </Row>
+
+      <Row className="login-btn-container">
+        <Col xs={8} xsOffset={2}>
+          <RaisedButton
+            primary={true}
+            label="Log In with Facebook"
+            onTouchTap={() => {logIn('facebook')}}
+            icon={<FontIcon className="zmdi zmdi-facebook" style={{fontSize: '2.5em'}}/>}
+            labelStyle={{
+              fontSize: '1em',
+              verticalAlign: 'middle',
+              color: 'white'
+
+            }}
+            buttonStyle={{
+              height: '8vh',
+              backgroundColor: '#3B5998'
             }}
             overlayStyle={{
               height: '100%'
@@ -77,83 +86,32 @@ const DumbLogin = props => {
         </Row>
 
         <Row>
-          <Col sm={8} xsOffset={2}>
-            { showSignup && <Signup fireboss={fireboss} renderError={renderError}/> }
-          </Col>
-        </Row>
-        <Row className="login-btn-container">
           <Col xs={8} xsOffset={2}>
             <RaisedButton
-              primary={true}
-              label="Log In with Google"
-              onTouchTap={() => {logIn('google')}}
-              icon={<FontIcon className="zmdi zmdi-google" style={{fontSize: '2.5em'}}/>}
+              label="Continue As Guest"
+              onTouchTap={anonymousSignIn}
               labelStyle={{
-                fontSize: '1em',
-                verticalAlign: 'middle'
-
-              }}
-              buttonStyle={{
-                height: '8vh',
-                color: 'white'
-              }}
-              overlayStyle={{
-                height: '100%'
-              }}
-              fullWidth={true}
-            />
-          </Col>
-        </Row>
-        <Row className="login-btn-container">
-          <Col xs={8} xsOffset={2}>
-            <RaisedButton
-              primary={true}
-              label="Log In with Facebook"
-              onTouchTap={() => {logIn('facebook')}}
-              icon={<FontIcon className="zmdi zmdi-facebook" style={{fontSize: '2.5em'}}/>}
-              labelStyle={{
-                fontSize: '1em',
+                fontSize: '1.2em',
                 verticalAlign: 'middle',
-                color: 'white'
-
+                color: '#363836'
               }}
               buttonStyle={{
                 height: '8vh',
-                backgroundColor: '#3B5998'
+                backgroundColor: '#DAE2DF'
               }}
+
               overlayStyle={{
                 height: '100%'
               }}
               fullWidth={true}
             />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col xs={8} xsOffset={2}>
-              <RaisedButton
-                label="Continue As Guest"
-                onTouchTap={anonymousSignIn}
-                labelStyle={{
-                  fontSize: '1.2em',
-                  verticalAlign: 'middle',
-                  color: '#363836'
-                }}
-                buttonStyle={{
-                  height: '8vh',
-                  backgroundColor: '#DAE2DF'
-                }}
-                overlayStyle={{
-                  height: '100%'
-                }}
-                fullWidth={true}
-              />
-            </Col>
-          </Row>
-        </div>
+          </Col>
+        </Row>
+      </div>
 
   );
-}
+};
+
 
 /* -----------------    STATEFUL REACT COMPONENT     ------------------ */
 
@@ -161,7 +119,6 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.anonymousSignIn = this.anonymousSignIn.bind(this);
-    this.signUp = this.signUp.bind(this);
     this.logIn = this.logIn.bind(this);
     this.setState = this.setState.bind(this);
     this.clearError = this.clearError.bind(this);
@@ -169,8 +126,7 @@ class Login extends Component {
 
     this.state = {
       error: {},
-      showDialog: false,
-      showSignup: false
+      showDialog: false
     };
   }
 
@@ -179,10 +135,6 @@ class Login extends Component {
 
     fireboss.auth.signInAnonymously()
       .catch(this.renderError)
-  }
-
-  signUp() {
-    this.setState({ showSignup: !this.state.showSignup });
   }
 
   logIn(method) {
@@ -217,7 +169,6 @@ class Login extends Component {
         clearError={ this.clearError }
         showDialog={ this.state.showDialog }
         msg={ this.state.error.message }
-        showSignup={ this.state.showSignup }
         fireboss={ this.props.fireboss }
         renderError={ this.renderError }
       />

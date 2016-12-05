@@ -409,8 +409,10 @@ export const randoParty = {
   songToRemove: ''
 };
 
+export const terribleSong = Object.assign({}, sampleSong5, {uid: 'foo', vote_priority: -7})
+
 export const randoTopTen = {
-  y1: Object.assign({}, sampleSong5, {uid: 'foo', vote_priority: -7}),
+  y1: terribleSong,
   y2: Object.assign({}, sampleSong2, {uid: 'foo' })
 };
 

@@ -103,101 +103,103 @@ const DumbMySongs = props => {
 
 
   return (
-    <Row className="mysongs-container">
-      <Col xs={12}>
-      { ((pQArr && pQArr.length) || (sQArr && sQArr.length) || (topTenArr && topTenArr.length)) ?
-        <List>
-          {
-            topTenArr.length ?
-            <h4 className="mysongs-divider">In the Top Ten!</h4>
-            :
-            ''
-
-          }
-          <FlipMove easing="ease" style={{width: "100%"}}>
+    <div className="mysongs-container">
+      <Row>
+        <Col xs={12}>
+        { ((pQArr && pQArr.length) || (sQArr && sQArr.length) || (topTenArr && topTenArr.length)) ?
+          <List>
             {
-                topTenArr.sort((a, b) => (b.vote_priority + b.time_priority) - (a.vote_priority + a.time_priority))
-                .map((song, i) => (
-                  <div key={song.id}>
-                    <DumbSong
-                      title={song.title}
-                      artist={song.artist}
-                      artwork_url={song.artwork_url}
-                      heat={song.vote_priority}
-                      duration={song.duration}
-                      index={i + 1}
-                      song={song}
-                    />
-                  </div>
-                ))
+              topTenArr.length ?
+              <h4 className="mysongs-divider">In the Top Ten!</h4>
+              :
+              ''
+
             }
-          </FlipMove>
-          {
-            sQArr.length ?
-            <div>
-              <Divider />
-              <h4 className="mysongs-divider mysongs-divider-mid">On Deck Soon</h4>
-            </div>
-            :
-            ''
-          }
-          {
-              sQArr.map((song, i) => (
-                <DumbSong
-                  title={song.title}
-                  artist={song.artist}
-                  artwork_url={song.artwork_url}
-                  key={i}
-                />
-              ))
-          }
-          {
-            pQArr.length ?
+            <FlipMove easing="ease" style={{width: "100%"}}>
+              {
+                  topTenArr.sort((a, b) => (b.vote_priority + b.time_priority) - (a.vote_priority + a.time_priority))
+                  .map((song, i) => (
+                    <div key={song.id}>
+                      <DumbSong
+                        title={song.title}
+                        artist={song.artist}
+                        artwork_url={song.artwork_url}
+                        heat={song.vote_priority}
+                        duration={song.duration}
+                        index={i + 1}
+                        song={song}
+                      />
+                    </div>
+                  ))
+              }
+            </FlipMove>
+            {
+              sQArr.length ?
               <div>
                 <Divider />
-                <h4 className="mysongs-divider mysongs-divider-mid">For Later...</h4>
+                <h4 className="mysongs-divider mysongs-divider-mid">On Deck Soon</h4>
               </div>
               :
               ''
-          }
-          <FlipMove easing="ease" style={{width: "100%"}}>
+            }
             {
-                pQArr.sort((a, b) => b.vote_priority - a.vote_priority)
-                .map((song, i) => (
-                  <div key={song.id}>
-                    <DumbPqSong
-                      title={song.title}
-                      artist={song.artist}
-                      artwork_url={song.artwork_url}
-                      uid={uid}
-                      user={user}
-                      currentParty={currentParty}
-                      fireboss={fireboss}
-                      song={song}
-                      duration={song.duration}
-                      length={pQArr.length}
-                      index={i}
-                    />
-                  </div>
+                sQArr.map((song, i) => (
+                  <DumbSong
+                    title={song.title}
+                    artist={song.artist}
+                    artwork_url={song.artwork_url}
+                    key={i}
+                  />
                 ))
             }
-          </FlipMove>
-        </List>
-        :
-        <Row>
-          <Col xs={6} xsOffset={3}>
-            <h4 className="songlist-fail">You have no songs queued!</h4>
-          </Col>
-          <Col xs={12} className="mysongs-col">
-            <FontIcon style={{ fontSize: '120px' }}
-                      className="zmdi zmdi-mood-bad zmdi-hc-4x"
-                      color={cyan500}
-            />
-          </Col>
-        </Row>
-      }
-      </Col>
-    </Row>
+            {
+              pQArr.length ?
+                <div>
+                  <Divider />
+                  <h4 className="mysongs-divider mysongs-divider-mid">For Later...</h4>
+                </div>
+                :
+                ''
+            }
+            <FlipMove easing="ease" style={{width: "100%"}}>
+              {
+                  pQArr.sort((a, b) => b.vote_priority - a.vote_priority)
+                  .map((song, i) => (
+                    <div key={song.id}>
+                      <DumbPqSong
+                        title={song.title}
+                        artist={song.artist}
+                        artwork_url={song.artwork_url}
+                        uid={uid}
+                        user={user}
+                        currentParty={currentParty}
+                        fireboss={fireboss}
+                        song={song}
+                        duration={song.duration}
+                        length={pQArr.length}
+                        index={i}
+                      />
+                    </div>
+                  ))
+              }
+            </FlipMove>
+          </List>
+          :
+          <Row>
+            <Col xs={6} xsOffset={3}>
+              <h4 className="songlist-fail">You have no songs queued!</h4>
+            </Col>
+            <Col xs={12} className="mysongs-col">
+              <FontIcon style={{ fontSize: '120px' }}
+                        className="zmdi zmdi-mood-bad zmdi-hc-4x"
+                        color={cyan500}
+              />
+            </Col>
+          </Row>
+        }
+        </Col>
+      </Row>
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ import Avatar from 'material-ui/Avatar';
 /* -----------------    DUMB COMPONENT     ------------------ */
 
 const Song = props => {
-	const {title, artist, dj_name, onFire, onWater, id, rank, heatIndex, ownSong, hasVotes} = props;
+	const {title, artist, dj_name, onFire, onWater, id, rank, heatIndex, ownSong, hasVotes, duration} = props;
 	const iconStyle = {fontSize: '30px'};
 	const buttonStyle = {paddingTop: '20px'}
 
@@ -36,7 +36,7 @@ const Song = props => {
 				</Col>
 				<Col xs={7}>
 					<h3>{title}</h3>
-					<h4>{artist}</h4>
+					<h4>{artist} - {duration}</h4>
 				</Col>
 				<Col xs={3} className="top-ten-col">
 					<Row>
@@ -51,7 +51,7 @@ const Song = props => {
 			</Row>
 			<Row className="top-ten-dj">
 				<Col xs={8} xsOffset={2}>
-					<h4>chosen by: { dj_name }</h4>
+					<h4>chosen by: { ownSong ? 'YOU' : dj_name }</h4>
 				</Col>
 			</Row>
 		</Col>

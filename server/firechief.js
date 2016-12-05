@@ -58,7 +58,6 @@ class Firechief {
 			if (needSong) {
 				this.masterReorder(partyId);
 			} else if (songToRemove) {
-				console.log('-------------------GONNA RUN THE THING!!!!!!', songToRemove)
 				this.removeWorstSong(partyId, songToRemove);
 			}
 		});

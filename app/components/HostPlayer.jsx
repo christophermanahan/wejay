@@ -23,10 +23,10 @@ const DumbCustomPlayer = props => {
   // console.log('props in custom player', this.props)
   let { track, playing, soundCloudAudio, currentTime, duration, onFire, onWater, mapDurationSecsToMins, play, triggerFirebase, uid, currentSong, hasVotes } = props;
 
-  let dur = duration && Math.floor(duration)
-  let curTime = Math.floor(currentTime)
-  let displayDuration = mapDurationSecsToMins(dur)
-  const ownSong = (uid === currentSong.uid)
+  let dur = duration && Math.floor(duration);
+  let curTime = Math.floor(currentTime);
+  let displayDuration = mapDurationSecsToMins(dur);
+  const ownSong = (uid === (currentSong && currentSong.uid));
 
   if (!track) {
       return <div><i className="zmdi zmdi-soundcloud zmdi-hc-5x"></i></div>;
@@ -201,13 +201,13 @@ class CustomPlayer extends React.Component {
 
   onFire() {
     const { fireboss, currentSong, currentParty } = this.props;
-    fireboss.incrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+    fireboss.onUpvote(currentParty.id, currentSong);
     this.openSnackbar();
   }
 
   onWater() {
     const { fireboss, currentSong, currentParty } = this.props;
-    fireboss.decrementCurrSongDjPoints(currentSong.uid, currentParty.id);
+    fireboss.onDownvote(currentParty.id, currentSong);
     this.openSnackbar();
   }
 
@@ -270,7 +270,7 @@ class CustomPlayerWrapper extends React.Component {
                 <CustomPlayer
                   votes={votes}
                   hasVotes={(votes > 0)}
-                  uid={user.uid}
+                  uid={user && user.uid}
                   fireboss={this.props.fireboss}
                   song_uri={song_uri}
                   partyId={this.props.currentParty.id}

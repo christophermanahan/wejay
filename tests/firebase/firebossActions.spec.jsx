@@ -18,7 +18,8 @@ import {
   randoHostId,
   randoParty,
   randoTopTen,
-  whateverPartyDJs
+  whateverPartyDJs,
+  terribleSong
 
 } from '../utils';
 
@@ -391,7 +392,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     });
   });
 
-  describe('TESTING INCREMENT SONG VOTE METHOD', () => {
+  describe('TESTING ONUPVOTE METHOD', () => {
     let topTenResult, partyDjsResult;
     let hostId = "abc123";
     let songHash = hostId;
@@ -408,7 +409,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
       Promise.all(setUpParty)
         .then(() => {
-          return fireboss.incrementVotePriority(partyId, sampleSong6Copy.uid);
+          return fireboss.onUpvote(partyId, sampleSong6Copy, songHash);
         })
         .then(() => {
           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
@@ -443,7 +444,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
     });
   });
 
-  describe('TESTING DECREMENT SONG VOTE METHOD', () => {
+  describe('TESTING ONDOWNVOTE METHOD', () => {
     let topTenResult, partyDjsResult;
     let hostId = "abc123";
     let songHash = hostId;
@@ -460,7 +461,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
       Promise.all(setUpParty)
         .then(() => {
-          return fireboss.decrementVotePriority(partyId, sampleSong6Copy2.uid);
+          return fireboss.onDownvote(partyId, sampleSong6Copy2, songHash);
         })
         .then(() => {
           return Promise.all([topTenRef.once('value'), partyDjsRef.once('value')]);
@@ -508,7 +509,7 @@ describe('---------- FIREBOSS TESTS ----------', () => {
 
       Promise.all(setUpParty)
       .then(() => {
-        return fireboss.decrementVotePriority(randoHostId, 'y1');
+        return fireboss.onDownvote(randoHostId, terribleSong, 'y1');
       })
       .then(() => {
         return Promise.all([

@@ -32,12 +32,12 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 **II. Use Fireboss to create a listener for the 'parties' ref on Firebase.**
 
-  1) The 'createPartiesListener' will always be active. It listens to the global parties list and 
+    1) The 'createPartiesListener' will always be active. It listens to the global parties list and 
      keeps the 'parties' state up to date with the latest party data.
 
 **III. Use Fireboss to create an 'onAuthStateChanged' listener.**
 
-  1) The 'onAuthStateChanged' listener checks if a user has been authenticated on Firebase.
+    1) The 'onAuthStateChanged' listener checks if a user has been authenticated on Firebase.
 
       A) If the user is not autheticated, Fireboss dispatches 'clearUser' (which clears the user from 
       the Redux store). Fireboss then pushes the client to '/login'.

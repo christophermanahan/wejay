@@ -184,7 +184,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
             a) Checks if the top ten exists. If not, 'return' / if so:
             b) Find the song with the highest net priority.
             c) THEN: set that song to current song, remove it from the top ten,
-                and set needSong to false.
+               and set needSong to false.
 
           ii) THEN: If 'setCurrentSong' was successful, run 'pullFromShadowQueue' which:
               a) Checks if the shadow queue exists. If not, 'return' / if so:

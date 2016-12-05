@@ -27,7 +27,7 @@ const DumbSearch = props => {
             <Row>
               <Col xs={12}>
                   <TextField
-                    key={timeStamp}
+                    key={ timeStamp }
                     style={TextFieldStyle}
                     onChange={ onType }
                     value={ query }
@@ -100,6 +100,7 @@ const DumbSearch = props => {
       const {tracksearch} = this.props;
       const {query} = this.state;
       if (!query.length) return;
+      this.onClear(evt);
       tracksearch(query);
     }
 

@@ -16,7 +16,7 @@ const reducer = (previousState = 5, action) => {
 
   switch (action.type) {
     case SET_CURRENT_PARTY:
-      return (action.currentParty.needSong) ? 5 : previousState
+      return (action.currentParty && action.currentParty.needSong) ? 5 : previousState;
 
      case DECREMENT_VOTES:
      	return (previousState > 0) ? previousState - 1 : 0

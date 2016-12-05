@@ -17,11 +17,10 @@ export const setCurrentParty = currentParty => ({
 const reducer = (state = {}, action) => {
   switch (action.type){
     case SET_CURRENT_PARTY:
-      console.log("IN CURRENT PARTY REDUCER");
-      return action.currentParty
+      return action.currentParty;
 
     case LEAVE_PARTY:
-      return {}
+      return {};
 
     default:
         return state;
@@ -29,7 +28,5 @@ const reducer = (state = {}, action) => {
 };
 
 /* ------------       DISPATCHERS     ------------------ */
-
-
 
 export default reducer;

@@ -8,6 +8,9 @@ import FontIcon from 'material-ui/FontIcon';
 
 import Audiotrack from 'material-ui/svg-icons/image/audiotrack';
 
+import FlipMove from 'react-flip-move';
+
+
 import {cyan500} from 'material-ui/styles/colors';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 import IconButton from 'material-ui/IconButton';
@@ -69,18 +72,17 @@ const DumbPqSong = props => {
 const DumbMySongs = props => {
   const { personalQueue, shadowQueue, topTen, uid, user, currentParty, fireboss } = props;
   let pQArr = [];
-  for (let song in personalQueue) { pQArr.push(personalQueue[song]) }
+  for (let song in personalQueue) { pQArr.push(Object.assign({}, personalQueue[song], {id: song})) }
 
   let sQArr = [];
-  for (let song in shadowQueue) { sQArr.push(shadowQueue[song]) }
+  for (let song in shadowQueue) { sQArr.push(Object.assign({}, shadowQueue[song], {id: song})) }
 
   let topTenArr = [];
   for (let song in topTen) {
     if (topTen[song].uid === uid) {
-      topTenArr.push(topTen[song]);
+      topTenArr.push(Object.assign({}, topTen[song], {id: song}));
     }
   }
-
 
   return (
     <Row className="mysongs-container">
@@ -94,17 +96,21 @@ const DumbMySongs = props => {
             ''
 
           }
-          {
-              topTenArr.map((song, i) => (
-                <DumbSong
-                  title={song.title}
-                  artist={song.artist}
-                  artwork_url={song.artwork_url}
-                  key={i}
-                  heat={song.vote_priority}
-                />
-              ))
-          }
+          <FlipMove easing="ease" style={{width: "100%"}}>
+            {
+                topTenArr.sort((a, b) => (b.vote_priority + b.time_priority) - (a.vote_priority + a.time_priority))
+                .map(song => (
+                  <div key={song.id}>
+                    <DumbSong
+                      title={song.title}
+                      artist={song.artist}
+                      artwork_url={song.artwork_url}
+                      heat={song.vote_priority}
+                    />
+                  </div>
+                ))
+            }
+          </FlipMove>
           {
             sQArr.length ?
             <div>
@@ -133,24 +139,27 @@ const DumbMySongs = props => {
               :
               ''
           }
-          {
-              pQArr.sort((a, b) => b.vote_priority - a.vote_priority)
-              .map((song, i) => (
-                <DumbPqSong
-                  title={song.title}
-                  artist={song.artist}
-                  artwork_url={song.artwork_url}
-                  uid={uid}
-                  user={user}
-                  currentParty={currentParty}
-                  fireboss={fireboss}
-                  song={song}
-                  length={pQArr.length}
-                  index={i}
-                  key={i}
-                />
-              ))
-          }
+          <FlipMove easing="ease" style={{width: "100%"}}>
+            {
+                pQArr.sort((a, b) => b.vote_priority - a.vote_priority)
+                .map((song, i) => (
+                  <div key={song.id}>
+                    <DumbPqSong
+                      title={song.title}
+                      artist={song.artist}
+                      artwork_url={song.artwork_url}
+                      uid={uid}
+                      user={user}
+                      currentParty={currentParty}
+                      fireboss={fireboss}
+                      song={song}
+                      length={pQArr.length}
+                      index={i}
+                    />
+                  </div>
+                ))
+            }
+          </FlipMove>
         </List>
         :
         <Row>

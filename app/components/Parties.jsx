@@ -71,7 +71,6 @@ const DumbParties = props => {
             <AutoComplete
               floatingLabelText="Find your party..."
               filter={AutoComplete.fuzzyFilter}
-              style={textFieldStyle}
               fullWidth={true}
               openOnFocus={true}
               dataSource={autofillArr}

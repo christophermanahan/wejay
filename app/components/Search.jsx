@@ -126,7 +126,8 @@ const DumbSearch = props => {
       tracksearch(query);
     }
 
-    addToQueue(song_uri, title, artist, artwork_url, duration) {
+    addToQueue(evt, song_uri, title, artist, artwork_url, duration) {
+      evt.preventDefault();
       const { user, currentParty, fireboss } = this.props;
       const partyId = currentParty.id;
       const { uid } = user;

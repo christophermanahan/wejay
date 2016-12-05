@@ -30,7 +30,7 @@ const DumbSong = props => {
         />
       </Col>
       <Col xs={2}>
-        <h3 style={{fontFamily: "Roboto"}}>{song && index ? '#' : ''}{song && index + 1}</h3>
+        <h3 style={{fontFamily: "Roboto"}}>{song && index ? '#' : ''}{song && index}</h3>
       </Col>
     </Row>
   );
@@ -125,7 +125,7 @@ const DumbMySongs = props => {
                       artwork_url={song.artwork_url}
                       heat={song.vote_priority}
                       duration={song.duration}
-                      index={i}
+                      index={i + 1}
                       song={song}
                     />
                   </div>

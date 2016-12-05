@@ -11,7 +11,28 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
+import Drawer from 'material-ui/Drawer';
 
+
+/*
+
+<IconMenu
+  iconButtonElement={
+    <IconButton style={{height: "100%"}}>
+      <MoreVertIcon />
+    </IconButton>}
+  anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+  targetOrigin={{horizontal: 'right', vertical: 'top'}}
+  iconStyle={{ color: '#363836', height: '50px', width: '50px' }}
+  menuStyle={{ backgroundColor: 'white', width: '8em' }}
+>
+  <MenuItem style={menuDropUpStyle} value="1"><ArrowDropUp/></MenuItem>
+  <MenuItem style={menuItemStyle} value="2">My Settings</MenuItem>
+  <MenuItem style={menuItemStyle} value="3" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
+  <MenuItem style={menuItemStyle} value="4" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
+</IconMenu>
+
+*/
 
 
 
@@ -19,7 +40,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 
 const DumbNavbar = props => {
-  const { dialogOpenLeave, dialogOpenLogout, user, handleOpenLeaveDialog, handleOpenLogoutDialog, handleCancel, handleLeaveParty, handleLogout, partyName, handleLeaveCancel, handleLogoutCancel } = props;
+  const { dialogOpenLeave, dialogOpenLogout, user, handleOpenLeaveDialog, handleOpenLogoutDialog, handleCancel, handleLeaveParty, handleLogout, partyName, handleLeaveCancel, handleLogoutCancel, handleDrawerToggle, handleDrawerClose, drawerOpen } = props;
 
   const menuDropUpStyle = {fontSize: '1em', marginLeft: '7em'};
   const menuItemStyle = {fontSize: '1em', backgroundColor: 'white'};
@@ -79,21 +100,31 @@ const DumbNavbar = props => {
         </Col>
         <Col xs={1} className="navbar-col">
           <div className="navbar-icon-container">
-            <IconMenu
-              iconButtonElement={
-                <IconButton style={{height: "100%"}}>
-                  <MoreVertIcon />
-                </IconButton>}
-              anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-              targetOrigin={{horizontal: 'right', vertical: 'top'}}
-              iconStyle={{ color: '#363836', height: '50px', width: '50px' }}
-              menuStyle={{ backgroundColor: 'white', width: '8em' }}
+
+            <IconButton style={{height: "100%"}}>
+              <MoreVertIcon onTouchTap={handleDrawerToggle} />
+            </IconButton>
+
+            <Drawer
+
+              openSecondary={true}
+              docked={false}
+              width={225}
+              open={drawerOpen}
+              onRequestChange={handleDrawerToggle}
             >
-              <MenuItem style={menuDropUpStyle} value="1"><ArrowDropUp/></MenuItem>
-              <MenuItem style={menuItemStyle} value="2">My Settings</MenuItem>
+              <MenuItem onTouchTap={handleDrawerClose}>Menu Item</MenuItem>
+              <MenuItem onTouchTap={handleDrawerClose}>Menu Item 2</MenuItem>
+
+              <MenuItem style={menuDropUpStyle} onTouchTap={handleDrawerClose} value="1"><ArrowDropUp/></MenuItem>
               <MenuItem style={menuItemStyle} value="3" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
               <MenuItem style={menuItemStyle} value="4" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
-            </IconMenu>
+            </Drawer>
+
+
+
+
+
           </div>
         </Col>
       </Row>
@@ -128,7 +159,8 @@ class Navbar extends Component {
 
     this.state = {
       dialogOpenLeave: false,
-      dialogOpenLogout: false
+      dialogOpenLogout: false,
+      drawerOpen: false
     };
 
     this.handleOpenLeaveDialog = this.handleOpenLeaveDialog.bind(this);
@@ -137,7 +169,16 @@ class Navbar extends Component {
     this.handleLogout = this.handleLogout.bind(this);
     this.handleLeaveCancel = this.handleLeaveCancel.bind(this);
     this.handleLogoutCancel = this.handleLogoutCancel.bind(this);
+
+    this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
+    this.handleDrawerClose = this.handleDrawerClose.bind(this);
   }
+
+
+  // handleDrawerToggle = () => this.setState({drawerOpen: !this.state.open});
+  handleDrawerToggle = () => this.setState({drawerOpen: true});
+
+  handleDrawerClose = () => this.setState({drawerOpen: false});
 
   handleOpenLeaveDialog() {
     this.setState({dialogOpenLeave: true});
@@ -177,6 +218,9 @@ class Navbar extends Component {
     return (
       <DumbNavbar
         user={user}
+        handleDrawerToggle={this.handleDrawerToggle}
+        handleDrawerClose={this.handleDrawerClose}
+        drawerOpen={this.state.drawerOpen}
         handleOpenLeaveDialog={this.handleOpenLeaveDialog}
         handleOpenLogoutDialog={this.handleOpenLogoutDialog}
         handleLeaveCancel={this.handleLeaveCancel}

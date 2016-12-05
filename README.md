@@ -33,23 +33,23 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 **II. Use Fireboss to create a listener for the 'parties' ref on Firebase.**
 
     1) The 'createPartiesListener' will always be active. It listens to the global parties list and 
-     keeps the 'parties' state up to date with the latest party data.
+       keeps the 'parties' state up to date with the latest party data.
 
 **III. Use Fireboss to create an 'onAuthStateChanged' listener.**
 
     1) The 'onAuthStateChanged' listener checks if a user has been authenticated on Firebase.
 
       A) If the user is not autheticated, Fireboss dispatches 'clearUser' (which clears the user from 
-      the Redux store). Fireboss then pushes the client to '/login'.
+         the Redux store). Fireboss then pushes the client to '/login'.
 
       B) If the user is authenticated, Fireboss dispatches 'setUser' with the user's data. Fireboss 
-      then checks if the user is currently associated with a party.
+         then checks if the user is currently associated with a party.
         i) If the user is not associated with any parties, the user to pushed to '/parties' where they 
-        can create or join a party
+           can create or join a party
 
         ii) If the user is currently associated with a party, Fireboss then sets up listeners using the 
-        partyId and user data (see below for detail). The user is then pushed to '/app' and the Top Ten 
-        tab is immediately visible.
+            partyId and user data (see below for detail). The user is then pushed to '/app' and the Top Ten 
+            tab is immediately visible.
 
 
 ## SET UP ALL PARTY LISTENERS
@@ -84,15 +84,15 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
     1) FIRST: 'submitUserSong' gets a snapshot of the party's current song, top ten, and shadow queue. THEN:
 
       A) Check 'current_song' snapshot.
-        i) If no 'current_song', set 'current_song' to submitted song. Return;
+        i)  If no 'current_song', set 'current_song' to submitted song. Return;
         ii) If 'current_song', advance to B.
 
       B) Check 'top_ten' snapshot.
-        i) If no 'top_ten' or if less than 10 songs in 'top_ten', push submitted song to 'top_ten'. Return;
+        i)  If no 'top_ten' or if less than 10 songs in 'top_ten', push submitted song to 'top_ten'. Return;
         ii) If 'top_ten' has 10 songs, advance to C.
 
       C) Check 'shadow_queue' snapshot.
-        i) If user does not have song 'shadow_queue', push submitted song. Return;
+        i)  If user does not have song 'shadow_queue', push submitted song. Return;
         ii) If user already has song in 'shadow_queue', advance to D.
 
       D) Push submitted song to 'personal_queue'.
@@ -103,44 +103,44 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 **I. Voting Rules**
 
     1) A user gets 5 votes to vote on the top ten and current song. Voting increases or decreases a song's 
-    'vote_priority' and increases or decreases the DJ who recommended its DJ Points.
+       'vote_priority' and increases or decreases the DJ who recommended its DJ Points.
 
     2) The 5 votes are replenished when the current song changes. The vote count is stored in local storage
-    (not in Firebase). Users cannot vote when their vote count is zero.
+       (not in Firebase). Users cannot vote when their vote count is zero.
 
     3) If a songs 'net_priority' (vote_priority + time_priority) meets the worst song threshold, an 
-    additional downvote removes the song from the top ten or skips the song if it is the current song.
+       additional downvote removes the song from the top ten or skips the song if it is the current song.
 
 **II. 'onUpvote'**
 
     1) Decrement the users vote count.
 
     2) Call 'updateDjPoints' with the song's uid, the party's partyId, and the third parameter (addBool)
-    as true. This finds the DJ who suggested the song and adds one to his/her DJ points.
+       as true. This finds the DJ who suggested the song and adds one to his/her DJ points.
 
     3) Call 'simpleVote' with the party's id, the song, true (addBool), and songId.
-        i) If songId is null, add a vote to the current song.
-        ii)If songId is given, add a vote to the appropriate song on the top ten.
+        i)  If songId is null, add a vote to the current song.
+        ii) If songId is given, add a vote to the appropriate song on the top ten.
 
 **III. 'onDownvote'**
 
     1) Decrement the users vote count.
 
     2) Calculate 'netPriority' of the song the user is downvoting and get a snapshot of 
-    'current_djs'. Check if this downvote pushes the song beyond the worst song threshold.
-      A) The worst song threshold is updated based on the number of djs in the party.
+       'current_djs'. Check if this downvote pushes the song beyond the worst song threshold.
+        A) The worst song threshold is updated based on the number of djs in the party.
 
     3) If 'meetsWorstSongThreshold' returns 'true':
-      A) Check if song has songId.
-      B) If song has songId that means it is a top ten song. Fireboss then calls 'removeDownvotedSong'
-         which sets the party's 'songToRemove' property on Firebase to the songId. Firechief hears this
-         and updates the top ten.
-      C) If song does not have songId, calls 'triggerFirebase' which skips current song.
+        A) Check if song has songId.
+        B) If song has songId that means it is a top ten song. Fireboss then calls 'removeDownvotedSong'
+           which sets the party's 'songToRemove' property on Firebase to the songId. Firechief hears this
+           and updates the top ten.
+        C) If song does not have songId, calls 'triggerFirebase' which skips current song.
 
     4) If 'meetsWorstSongThreshold' returns 'false':
-      A) Call 'simpleVote' with the party's id, the song, false (addBool), and songId.
-          i) If songId is null, remove a vote to the current song.
-          ii) If songId is given, remove a vote to the appropriate song on the top ten.
+        A) Call 'simpleVote' with the party's id, the song, false (addBool), and songId.
+            i)  If songId is null, remove a vote to the current song.
+            ii) If songId is given, remove a vote to the appropriate song on the top ten.
 
 ## LEAVE PARTY / LOG OUT
 
@@ -149,25 +149,25 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
     1) Check if user id is equal to the party id (if true, the user is the host).
 
     2) If user is host, call 'endParty' with the partyId.
-      A) FIRST: 'endParty' removes the party from the DB. This triggers the 'endParty' 
-         listeners for all the guests, who have their listeners removed and get kicked out. THEN:
-      B) The host removes the current song, top ten, party_djs, and shadow queue from the db.
-      C) The host gets pushed to '/parties'.
+        A) FIRST: 'endParty' removes the party from the DB. This triggers the 'endParty' 
+           listeners for all the guests, who have their listeners removed and get kicked out. THEN:
+        B) The host removes the current song, top ten, party_djs, and shadow queue from the db.
+        C) The host gets pushed to '/parties'.
 
     3) If user is a guest, call 'removeUserParty' which dis-associates the user's id from the the party id.
-      A) THEN: the user is removed from 'party_djs'.
-      B) THEN: party listeners are removed, 'leaveParty' is dispatched which clears the Redux store, and the
-         user is pushed '/parties'.
+        A) THEN: the user is removed from 'party_djs'.
+        B) THEN: party listeners are removed, 'leaveParty' is dispatched which clears the Redux store, and the
+           user is pushed '/parties'.
 
 **II. Log out (similar to leave party)**
 
     1) Check if user id is equal to the party id (if true, the user is the host).
 
     2) If user is host, call 'endParty' with the partyId and 'Fireboss.auth.signout()'.
-      A) After both complete, the host gets pushed to '/login'.
+        A) After both complete, the host gets pushed to '/login'.
 
     3) If user is a guest, call 'removeUserParty', 'removePartyDj' and 'Fireboss.auth.signout()'.
-      B) After all three complete, the guest gets pushed to '/login'.
+        B) After all three complete, the guest gets pushed to '/login'.
 
 
 # SERVER SIDE LOGIC (FIRECHIEF)

@@ -72,9 +72,10 @@ class Fireboss {
   logOut (partyId, user) {
     //testing if user is host
     if (partyId === user.uid) {
-      const p1 = this.endParty(partyId);
-      const p2 = this.auth.signOut();
-      return Promise.all([p1, p2])
+      this.endParty(partyId)
+        .then(() => {
+          return this.auth.signOut()
+        })
         .catch(console.error)
     } else { //if user is not host logout normally
       return this.removeUserParty(partyId, user)
@@ -87,7 +88,6 @@ class Fireboss {
           this.removePartyListeners(partyId, user);
           this.dispatchers.leaveParty();
           this.dispatchers.clearUser();
-          return this.auth.signOut()
         })
         .then(() => this.browserHistory.push('/login'))
         .catch(console.error)
@@ -229,6 +229,7 @@ class Fireboss {
   }
 
   removePartyListeners (partyId, user) {
+    this.getParty(partyId).off();
     this.database.ref('current_song').child(partyId).off();
     this.database.ref('top_ten').child(partyId).off();
     this.database.ref('party_djs').child(partyId).off();

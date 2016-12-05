@@ -27,7 +27,7 @@ export class DjsComponent extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { djs, user } = nextProps;
-    let djName = djs[user.uid] && djs[user.uid].dj_name;
+    let djName = djs && djs[user.uid] && djs[user.uid].dj_name;
     this.setState({value: djName});
   }
 
@@ -67,7 +67,7 @@ export class DjsComponent extends Component {
                 </p>
               </Col>
               <Col xs={6}>
-                <p>{djs[user.uid] && djs[user.uid].dj_name}</p>
+                <p>{djs && djs[user.uid] && djs[user.uid].dj_name}</p>
               </Col>
               <Col xs={5}>
                 <p>DJ Rank: {userRank} of {djArr.length}</p>

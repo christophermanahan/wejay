@@ -38,12 +38,9 @@ export class DjsComponent extends Component {
 
   onSubmit(evt) {
     evt.preventDefault();
-    const { firebase, currentParty, user } = this.props
+    const { fireboss, currentParty, user } = this.props
     this.setState({showEditor: false})
-    firebase.database().ref('party_djs').child(currentParty.id).child(user.uid)
-    .update({dj_name: this.state.value})
-
-
+    fireboss.updateDjName(currentParty.id, user, this.state.value)
   }
 
   handleChange(evt) {
@@ -111,6 +108,6 @@ export class DjsComponent extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ firebase, user, djs, currentParty }) => ({ firebase, user, djs, currentParty });
+const mapStateToProps = ({ fireboss, user, djs, currentParty }) => ({ fireboss, user, djs, currentParty });
 
 export default connect(mapStateToProps)(DjsComponent);

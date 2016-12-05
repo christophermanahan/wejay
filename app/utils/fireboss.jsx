@@ -44,6 +44,9 @@ class Fireboss {
               this.setUpAllPartyListeners(partyId, user);
               this.browserHistory.push('/app');
             })
+            .then(() => {
+              this.checkAndUpdateDjName(partyId, user)
+            })
             .catch(err => console.error(err));
   }
 
@@ -58,6 +61,9 @@ class Fireboss {
                 .then(() => {
                   this.setUpAllPartyListeners(partyId, user);
                   this.browserHistory.push('/app');
+                })
+                .then(() => {
+                  this.checkAndUpdateDjName(partyId, user)
                 })
                 .catch(console.error)
             })
@@ -249,7 +255,24 @@ class Fireboss {
     });
   }
 
-  /* ------------------- SETTERS RETURNING PROMISES ------------------- */
+  checkAndUpdateDjName (partyId, user) {
+    const { uid } = user
+
+    // if no auth provider, do nothing
+    if (!Object.keys(user.providerData).length) return;
+
+    return this.database.ref('dj_names').child(user.uid).once('value')
+      .then(snapshot => {
+        const priorDjName = snapshot && snapshot.val()
+        if(priorDjName) {
+          this.database.ref('party_djs').child(partyId).child(uid).update({dj_name: priorDjName})
+        }
+      })
+      .then(() =>{})
+      .catch(console.error)
+  }
+
+  /* ------------------- SETTERS  ------------------- */
 
   addingPartyDJ (partyId, user) {
     const capitalize = (string) => {
@@ -324,6 +347,17 @@ class Fireboss {
 
   addToPartyQueue (partyId, type, song) {
     return this.database.ref(type).child(partyId).push(song)
+  }
+
+  updateDjName (partyId, user, newName) {
+    const { uid } = user
+    const updatingPartyDjs = this.database.ref('party_djs').child(partyId).child(uid).update({dj_name: newName})
+
+    // if no auth provider, just update the temp dj name
+    if (!Object.keys(user.providerData).length) return updatingPartyDjs
+
+    const persistingDjName = this.database.ref('dj_names').update({[uid]: newName})
+    return Promise.all([updatingPartyDjs, persistingDjName])
   }
 
    /* ------------------- REORDERING PERSONAL QUEUE ------------------- */

@@ -41,11 +41,10 @@ class SearchResults extends Component {
 	render() {
 		const { searchResults, addToQueue } = this.props;
 	  return (
-	    <div>
-				<List>
-	      { searchResults && searchResults.map(song => (
-
-	        <SingleSong
+	    <div className="search-container">
+			<List>
+		      	{ searchResults && searchResults.map(song => (
+			        <SingleSong
 						addToQueue={addToQueue}
 						title={song.title}
 						key={song.id}
@@ -53,8 +52,8 @@ class SearchResults extends Component {
 						permalink_url={song.permalink_url}
 						artist={song.user.username}
 						duration={this.mapDurationToMinSecs(song.duration)}
-	        />
-	      ))}
+			        />
+		      	))}
 	      </List>
 	    </div>
 		);

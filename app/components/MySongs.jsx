@@ -18,15 +18,20 @@ import IconButton from 'material-ui/IconButton';
 
 /* -----------------    DUMB COMPONENTS     ------------------ */
 const DumbSong = props => {
-  const { title, artist, artwork_url, heat } = props;
+  const { title, artist, artwork_url, heat, song } = props;
   return (
-    <div>
-      <ListItem
-        primaryText={title}
-        secondaryText={artist}
-        leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
-      />
-    </div>
+    <Row>
+      <Col xs={10}>
+        <ListItem
+          primaryText={title}
+          secondaryText={`${artist} - ${song.duration}`}
+          leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
+        />
+      </Col>
+      <Col xs={2}>
+        <h3 style={{fontFamily: "Roboto"}}>#{song.index + 1}</h3>
+      </Col>
+    </Row>
   );
 };
 
@@ -36,16 +41,24 @@ const DumbPqSong = props => {
   return (
     <div>
       <Row>
-        <Col xs={9}>
+        <Col xs={8}>
           <ListItem
             primaryText={title}
-            secondaryText={artist}
+            secondaryText={`${artist} - ${song.duration}`}
             leftAvatar={artwork_url ? <Avatar src={artwork_url}/> : <Avatar color={cyan500} backgroundColor='#363836' icon={<Audiotrack />}/>}
           />
         </Col>
-        <Col xs={2}>
+        <Col xs={3}>
           <Row>
-            <Col xs={6}>
+            <Col xs={4}>
+              <IconButton 
+                iconStyle={iconStyle}
+                iconClassName="zmdi zmdi-close"
+                onTouchTap={() => {fireboss.userRemoveSong(currentParty.id, user.uid, song.id)}} 
+              />
+            </Col>
+
+            <Col xs={4}>
               <IconButton 
                 iconStyle={iconStyle} 
                 iconClassName="zmdi zmdi-chevron-down"
@@ -54,7 +67,7 @@ const DumbPqSong = props => {
               />
             </Col>
 
-            <Col xs={6}>
+            <Col xs={4}>
               <IconButton 
                 iconStyle={iconStyle} 
                 iconClassName="zmdi zmdi-chevron-up"
@@ -79,10 +92,14 @@ const DumbMySongs = props => {
 
   let topTenArr = [];
   for (let song in topTen) {
-    if (topTen[song].uid === uid) {
-      topTenArr.push(Object.assign({}, topTen[song], {id: song}));
-    }
+    topTenArr.push(Object.assign({}, topTen[song], {id: song}));
   }
+
+  topTenArr = topTenArr
+    .sort((a, b) => (b.vote_priority + b.time_priority) - (a.vote_priority + a.time_priority))
+    .map((song, index) => Object.assign(song, { index }))
+    .filter(song => song.uid === uid);
+
 
   return (
     <Row className="mysongs-container">
@@ -106,6 +123,8 @@ const DumbMySongs = props => {
                       artist={song.artist}
                       artwork_url={song.artwork_url}
                       heat={song.vote_priority}
+                      index={song.index}
+                      song={song}
                     />
                   </div>
                 ))

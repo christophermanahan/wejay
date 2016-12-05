@@ -118,6 +118,8 @@ const DumbSearch = props => {
     }
 
     trackSearch(evt){
+      console.log(document.activeElement)
+      document.activeElement.blur();
       evt.preventDefault();
       const {tracksearch} = this.props;
       const {query} = this.state;

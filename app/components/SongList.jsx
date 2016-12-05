@@ -36,6 +36,7 @@ class DumbSongList extends Component {
               heatIndex={calcHeatIndex(song, netHeat)}
               ownSong={(uid === song.uid)}
               hasVotes={hasVotes}
+              duration={song.duration}
             />
           </div>
     );

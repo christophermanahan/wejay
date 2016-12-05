@@ -24,7 +24,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 **Firechief** - controls Firebase logic on the server side. Listens to requests from parties and manages song flow through our queue system. Any time a party needs a new song, Firechief decides what song plays next. Any time a lame song is voted off the top ten, Firechief picks its replacement.
 
 
-# CLIENT SIDE LOGIC (FIREBOSS)
+# FIREBOSS CLIENT SIDE LOGIC
 
 ## ON MAIN ENTER
 
@@ -170,7 +170,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
         B) After all three complete, the guest gets pushed to '/login'.
 
 
-# SERVER SIDE LOGIC (FIRECHIEF)
+# FIRECHIEF SERVER SIDE LOGIC
 
 ## LISTEN FOR PARTIES BEING ADDED AND PARTIES BEING REMOVED
 

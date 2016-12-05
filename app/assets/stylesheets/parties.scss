@@ -27,9 +27,25 @@
 	text-align: center;
   color: white;
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .party-header-create {
-	padding-top: 1em;
+	padding-top: 0.7em;
+	padding-bottom: 0;
+}
+
+.parties-logout-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 1vh;
+}
+
+.logout-txt {
+	text-align: center;
+	font-family: Roboto;
+	margin: 0;
+	font-style: italic;
+	font-size: 0.8em;
 }

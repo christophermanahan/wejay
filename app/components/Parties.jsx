@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
-import { RaisedButton, TextField, AutoComplete, Dialog} from 'material-ui';
+import { RaisedButton, TextField, AutoComplete, Dialog, FlatButton  } from 'material-ui';
 
 import { Row, Col } from 'react-flexbox-grid/lib/index';
 
@@ -9,19 +9,13 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 
 const DumbParties = props => {
   const { parties, onPartySelect, joinParty, onSubmit, onPartyNameType, onPartyLocationType,
-        dialogOpen, validationMsg, onDialogClose } = props;
+        dialogOpen, validationMsg, onDialogClose, name, logoutDialogOpen, toggleLogoutDialog, handleLogout  } = props;
 
   //override material ui's inline style elements
-  let btnStyle = {
-    minWidth: "50%"
-  };
-
-  let textFieldStyle = {
-    color: "#363836",
-    width: "98%",
-    margin: "0.2em"
-  };
-
+  const btnStyle = { minWidth: "50%"};
+  const textFieldStyle = { color: "#363836", width: "98%", margin: "0.2em"};
+  const actionLabelStyleCancel = {fontSize: '1em', color: '#7aa095'};
+  const actionLabelStyleLogout = {fontSize: '1em', color: '#ec4616'};
 
   let autofillArr = [];
 
@@ -42,6 +36,23 @@ const DumbParties = props => {
     />
   ];
 
+  const logoutDialogActions = [
+    <FlatButton
+      label="Cancel"
+      primary={true}
+      onTouchTap={toggleLogoutDialog}
+      labelStyle={actionLabelStyleCancel}
+    />,
+    <FlatButton
+      label="Logout"
+      primary={true}
+      onTouchTap={handleLogout}
+      labelStyle={actionLabelStyleLogout}
+    />
+  ];
+
+  const logoutStyle = {color: "#dae2df", backgroundColor: "#363836", fontSize: "0.8em"}
+
   return (
     <Row id="login-grad" className="party-container">
       <Col xsOffset={1} xs={10}>
@@ -56,10 +67,11 @@ const DumbParties = props => {
           </Col>
         </Row>
         <Row>
-          <Col xsOffset={1} xs={10}>
+          <Col xs={12}>
             <AutoComplete
               floatingLabelText="Find your party..."
               filter={AutoComplete.fuzzyFilter}
+              fullWidth={true}
               openOnFocus={true}
               dataSource={autofillArr}
               dataSourceConfig={autofillConfig}
@@ -68,10 +80,10 @@ const DumbParties = props => {
               targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
             />
           </Col>
-
         </Row>
 
-
+        <Row>
+          <Col xs={12}>
             <RaisedButton
               className="party-btn"
               primary={true}
@@ -109,9 +121,23 @@ const DumbParties = props => {
               open={dialogOpen}
               modal={true}
               actions={dialogActions}
-            >
-              { validationMsg }
-            </Dialog>
+            >{ validationMsg }</Dialog>
+            <Dialog
+              title="Are you sure you want to logout?"
+              open={logoutDialogOpen}
+              modal={true}
+              actions={logoutDialogActions}
+            >{ validationMsg }</Dialog>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={10} xsOffset={1}>
+            <h3 className="logout-txt">Signed in as {name}</h3>
+            <div className="parties-logout-container">
+              <FlatButton style={logoutStyle} label="Logout" onTouchTap={toggleLogoutDialog} />
+            </div>
+          </Col>
+        </Row>
       </Col>
     </Row>
 
@@ -129,12 +155,15 @@ class Parties extends Component {
     this.onPartyNameType = this.onPartyNameType.bind(this);
     this.onPartyLocationType = this.onPartyLocationType.bind(this);
     this.onDialogClose = this.onDialogClose.bind(this);
+    this.toggleLogoutDialog = this.toggleLogoutDialog.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
 
     this.state = {
       partyId: '',
       newPartyName: '',
       newPartyLocation: '',
       dialogOpen: false,
+      logoutDialogOpen: false,
       validationMsgArr: []
     };
 
@@ -169,6 +198,15 @@ class Parties extends Component {
 
   onDialogClose() {
     this.setState({dialogOpen: false, validationMsgArr: []});
+  }
+
+  toggleLogoutDialog() {
+    this.setState(prevState => ({logoutDialogOpen: !prevState.logoutDialogOpen}));
+  }
+
+  handleLogout() {
+    const { fireboss } = this.props;
+    fireboss.auth.signOut();
   }
 
   onSubmit(evt) {
@@ -217,6 +255,7 @@ class Parties extends Component {
   }
 
   render() {
+    const name = this.props.user.displayName || 'Guest';
     return (
       <div>
         <DumbParties partyId={this.state.partyId}
@@ -230,6 +269,11 @@ class Parties extends Component {
                      dialogOpen={this.state.dialogOpen}
                      validationMsg={this.state.validationMsgArr.join(' ')}
                      onDialogClose={this.onDialogClose}
+                     name={name}
+                     onLogout={this.handleLogout}
+                     logoutDialogOpen={this.state.logoutDialogOpen}
+                     toggleLogoutDialog={this.toggleLogoutDialog}
+                     handleLogout={this.handleLogout}
                      />
       </div>
     );

@@ -16,7 +16,9 @@ import { Row, Col } from 'react-flexbox-grid/lib/index';
 /* -----------------    COMPONENT     ------------------ */
 
 const App = props => {
-	const { uid, party_id } = props;
+	const { uid, currentParty } = props;
+
+	const party_id = currentParty && currentParty.id
 
 	const selectTabInkBarStyle = {
 		backgroundColor:"#EC4616",
@@ -64,7 +66,7 @@ const App = props => {
 
 const mapStateToProps = ({ user, currentParty }) => ({
 	uid: user.uid,
-	party_id: currentParty.id
+	currentParty
 });
 
 export default connect(mapStateToProps)(App);

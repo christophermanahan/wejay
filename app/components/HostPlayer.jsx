@@ -170,7 +170,11 @@ class CustomPlayer extends React.Component {
 
   //Todo-->FIX: Custom Player renders before track loads
 
-
+  // stops music if user leaves party
+  componentWillUnmount() {
+    const { soundCloudAudio } = this.props;
+    return soundCloudAudio && soundCloudAudio.pause();
+  }
 
   play() {
       let { soundCloudAudio, playing } = this.props;

@@ -27,7 +27,7 @@ export class DjsComponent extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { djs, user } = nextProps;
-    let djName = djs[user.uid] && djs[user.uid].dj_name;
+    let djName = djs && djs[user.uid] && djs[user.uid].dj_name;
     this.setState({value: djName});
   }
 
@@ -38,12 +38,9 @@ export class DjsComponent extends Component {
 
   onSubmit(evt) {
     evt.preventDefault();
-    const { firebase, currentParty, user } = this.props
+    const { fireboss, currentParty, user } = this.props
     this.setState({showEditor: false})
-    firebase.database().ref('party_djs').child(currentParty.id).child(user.uid)
-    .update({dj_name: this.state.value})
-
-
+    fireboss.updateDjName(currentParty.id, user, this.state.value)
   }
 
   handleChange(evt) {
@@ -70,7 +67,7 @@ export class DjsComponent extends Component {
                 </p>
               </Col>
               <Col xs={6}>
-                <p>{djs[user.uid] && djs[user.uid].dj_name}</p>
+                <p>{djs && djs[user.uid] && djs[user.uid].dj_name}</p>
               </Col>
               <Col xs={5}>
                 <p>DJ Rank: {userRank} of {djArr.length}</p>
@@ -111,6 +108,6 @@ export class DjsComponent extends Component {
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapStateToProps = ({ firebase, user, djs, currentParty }) => ({ firebase, user, djs, currentParty });
+const mapStateToProps = ({ fireboss, user, djs, currentParty }) => ({ fireboss, user, djs, currentParty });
 
 export default connect(mapStateToProps)(DjsComponent);

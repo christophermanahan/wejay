@@ -5,8 +5,7 @@ import { spy } from 'sinon';
 
 import { sampleUser, sampleDjs, sampleDjHost, sampleDjGuest } from '../utils';
 
-import { SingleDj } from '../../app/components/DjsList';
-import DjsList from '../../app/components/DjsList';
+import SingleDj from '../../app/components/SingleDj';
 import { DjsComponent } from '../../app/components/Djs';
 
 
@@ -17,7 +16,7 @@ describe('<SingleDj /> dumb component', () => {
 	let singleDj;
 
 	beforeEach('Create shallow copy with user and dj on props', () => {
-		singleDj = shallow(<DjsList user={sampleUser} dj={sampleDjGuest}/>);
+		// singleDj = shallow(<DjsList user={sampleUser} dj={sampleDjGuest}/>);
 	}); // TODO: this needs to alternate for guest and host
 
 	it('should render one way for guests', () => {

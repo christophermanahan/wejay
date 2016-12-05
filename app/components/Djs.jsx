@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 
 import Create from 'material-ui/svg-icons/content/create';
+import FlipMove from 'react-flip-move';
 
 import { TextField, RaisedButton, IconButton, FontIcon } from 'material-ui';
 import { Row, Col } from 'react-flexbox-grid/lib/index';
-import DjList from './DjsList'
+import SingleDj from './SingleDj'
 
 /* -----------------    STYLES     ------------------ */
 const TextFieldStyle = {width: '60%'}
@@ -46,6 +47,18 @@ export class DjsComponent extends Component {
   handleChange(evt) {
     evt.preventDefault();
     this.setState({value: evt.target.value})
+  }
+
+  renderDjsList() {
+    const { djs, user } = this.props
+    let djArr = []
+    for (let dj in djs) { djArr.push(djs[dj]) }
+    djArr.sort((a, b) => (b.dj_points - a.dj_points))
+    return djArr.map(dj => (
+          <div key={dj.uid} style={{width: "100%"}}>
+            <SingleDj user={user} dj={dj} />
+          </div>
+          ))
   }
 
 
@@ -97,7 +110,9 @@ export class DjsComponent extends Component {
 
             <Row>
               <Col xs={12}>
-                <DjList user={user} djs={djArr}/>
+              <FlipMove easing="ease" style={{width: "100%"}}>
+                { this.renderDjsList() }
+              </FlipMove>
               </Col>
             </Row>
           </Col>

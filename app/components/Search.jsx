@@ -20,31 +20,53 @@ const RaisedButtonStyle = {width: '20%', marginLeft: '20px'};
 
 const DumbSearch = props => {
   const { onType, trackSearch, onClear, query, timeStamp } = props;
+
+  let clrBtnStyle = {
+    marginLeft: "-4em",
+    marginRight: "1em",
+    marginTop: "0.9em"
+  }
+
+  let searchBtnStyle = {
+    marginTop: "1.2em"
+  }
+
+  let searchTextField = {
+    marginTop: "-0.5em"
+  }
+
   return (
       <Row>
         <Col xs={12}>
           <form onSubmit={ trackSearch }>
+
             <Row>
-              <Col xs={12}>
-                  <TextField
-                    key={ timeStamp }
-                    style={TextFieldStyle}
-                    onChange={ onType }
-                    value={ query }
-                    floatingLabelText="Search By Track"
-                  />
-
-                  <IconButton onTouchTap={onClear}>
-                    <i className="material-icons">highlight_off</i>
-                  </IconButton>
-
-                  <RaisedButton
-                    label="Search"
-                    type="submit"
-                    style={RaisedButtonStyle}
+              <Col style={searchTextField} xs={8}>
+                <TextField
+                  key={ timeStamp }
+                  style={TextFieldStyle}
+                  onChange={ onType }
+                  value={ query }
+                  floatingLabelText="Search By Track"
                   />
               </Col>
+
+              <Col style={clrBtnStyle} xs={1}>
+                <IconButton onTouchTap={onClear}>
+                  <i className="material-icons">highlight_off</i>
+                </IconButton>
+              </Col>
+
+              <Col style={searchBtnStyle} xs={3}>
+                <RaisedButton
+                  label="Search"
+                  type="submit"
+                  style={RaisedButtonStyle}
+                  />
+              </Col>
+
             </Row>
+
            </form>
         </Col>
       </Row>

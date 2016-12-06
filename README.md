@@ -51,7 +51,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
         partyId and user data (see below for detail). The user is then pushed to `/app` and the Top Ten 
         tab is immediately visible.
 
----
+
 ## SET UP ALL PARTY LISTENERS
 
 **```setUpAllPartyListeners``` runs when a user enters a party. Users can enter a party from the `/parties` page by clicking CREATE PARTY or JOIN PARTY. The seven listeners are descibed below:**
@@ -76,7 +76,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 * **Shadow Queue Listener** - manages ```shadowQueue``` on the Redux store. Listens to the Shadow Queue for the party.
 
----
+
 ## ADDING A SONG
 
 **I.```submitUserSong``` runs when user selects a song they want to hear. Users can add songs from the ADD SONG page.**
@@ -97,7 +97,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
   4.  Push submitted song to ```personal_queue```.
 
----
+
 ## VOTING
 
 **I. Voting Rules**
@@ -168,7 +168,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
   3. If user is a guest, call ```removeUserParty```, 'removePartyDj' and ```Fireboss.auth.signout()```.
       * After all three complete, the guest gets pushed to '/login'.
 
-
+---
 # FIRECHIEF SERVER SIDE LOGIC
 
 ## LISTEN FOR PARTIES BEING ADDED AND PARTIES BEING REMOVED
@@ -202,7 +202,6 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
     3. Runs `pullFromShadowQueue` to replenish the top ten.
     4  Runs `pullFromPersonalQueue` to replenish the shadow queue.
 
-
   Firechief's `createPartyAddedLister` is invoked with a `topTenInterval` and a `sqInterval` in order to:
 
   1. Run `createTimePriorityIncrementer` for each queue when a party is made.
@@ -224,3 +223,12 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
   2. `removeTimePriorityIncrementer` calls `clearInterval` on the queue and sets the references to the incrementers in
        `Firechief[incrementers][partyId][queue]` to `null`
+
+
+---
+## GETTING STARTED:
+
+`git clone` this repo and run `npm start`, which will automatically run webpack and compile the necessary CSS dependencies.
+
+### TESTING:
+We love testing. To thoroughly test Fireboss and Firechief, we leveraged the `firebase-server` package, which runs a local instance of a firebase database. This means that our Firebase-related tests require two simultaneous Node processes: `npm test` and `npm run test-server`. 

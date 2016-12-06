@@ -109,15 +109,22 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 ## VOTING
 
-**Voting Rules**
+### Voting Rules
 
-  1. Users can vote for the current song or songs in the top ten. Voting increases or decreases a song's 
-     ```vote_priority``` and increments or decrements the DJ points of whomever suggested it.
+**I. Eligibility**
+  * Users can vote for the current song or songs in the top ten. 
+  * Voting increases or decreases a song's `vote_priority` and increments/decrements the DJ points of whomever suggested it.
+  * Users cannot vote for their own songs.
 
-  2. A user starts with 5 votes, which are are replenished each time the current song changes. The vote count is stored 
-     in local storage(not in Firebase) for simplicity. Users cannot vote for their own songs, or when they have 0 votes left.
+**II. Allottment**
+  * A user starts with 5 votes, which are are replenished each time the current song changes. 
+  * The vote count is stored in local storage (not in Firebase) for simplicity. 
 
-  3. If a song's net priority, ie ```vote_priority + time_priority``` meets the worst song threshold, it is removed.
+**III. Song Removal**
+  * If a song's net priority, ie ```vote_priority + time_priority``` meets the worst song threshold, it is removed.
+  * Threshold changes dynamically and is equal to double the number of djs in a party.
+
+### Voting Methods
 
 **I. `onUpvote`**
 

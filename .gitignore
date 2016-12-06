@@ -17,3 +17,5 @@ app/utils/publicKeys.jsx
 bundle.css
 bundle.css.map
 public/stylesheets/main.css
+
+app/utils/publicKeys.jsx

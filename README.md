@@ -109,7 +109,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 ## VOTING
 
-**I. Voting Rules**
+**Voting Rules**
 
   1. Users can vote for the current song or songs in the top ten. Voting increases or decreases a song's 
      ```vote_priority``` and increments or decrements the DJ points of whomever suggested it.
@@ -119,7 +119,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
   3. If a song's net priority, ie ```vote_priority + time_priority``` meets the worst song threshold, it is removed.
 
-**II. `onUpvote`**
+**I. `onUpvote`**
 
   1. Decrement the user's vote count.
 
@@ -130,7 +130,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
       *  If songId is null, add a vote to the current song.
       *  If songId is given, add a vote to the appropriate song on the top ten.
 
-**III. `onDownvote`**
+**II. `onDownvote`**
 
   1. Decrement the user's vote count.
 
@@ -162,19 +162,19 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
       * The host removes the ```current_song```, ```top_ten```, ```party_djs```, and ```shadow_queue``` from the db.
       * The host gets pushed to '/parties'.
 
-    3) If user is a guest, call ```removeUserParty``` which dis-associates the user's id from the the party id.
-        A) THEN: the user is removed from ```party_djs```.
-        B) THEN: party listeners are removed, ```leaveParty``` is dispatched which clears the Redux store, and the
-           user is pushed '/parties'.
+  3. If user is a guest, call ```removeUserParty``` which dis-associates the user's id from the the party id.
+       A) THEN: the user is removed from ```party_djs```.
+      B) THEN: party listeners are removed, ```leaveParty``` is dispatched which clears the Redux store, and the
+         user is pushed `/parties`.
 
 **II. Log out (similar to leave party)**
   1. Check if user id is equal to the party id (if `true`, the user is the host).
 
   2. If user is host, call ```endParty``` with the partyId and ```Fireboss.auth.signout()```.
-      * After both complete, the host gets pushed to '/login'.
+      * After both complete, the host gets pushed to `/login`.
 
   3. If user is a guest, call ```removeUserParty```, 'removePartyDj' and ```Fireboss.auth.signout()```.
-      * After all three complete, the guest gets pushed to '/login'.
+      * After all three complete, the guest gets pushed to `/login`.
 
 ---
 # FIRECHIEF SERVER SIDE LOGIC

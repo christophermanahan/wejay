@@ -1,6 +1,6 @@
 # WE. ARE. WEJAY.
 
-Remember that time you went to a party and some rando hijacked the playlist to spin some track no one else wanted to hear? Or that time you invited friends over but were too busy to manage the music? With weJay, the whole party decides which hot track plays next.
+Remember that time you went to a party and some stranger hijacked the playlist to spin a track no one else wanted to hear? Or that time you invited friends over but were too busy to manage the music? With weJay, the whole party decides which song plays next.
 
 A host starts a party, and anyone who launches the app can join as a guest. Each guest is a DJ who can suggest songs, vote on others' suggestions, and accrue 'DJ points' depending on how many people up-vote their songs. The next song played is determined by its votes and the time passed since first suggested.
 

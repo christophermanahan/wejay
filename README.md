@@ -79,9 +79,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 ## ADDING A SONG
 
-**I.```submitUserSong``` runs when user selects a song they want to hear. Users can add songs from the ADD SONG page.**
-
-  **```submitUserSong``` gets a snapshot of the party's current song, top ten, and shadow queue. THEN:
+**`submitUserSong` runs when user selects a song they want to hear from the ADD SONG page. It takes a snapshot of the party's current song, top ten, and shadow queue. THEN:**
 
   1. Check ```current_song``` snapshot.
     * If no ```current_song```, set ```current_song``` to submitted song and return.
@@ -110,7 +108,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
   3. If a song's net priority, ie ```vote_priority + time_priority``` meets the worst song threshold, it is removed.
 
-**II. 'onUpvote'**
+**II. `onUpvote`**
 
   1. Decrement the user's vote count.
 
@@ -121,7 +119,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
       *  If songId is null, add a vote to the current song.
       *  If songId is given, add a vote to the appropriate song on the top ten.
 
-**III. 'onDownvote'**
+**III. `onDownvote`**
 
   1. Decrement the user's vote count.
 
@@ -136,8 +134,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
          and updates the top ten.
       * If song does not have songId, calls ```triggerFirebase``` which skips to the next song in the Top Ten.
 
-  4. If ```meetsWorstSongThreshold``` returns '
-  ':
+  4. If ```meetsWorstSongThreshold``` returns `false`:
       * Call ```simpleVote``` with the party's id, the song, false ie ```addBool```, and ```songId```.
           + If songId is null, remove a vote to the current song.
           + If songId is given, remove a vote to the appropriate song on the top ten.

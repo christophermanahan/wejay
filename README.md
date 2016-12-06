@@ -118,7 +118,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 **II. Allottment**
   * A user starts with 5 votes, which are are replenished each time the current song changes. 
-  * The vote count is stored in local storage (not in Firebase) for simplicity. 
+  * The vote count is stored in local storage (not in Firebase) for performance optimization. 
 
 **III. Song Removal**
   * If a song's net priority, ie ```vote_priority + time_priority``` meets the worst song threshold, it is removed.

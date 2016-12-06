@@ -170,9 +170,9 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
       * The host gets pushed to '/parties'.
 
   3. If user is a guest, call ```removeUserParty``` which dis-associates the user's id from the the party id.
-       A) THEN: the user is removed from ```party_djs```.
-      B) THEN: party listeners are removed, ```leaveParty``` is dispatched which clears the Redux store, and the
-         user is pushed `/parties`.
+      * User is removed from ```party_djs```.
+      * Then, party listeners are removed, ```leaveParty``` is dispatched to clear the Redux store, and the
+        user is pushed `/parties`.
 
 **II. Log out (similar to leave party)**
   1. Check if user id is equal to the party id (if `true`, the user is the host).

@@ -90,9 +90,8 @@ const DumbNavbar = props => {
               menuStyle={{ backgroundColor: 'white', width: '8em' }}
             >
               <MenuItem style={menuDropUpStyle} value="1"><ArrowDropUp/></MenuItem>
-              <MenuItem style={menuItemStyle} value="2">My Settings</MenuItem>
-              <MenuItem style={menuItemStyle} value="3" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
-              <MenuItem style={menuItemStyle} value="4" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
+              <MenuItem style={menuItemStyle} value="2" onTouchTap={handleOpenLeaveDialog}>Leave Party</MenuItem>
+              <MenuItem style={menuItemStyle} value="3" onTouchTap={handleOpenLogoutDialog}>Logout</MenuItem>
             </IconMenu>
           </div>
         </Col>

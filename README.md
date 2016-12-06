@@ -17,7 +17,7 @@ weJay uses Firebase to namespace different parties and provide real-time updates
 
 **Personal Queue** - the songs that a user has suggested, but are not yet locked in. Users can see their personal queue in the 'My Songs' tab, and songs can be reordered and removed.
 
-**Fireboss** - manages application state on the client side. When a user adds a song, Fireboss decides what queue it goes into. When a user joins a party, Fireboss binds the application state to that party. When a host leaves, Firebosss kicks everyone out. In the WeJay application, Fireboss is truly the boss.
+**Fireboss** - manages application state on the client side. When a user adds a song, Fireboss decides what queue it goes into. When a user joins a party, Fireboss binds the application state to that party. When a host leaves, Firebosss kicks everyone out. In the weJay application, Fireboss is truly the boss.
 
 To do this, Fireboss connects the Redux store to our Firebase Realtime Database and listens for changes. Any changes are immediately dispatched to the client's Redux store, and all client actions are sent to Firebase directly (using methods on Fireboss). Fireboss can also use React-Router's browser history to update the client's view in realtime.
 
@@ -40,23 +40,23 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
   The ```onAuthStateChanged``` listener checks if a user has been authenticated on Firebase.
 
   1. If the user is not autheticated, Fireboss dispatches ```clearUser``` (which clears the user from
-     the Redux store). Fireboss then pushes the client to '/login'.
+     the Redux store). Fireboss then pushes the client to `/login`.
 
   2. If the user is authenticated, Fireboss dispatches ```setUser``` with the user's data. Fireboss 
      then checks if the user is currently associated with a party.
-      * If the user is not associated with any parties, the user to pushed to '/parties' where they 
+      * If the user is not associated with any parties, the user to pushed to `/parties` where they 
         can create or join a party
 
       * If the user is currently associated with a party, Fireboss then sets up listeners using the 
-        partyId and user data (see below for detail). The user is then pushed to '/app' and the Top Ten 
+        partyId and user data (see below for detail). The user is then pushed to `/app` and the Top Ten 
         tab is immediately visible.
 
 ---
 ## SET UP ALL PARTY LISTENERS
 
-**```setUpAllPartyListeners``` runs when a user enters a party. Users can enter a party from the '/parties' page by clicking CREATE PARTY or JOIN PARTY. The seven listeners are descibed below:**
+**```setUpAllPartyListeners``` runs when a user enters a party. Users can enter a party from the `/parties` page by clicking CREATE PARTY or JOIN PARTY. The seven listeners are descibed below:**
 
-* **Current Party Listener** - manages ```currentParty``` on the Redux store. Current party contains the partyId, so the user can send updates to the appropriate ref in Firebase.
+* **Current Party Listener** - manages ```currentParty``` on the Redux store. Current party contains the `partyId`, so the user can send updates to the appropriate ref in Firebase.
 
 
 * **Current Song Listener** - manages ```currentSong``` on the Redux store. Contains all relevant data about the current song, including the ```song_uri``` for the SoundCloud player.
@@ -68,7 +68,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 * **Party DJs Listener** - manages ```djs``` on the Redux store. Lets the user know what DJs are in a party and how many DJ Points they have.
 
 
-* **End Party Listener** - When the host ends a party, alerts the user, turns off all party specific listeners (including itself), and pushes the user to the '/parties' page.
+* **End Party Listener** - When the host ends a party, alerts the user, turns off all party specific listeners (including itself), and pushes the user to the `/parties` page.
 
 
 * **Personal Queue Listener** - manages ```personalQueue``` on the Redux store. Listens to updates from the users personal queue.
@@ -129,14 +129,15 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
      ```current_djs```. Check if this downvote pushes the song beyond the worst song threshold.
      * NOTE: The worst song threshold changes dynamically based on the number of djs in the party.
 
-  3. If ```meetsWorstSongThreshold``` returns 'true':
-      * Check if song has songId.
-      * If song has songId that means it is a top ten song. Fireboss then calls ```removeDownvotedSong```
+  3. If ```meetsWorstSongThreshold``` returns `true`:
+      * Check if song has `songId`.
+      * If song has `songId` that means it is a top ten song. Fireboss then calls ```removeDownvotedSong```
          which sets the party's ```songToRemove``` property on Firebase to the songId. Firechief hears this
          and updates the top ten.
       * If song does not have songId, calls ```triggerFirebase``` which skips to the next song in the Top Ten.
 
-  4. If ```meetsWorstSongThreshold``` returns 'false':
+  4. If ```meetsWorstSongThreshold``` returns '
+  ':
       * Call ```simpleVote``` with the party's id, the song, false ie ```addBool```, and ```songId```.
           + If songId is null, remove a vote to the current song.
           + If songId is given, remove a vote to the appropriate song on the top ten.
@@ -159,7 +160,7 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
            user is pushed '/parties'.
 
 **II. Log out (similar to leave party)**
-  1. Check if user id is equal to the party id (if true, the user is the host).
+  1. Check if user id is equal to the party id (if `true`, the user is the host).
 
   2. If user is host, call ```endParty``` with the partyId and ```Fireboss.auth.signout()```.
       * After both complete, the host gets pushed to '/login'.
@@ -172,52 +173,54 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 ## LISTEN FOR PARTIES BEING ADDED AND PARTIES BEING REMOVED
 
-**I. On 'child_added' for parties, Firechief runs 'createNewPartyListener' & runs
-  'createNewTimePriorityIncrementer' for the top ten and for the shadow queue.**
+**I. On `child_added` for parties, Firechief runs `createNewPartyListener` and
+  `createNewTimePriorityIncrementer` for the top ten and for the shadow queue.**
 
-    1) Each new party listener listens to ‘needSong’ and ‘songToRemove’ on the party instance.
+  Each new party listener listens to `needSong` and `songToRemove` on the party instance.
 
-      A) If 'needSong = true', run 'masterReorder' which:
-          i) FIRST: runs 'setCurrentSong' which:
-            a) Checks if the top ten exists. If not, 'return' / if so:
-            b) Find the song with the highest net priority.
-            c) THEN: set that song to current song, remove it from the top ten,
-               and set needSong to false.
+  1. If ```needSong``` is `true`, run `masterReorder` which:
+    1. Runs ```setCurrentSong``` which:
+      * Checks if the top ten exists. If not, `return`. Otherwise:
+      * Find the song with the highest net priority.
+      * Sets that song to current song, removes it from the top ten,
+        and sets `needSong` to `false`.
 
-          ii) THEN: If 'setCurrentSong' was successful, run 'pullFromShadowQueue' which:
-              a) Checks if the shadow queue exists. If not, 'return' / if so:
-              b) Find the song with the highest net priority.
-              c) THEN: Add that song to the top ten, remove it from the shadow queue, and
-                 pass the song submitter's uid to the next stage.
+    2. Then runs `pullFromShadowQueue` which:
+      * Checks if the shadow queue exists. If not, `return`. Otherwise:
+      * Find the song with the highest net priority.
+      * Add that song to the top ten, remove it from the shadow queue, and
+        pass the song submitter's uid to the next stage.
 
-          iii) THEN: If 'pullFromShadowQueue' was successful, run 'pullFromPersonalQueue' which:
-              a) Checks if a personal queue for the given uid exists. If not, 'return' / if so:
-              b) Find the song with the highest net priority.
-              c) THEN: add that song to the shadow queue and remove it from the personal queue.
+    3.  Runs `pullFromPersonalQueue` which:
+      * Checks if a personal queue for the given uid exists. If not, `return`. Otherwise:
+      * Find the song with the highest net priority.
+      * Adds that song to the shadow queue and remove it from the personal queue.
 
-        B) If 'songToRemove = aTruthyValue', run 'removeWorstSong' which:
-          i)   FIRST: sets 'songToRemove' to an empty string (a falsy value).
-          ii)  THEN: runs 'pullFromShadowQueue' as described above. If successful:
-          iii) THEN: runs 'pullFromPersonalQueue' as described above.
-
-
-    2) If 'createPartyAddedLister' is invoked with a 'topTenInterval' and a 'sqInterval':
-
-      A) Run 'createTimePriorityIncrementer' for each queue.
-        i) See if an incrementers object exists for the party. If object exists, set it equal
-           to itself, if object does not exist create it.
-
-        ii) Set Firechief[incrementers][partyId][queue] equal to a 'setInterval' invoked with
-            incrementerHelper, the given interval, the partyId, and the chosen queue.
-
-        iii) The incrementerHelper function takes the partyId and chosenQueue, and every
-             time it is invoked, it snapshots the entire queue, increments the 'time_priority'
-             of every song by one, and THEN replaces the old queue with the updated queue.
+  2. If `songToRemove` is set to a non-empty string, runs `removeWorstSong` which:
+    1. Takes the value of `songToRemove`, which points to the lowest priority song in the top ten, and removes that song.
+    2. Resets `songToRemove` to an empty string.
+    3. Runs `pullFromShadowQueue` to replenish the top ten.
+    4  Runs `pullFromPersonalQueue` to replenish the shadow queue.
 
 
-**II. On 'child_removed' for parties, Firechief uses the partyId to run 'removePartyListener' and 'removeTimePriorityIncrementer' for the party's shadow queue and its top ten.**
+  Firechief's `createPartyAddedLister` is invoked with a `topTenInterval` and a `sqInterval` in order to:
 
-    1) 'removePartyListener' calls '.off()' the firebase database listener for the partyId
+  1. Run `createTimePriorityIncrementer` for each queue when a party is made.
+    * NOTE: Each incrementer is stored as a property on the Firechief instance, and is organized by `partyId`.
 
-    2) 'removeTimePriorityIncrementer' calls 'clearInterval' on the queue and sets 
-       Firechief[incrementers][partyId][queue] to 'null'
+  2. The `createTimePriorityIncrementer` uses `setInterval` to increment the `time_priority` of songs on the top ten
+     and shadow queue. 
+     * It uses `incrementerHelper`, the passed time interval, the partyId, and the chosen queue.
+     * Because it accepts `queue` and `interval` as arguments, songs can accrue time_priority at different rates depending on what queue         they are in.
+
+  3. The `incrementerHelper` function takes the `partyId` and `chosenQueue`, and every
+     time it is invoked, it snapshots the entire queue, increments the `time_priority`
+     of every song by one, and THEN replaces the old queue with the updated queue.
+
+
+**II. When a child is removed from Firebase's `parties` object, Firechief uses the `partyId` to run `removePartyListener` and `removeTimePriorityIncrementer` for the party's shadow queue and its top ten.**
+
+  1. `removePartyListener` calls `.off()` the firebase database listener for the `partyId`
+
+  2. `removeTimePriorityIncrementer` calls `clearInterval` on the queue and sets the references to the incrementers in
+       `Firechief[incrementers][partyId][queue]` to `null`

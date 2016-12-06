@@ -88,6 +88,7 @@ class Fireboss {
           this.removePartyListeners(partyId, user);
           this.dispatchers.leaveParty();
           this.dispatchers.clearUser();
+          return this.auth.signOut();
         })
         .then(() => this.browserHistory.push('/login'))
         .catch(console.error)

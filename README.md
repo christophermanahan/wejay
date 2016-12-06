@@ -6,6 +6,17 @@ A host starts a party, and anyone who launches the app can join as a guest. Each
 
 weJay uses Firebase to namespace different parties and provide real-time updates to each client. When a client suggests a song, it receives a snapshot of the relevant Firebase data and pushes the song to its proper place in the Firebase queue. Concurrently, Node listens to for when a song finishes playing, at which point it receives a snapshot of the Firebase party state and computes the next song accordingly. Songs are streamed from SoundCloud to the host client device only, but all guests can view the info of the song currently being played.
 
+
+---
+## GETTING STARTED:
+
+`git clone` this repo and run `npm start`, which will automatically run webpack and compile the necessary CSS dependencies.
+
+### TESTING:
+We love testing. To thoroughly test Fireboss and Firechief, we leveraged the `firebase-server` package, which runs a local instance of a firebase database. This means that our Firebase-related tests require two simultaneous Node processes: `npm test` and `npm run test-server`. 
+
+
+
 ---
 ## DEFINITIONS:
 
@@ -220,12 +231,3 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
   2. `removeTimePriorityIncrementer` calls `clearInterval` on the queue and sets the references to the incrementers in
        `Firechief[incrementers][partyId][queue]` to `null`
-
-
----
-## GETTING STARTED:
-
-`git clone` this repo and run `npm start`, which will automatically run webpack and compile the necessary CSS dependencies.
-
-### TESTING:
-We love testing. To thoroughly test Fireboss and Firechief, we leveraged the `firebase-server` package, which runs a local instance of a firebase database. This means that our Firebase-related tests require two simultaneous Node processes: `npm test` and `npm run test-server`. 

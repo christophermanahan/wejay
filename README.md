@@ -6,7 +6,7 @@ A host starts a party, and anyone who launches the app can join as a guest. Each
 
 weJay uses Firebase to namespace different parties and provide real-time updates to each client. When a client suggests a song, it receives a snapshot of the relevant Firebase data and pushes the song to its proper place in the Firebase queue. Concurrently, Node listens to for when a song finishes playing, at which point it receives a snapshot of the Firebase party state and computes the next song accordingly. Songs are streamed from SoundCloud to the host client device only, but all guests can view the info of the song currently being played.
 
-
+---
 ## DEFINITIONS:
 
 **Current Song** - the song currently playing in the party.
@@ -23,151 +23,149 @@ To do this, Fireboss connects the Redux store to our Firebase Realtime Database 
 
 **Firechief** - controls Firebase logic on the server side. Listens to requests from parties and manages song flow through our queue system. Any time a party needs a new song, Firechief decides what song plays next. Any time a lame song is voted off the top ten, Firechief picks its replacement.
 
-
+---
 # FIREBOSS CLIENT SIDE LOGIC
 
 ## ON MAIN ENTER
 
 **I. Create new Fireboss instance, and dispatch it to the Redux store.**
 
-**II. Use Fireboss to create a listener for the 'parties' ref on Firebase.**
+**II. Use Fireboss to create a listener for the ```parties``` ref on Firebase.**
 
-    1) The 'createPartiesListener' will always be active. It listens to the global parties list and 
-       keeps the 'parties' state up to date with the latest party data.
+  1. The ```createPartiesListener``` will always be active. It listens to the global parties list and 
+     keeps the 'parties' state up to date with the latest party data.
 
-**III. Use Fireboss to create an 'onAuthStateChanged' listener.**
+**III. Use Fireboss to create an ```onAuthStateChanged``` listener.**
 
-    1) The 'onAuthStateChanged' listener checks if a user has been authenticated on Firebase.
+  The ```onAuthStateChanged``` listener checks if a user has been authenticated on Firebase.
 
-      A) If the user is not autheticated, Fireboss dispatches 'clearUser' (which clears the user from 
-         the Redux store). Fireboss then pushes the client to '/login'.
+  1. If the user is not autheticated, Fireboss dispatches ```clearUser``` (which clears the user from
+     the Redux store). Fireboss then pushes the client to '/login'.
 
-      B) If the user is authenticated, Fireboss dispatches 'setUser' with the user's data. Fireboss 
-         then checks if the user is currently associated with a party.
-        i) If the user is not associated with any parties, the user to pushed to '/parties' where they 
-           can create or join a party
+  2. If the user is authenticated, Fireboss dispatches ```setUser``` with the user's data. Fireboss 
+     then checks if the user is currently associated with a party.
+      * If the user is not associated with any parties, the user to pushed to '/parties' where they 
+        can create or join a party
 
-        ii) If the user is currently associated with a party, Fireboss then sets up listeners using the 
-            partyId and user data (see below for detail). The user is then pushed to '/app' and the Top Ten 
-            tab is immediately visible.
+      * If the user is currently associated with a party, Fireboss then sets up listeners using the 
+        partyId and user data (see below for detail). The user is then pushed to '/app' and the Top Ten 
+        tab is immediately visible.
 
-
+---
 ## SET UP ALL PARTY LISTENERS
 
-**I.'setUpAllPartyListeners' runs when a user enters a party. Users can enter a party from the '/parties' page by clicking 'createParty' or 'joinParty'. The seven listeners are descibed below:**
+**```setUpAllPartyListeners``` runs when a user enters a party. Users can enter a party from the '/parties' page by clicking CREATE PARTY or JOIN PARTY. The seven listeners are descibed below:**
 
-* **Current Party Listener** - manages 'currentParty' on the Redux store. Current party contains the partyId, so the user can send updates to the appropriate ref in Firebase.
-
-
-* **Current Song Listener** - manages 'currentSong' on the Redux store. Contains all relevant data about the current song, including the 'song_uri' for the SoundCloud player.
+* **Current Party Listener** - manages ```currentParty``` on the Redux store. Current party contains the partyId, so the user can send updates to the appropriate ref in Firebase.
 
 
-* **Top Ten Listener** - manages 'topTen' on the Redux store. Changes to the order of the top ten are dispatched from here.
+* **Current Song Listener** - manages ```currentSong``` on the Redux store. Contains all relevant data about the current song, including the ```song_uri``` for the SoundCloud player.
 
 
-* **Party DJs Listener** - manages 'djs' on the Redux store. Lets the user know what DJs are in a party and how many DJ Points they have.
+* **Top Ten Listener** - manages ```topTen``` on the Redux store. Changes to the order of the top ten are dispatched from here.
 
 
-* **End Party Listener** - When the host ends a party, 'alerts' the user, turns off all party specific listeners (including itself), and pushes the user to the '/parties' page.
+* **Party DJs Listener** - manages ```djs``` on the Redux store. Lets the user know what DJs are in a party and how many DJ Points they have.
 
 
-* **Personal Queue Listener** - manages 'personalQueue' on the Redux store. Listens to updates from the users personal queue.
+* **End Party Listener** - When the host ends a party, alerts the user, turns off all party specific listeners (including itself), and pushes the user to the '/parties' page.
 
 
-* **Shadow Queue Listener** - manages 'shadowQueue' on the Redux store. Listens to the Shadow Queue for the party.
+* **Personal Queue Listener** - manages ```personalQueue``` on the Redux store. Listens to updates from the users personal queue.
 
 
+* **Shadow Queue Listener** - manages ```shadowQueue``` on the Redux store. Listens to the Shadow Queue for the party.
+
+---
 ## ADDING A SONG
 
-**I.'submitUserSong' runs when user selects a song they want to hear. Users can add songs from the 'Add Song' page.**
+**I.```submitUserSong``` runs when user selects a song they want to hear. Users can add songs from the ADD SONG page.**
 
-    1) FIRST: 'submitUserSong' gets a snapshot of the party's current song, top ten, and shadow queue. THEN:
+  **```submitUserSong``` gets a snapshot of the party's current song, top ten, and shadow queue. THEN:
 
-      A) Check 'current_song' snapshot.
-        i)  If no 'current_song', set 'current_song' to submitted song. Return;
-        ii) If 'current_song', advance to B.
+  1. Check ```current_song``` snapshot.
+    * If no ```current_song```, set ```current_song``` to submitted song and return.
+    * If ```current_song```, advance to 2.
+ 
+  2. Check ```top_ten``` snapshot.
+    * If no ```top_ten``` or if less than 10 songs in ```top_ten```, push submitted song to ```top_ten```.
+    * If ```top_ten``` has 10 songs, advance to 3.
 
-      B) Check 'top_ten' snapshot.
-        i)  If no 'top_ten' or if less than 10 songs in 'top_ten', push submitted song to 'top_ten'. Return;
-        ii) If 'top_ten' has 10 songs, advance to C.
+  3. Check ```shadow_queue``` snapshot.
+    *  If user does not have song ```shadow_queue```, push submitted song and return.
+    *  If user already has song in ```shadow_queue```, advance to 4.
 
-      C) Check 'shadow_queue' snapshot.
-        i)  If user does not have song 'shadow_queue', push submitted song. Return;
-        ii) If user already has song in 'shadow_queue', advance to D.
+  4.  Push submitted song to ```personal_queue```.
 
-      D) Push submitted song to 'personal_queue'.
-
-
+---
 ## VOTING
 
 **I. Voting Rules**
 
-    1) A user gets 5 votes to vote on the top ten and current song. Voting increases or decreases a song's 
-       'vote_priority' and increases or decreases the DJ who recommended its DJ Points.
+  1. Users can vote for the current song or songs in the top ten. Voting increases or decreases a song's 
+     ```vote_priority``` and increments or decrements the DJ points of whomever suggested it.
 
-    2) The 5 votes are replenished when the current song changes. The vote count is stored in local storage
-       (not in Firebase). Users cannot vote when their vote count is zero.
+  2. A user starts with 5 votes, which are are replenished each time the current song changes. The vote count is stored 
+     in local storage(not in Firebase) for simplicity. Users cannot vote for their own songs, or when they have 0 votes left.
 
-    3) If a songs 'net_priority' (vote_priority + time_priority) meets the worst song threshold, an 
-       additional downvote removes the song from the top ten or skips the song if it is the current song.
+  3. If a song's net priority, ie ```vote_priority + time_priority``` meets the worst song threshold, it is removed.
 
 **II. 'onUpvote'**
 
-    1) Decrement the users vote count.
+  1. Decrement the user's vote count.
 
-    2) Call 'updateDjPoints' with the song's uid, the party's partyId, and the third parameter (addBool)
+  2. Calls ```updateDjPoints``` with the song's uid, the party's id, and the third parameter ```addBool```
        as true. This finds the DJ who suggested the song and adds one to his/her DJ points.
 
-    3) Call 'simpleVote' with the party's id, the song, true (addBool), and songId.
-        i)  If songId is null, add a vote to the current song.
-        ii) If songId is given, add a vote to the appropriate song on the top ten.
+  3. Calls ```simpleVote``` with the party's id, the song, true ie ```addBool```, and ```songId```.
+      *  If songId is null, add a vote to the current song.
+      *  If songId is given, add a vote to the appropriate song on the top ten.
 
 **III. 'onDownvote'**
 
-    1) Decrement the users vote count.
+  1. Decrement the user's vote count.
 
-    2) Calculate 'netPriority' of the song the user is downvoting and get a snapshot of 
-       'current_djs'. Check if this downvote pushes the song beyond the worst song threshold.
-        A) The worst song threshold is updated based on the number of djs in the party.
+  2. Calculate net priority of the song the user is downvoting and get a snapshot of 
+     ```current_djs```. Check if this downvote pushes the song beyond the worst song threshold.
+     * NOTE: The worst song threshold changes dynamically based on the number of djs in the party.
 
-    3) If 'meetsWorstSongThreshold' returns 'true':
-        A) Check if song has songId.
-        B) If song has songId that means it is a top ten song. Fireboss then calls 'removeDownvotedSong'
-           which sets the party's 'songToRemove' property on Firebase to the songId. Firechief hears this
-           and updates the top ten.
-        C) If song does not have songId, calls 'triggerFirebase' which skips current song.
+  3. If ```meetsWorstSongThreshold``` returns 'true':
+      * Check if song has songId.
+      * If song has songId that means it is a top ten song. Fireboss then calls ```removeDownvotedSong```
+         which sets the party's ```songToRemove``` property on Firebase to the songId. Firechief hears this
+         and updates the top ten.
+      * If song does not have songId, calls ```triggerFirebase``` which skips to the next song in the Top Ten.
 
-    4) If 'meetsWorstSongThreshold' returns 'false':
-        A) Call 'simpleVote' with the party's id, the song, false (addBool), and songId.
-            i)  If songId is null, remove a vote to the current song.
-            ii) If songId is given, remove a vote to the appropriate song on the top ten.
+  4. If ```meetsWorstSongThreshold``` returns 'false':
+      * Call ```simpleVote``` with the party's id, the song, false ie ```addBool```, and ```songId```.
+          + If songId is null, remove a vote to the current song.
+          + If songId is given, remove a vote to the appropriate song on the top ten.
 
 ## LEAVE PARTY / LOG OUT
 
 **I. Leave Party**
 
-    1) Check if user id is equal to the party id (if true, the user is the host).
+  1. Check if user id is equal to the party id (if true, the user is the host).
 
-    2) If user is host, call 'endParty' with the partyId.
-        A) FIRST: 'endParty' removes the party from the DB. This triggers the 'endParty' 
-           listeners for all the guests, who have their listeners removed and get kicked out. THEN:
-        B) The host removes the current song, top ten, party_djs, and shadow queue from the db.
-        C) The host gets pushed to '/parties'.
+  2. If user is host, call ```endParty``` with the partyId.
+      * ```endParty``` removes the party from the DB. This triggers the ```endParty``` 
+         listeners for all the guests, who have their listeners removed and get kicked out. THEN:
+      * The host removes the ```current_song```, ```top_ten```, ```party_djs```, and ```shadow_queue``` from the db.
+      * The host gets pushed to '/parties'.
 
-    3) If user is a guest, call 'removeUserParty' which dis-associates the user's id from the the party id.
-        A) THEN: the user is removed from 'party_djs'.
-        B) THEN: party listeners are removed, 'leaveParty' is dispatched which clears the Redux store, and the
+    3) If user is a guest, call ```removeUserParty``` which dis-associates the user's id from the the party id.
+        A) THEN: the user is removed from ```party_djs```.
+        B) THEN: party listeners are removed, ```leaveParty``` is dispatched which clears the Redux store, and the
            user is pushed '/parties'.
 
 **II. Log out (similar to leave party)**
+  1. Check if user id is equal to the party id (if true, the user is the host).
 
-    1) Check if user id is equal to the party id (if true, the user is the host).
+  2. If user is host, call ```endParty``` with the partyId and ```Fireboss.auth.signout()```.
+      * After both complete, the host gets pushed to '/login'.
 
-    2) If user is host, call 'endParty' with the partyId and 'Fireboss.auth.signout()'.
-        A) After both complete, the host gets pushed to '/login'.
-
-    3) If user is a guest, call 'removeUserParty', 'removePartyDj' and 'Fireboss.auth.signout()'.
-        B) After all three complete, the guest gets pushed to '/login'.
+  3. If user is a guest, call ```removeUserParty```, 'removePartyDj' and ```Fireboss.auth.signout()```.
+      * After all three complete, the guest gets pushed to '/login'.
 
 
 # FIRECHIEF SERVER SIDE LOGIC

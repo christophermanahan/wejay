@@ -8,17 +8,17 @@ weJay uses Firebase to namespace different parties and provide real-time updates
 
 
 ---
-## GETTING STARTED:
+## GETTING STARTED
 
 `git clone` this repo and run `npm start`, which will automatically run webpack and compile the necessary CSS dependencies.
 
-### TESTING:
+### TESTING
 We love testing. To thoroughly test Fireboss and Firechief, we leveraged the `firebase-server` package, which runs a local instance of a firebase database. This means that our Firebase-related tests require two simultaneous Node processes: `npm test` and `npm run test-server`. 
 
 
 
 ---
-## DEFINITIONS:
+## DEFINITIONS
 
 **Current Song** - the song currently playing in the party.
 
